@@ -108,10 +108,11 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col theme-green text-left">
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col theme-green">
+    <h1>haii</h1>
 
     <!-- Navbar -->
-    <nav class="bg-gray-900 text-white sticky top-0 z-50 shadow-xl">
+    <nav class="bg-gray-900 text-white sticky top-0 z-50 shadow-xl text-left">
         <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer" onclick="window.setView('dashboard')">
                 <img src="Gemini_Generated_Image_3ugjp93ugjp93ugj.jpg" alt="Logo" class="w-10 h-10 rounded-xl object-cover border border-gray-700 shadow-lg" onerror="this.style.display='none'">
@@ -145,7 +146,7 @@
                         Profil Saya
                     </button>
                     <button onclick="window.setView('settings')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-400 font-bold text-sm transition-colors">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 1 0 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                         Pengaturan
                     </button>
                 </div>
@@ -158,6 +159,7 @@
         
         <!-- View: Dashboard -->
         <div id="view-dashboard" class="space-y-8 animate-in fade-in duration-500">
+            <!-- Summary Chart -->
             <div id="dash-chart-container" class="hidden card overflow-hidden border-none bg-white p-0 shadow-lg">
                 <div class="p-6 pb-2 flex justify-between items-center text-left">
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest text-left">Ringkasan Tren Saldo</h3>
@@ -185,16 +187,16 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 <div class="card border-l-[10px] border-l-emerald-500 bg-white">
                     <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1 text-left">Kekayaan Total</p>
                     <h2 id="hero-balance" class="text-3xl font-black text-gray-900 tracking-tighter text-left">Rp 0</h2>
                 </div>
                 
                 <div class="card border-l-[10px] border-l-blue-500 flex flex-col justify-between bg-white text-left">
-                    <div class="flex justify-between items-start text-left">
-                        <div class="text-left text-left">
-                            <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1 text-left text-left">Target Saldo</p>
+                    <div class="flex justify-between items-start">
+                        <div class="text-left">
+                            <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1 text-left">Target Saldo</p>
                             <h2 id="hero-target-display" class="text-2xl font-black text-gray-900 tracking-tighter text-left">Rp 0</h2>
                         </div>
                         <button onclick="window.toggleTargetEdit()" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-all text-left"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
@@ -204,7 +206,7 @@
                         <button onclick="window.saveCurrentTarget()" class="bg-blue-600 text-white px-5 rounded-xl font-black text-[10px] uppercase">Set</button>
                     </div>
                     <div class="mt-4">
-                        <div class="progress-bar mb-2"><div id="target-progress-fill" class="progress-fill" style="width: 0%"></div></div>
+                        <div class="progress-bar mb-2"><div id="target-progress-fill" class="progress-fill"></div></div>
                         <span id="target-progress-label" class="text-[9px] font-black text-gray-400 uppercase tracking-widest text-left">Progress: 0%</span>
                     </div>
                 </div>
@@ -215,29 +217,49 @@
                 </div>
             </div>
 
-            <div class="space-y-6">
+            <div class="space-y-6 text-left text-left">
                 <h2 class="text-xl font-black text-gray-900 tracking-tight text-left">Riwayat Pencatatan</h2>
-                <div id="monthly-records-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left"></div>
+                <div id="monthly-records-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left text-left text-left"></div>
             </div>
         </div>
 
-        <!-- View: Library Zone -->
-        <div id="view-library" class="hidden space-y-10 animate-in fade-in duration-500 text-left text-left">
+        <!-- View: Library Hub (Layout Fixed to 2 columns on mobile) -->
+        <div id="view-library" class="hidden space-y-10 animate-in fade-in duration-500 text-left text-left text-left text-left">
             <div class="border-b border-gray-100 pb-8 text-left text-left">
-                <h1 class="text-5xl font-black text-gray-900 tracking-tighter uppercase text-left text-left">Library Zone</h1>
-                <p class="text-gray-400 text-sm font-bold uppercase tracking-[0.3em] mt-2 opacity-70 text-left">E-Library Curated by Jova Rivanda</p>
+                <h1 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter uppercase text-left text-left text-left">Library Zone</h1>
+                <p class="text-gray-400 text-sm font-bold uppercase tracking-[0.3em] mt-2 opacity-70 text-left text-left text-left">E-Library Curated by Jova Rivanda</p>
             </div>
-            <div id="library-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 text-left"></div>
+            <!-- grid-cols-2 ensures 2 modules side-by-side on mobile -->
+            <div id="library-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-10 text-left"></div>
         </div>
 
-        <!-- Additional Views (Portfolio, Record Detail, Profile, Settings) -->
-        <div id="view-record-detail" class="hidden space-y-8 animate-in slide-in-from-right duration-300 text-left">
+        <!-- Portfolio Hub -->
+        <div id="view-portfolio" class="hidden space-y-8 animate-in fade-in duration-500 text-left text-left text-left">
+            <h1 class="text-3xl font-black text-gray-900 tracking-tighter uppercase text-left text-left">Analisis Global</h1>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
+                <div class="card border-l-[12px] border-l-emerald-500 p-8 bg-white text-left text-left text-left" id="port-simple-stats"></div>
+                <div class="card border-l-[12px] border-l-indigo-500 p-8 bg-white text-left text-left text-left" id="port-complex-stats"></div>
+            </div>
+            <div class="card p-8 border-none shadow-xl bg-white text-left text-left">
+                <div class="h-[500px] text-left">
+                    <canvas id="portfolioChart"></canvas>
+                </div>
+                 <div class="flex bg-gray-100 p-2 rounded-2xl gap-2 mt-8 text-left text-left text-left">
+                    <button onclick="window.setPortChartType('total')" id="port-tab-total" class="flex-1 py-4 rounded-xl text-[10px] font-black tab-active uppercase tracking-widest text-left text-left">Saldo</button>
+                    <button onclick="window.setPortChartType('income')" id="port-tab-income" class="flex-1 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-left text-left text-left">Masuk</button>
+                    <button onclick="window.setPortChartType('expense')" id="port-tab-expense" class="flex-1 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-left text-left text-left text-left">Keluar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Record Detail View -->
+        <div id="view-record-detail" class="hidden space-y-8 animate-in slide-in-from-right duration-300 text-left text-left text-left">
              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                 <div class="flex items-center gap-5">
                     <button onclick="window.setView('dashboard')" class="p-4 bg-white rounded-3xl shadow-lg border border-gray-100 hover:bg-gray-50 transition-all text-left">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m15 18-6-6 6-6"/></svg>
                     </button>
-                    <div class="text-left text-left">
+                    <div class="text-left">
                         <h1 id="detail-title" class="text-3xl font-black text-gray-900 tracking-tighter text-left">Nama Buku</h1>
                         <p id="detail-month" class="text-xs text-gray-400 font-black uppercase tracking-[0.4em] mt-1 text-left text-left text-left">Bulan</p>
                     </div>
@@ -253,123 +275,75 @@
                     <h2 id="detail-balance" class="text-3xl font-black mt-2 tracking-tighter text-left">Rp 0</h2>
                 </div>
                 <div class="card bg-white border-b-8 border-b-emerald-500 p-8 text-left text-left">
-                    <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest text-left">Masuk</p>
+                    <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest text-left text-left">Masuk</p>
                     <h2 id="detail-income-total" class="text-2xl font-black text-emerald-600 tracking-tighter text-left">Rp 0</h2>
                 </div>
                 <div class="card bg-white border-b-8 border-b-red-500 p-8 text-left text-left">
-                    <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest text-left">Keluar</p>
-                    <h2 id="detail-expense" class="text-2xl font-black text-red-600 tracking-tighter text-left text-left">Rp 0</h2>
+                    <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest text-left text-left">Keluar</p>
+                    <h2 id="detail-expense" class="text-2xl font-black text-red-600 tracking-tighter text-left">Rp 0</h2>
                 </div>
-                <div class="card bg-white hidden md:block border-b-8 border-b-blue-500 p-8 text-left">
+                <div class="card bg-white hidden md:block border-b-8 border-b-blue-500 p-8 text-left text-left">
                     <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest text-left text-left">Gaji Pokok</p>
-                    <h2 id="detail-base" class="text-2xl font-black text-blue-600 tracking-tighter text-left text-left">Rp 0</h2>
+                    <h2 id="detail-base" class="text-2xl font-black text-blue-600 tracking-tighter text-left">Rp 0</h2>
                 </div>
             </div>
-            <div class="card p-8 bg-white border-none shadow-lg text-left">
-                <div class="flex justify-between items-center mb-8 border-b border-gray-50 pb-5 text-left">
-                    <h3 class="font-black text-gray-900 uppercase text-xs tracking-widest text-left">Statistik Arus Kas</h3>
-                    <select id="book-chart-style" onchange="window.updateBookChart()" class="text-[10px] px-4 py-2 border rounded-xl font-bold bg-gray-50 text-left">
-                        <option value="candle">Candle Stick</option>
-                        <option value="line">Tren Garis</option>
-                    </select>
-                </div>
-                <div class="h-96 w-full text-left">
-                    <canvas id="bookChart"></canvas>
-                </div>
-                <div class="flex bg-gray-100 p-2 rounded-2xl mt-8 gap-2 text-left">
-                    <button onclick="window.setChartType('total')" id="tab-total" class="flex-1 py-4 rounded-xl text-[10px] font-black tab-active uppercase text-left">Saldo</button>
-                    <button onclick="window.setChartType('income')" id="tab-income" class="flex-1 py-4 rounded-xl text-[10px] font-black uppercase text-left">Masuk</button>
-                    <button onclick="window.setChartType('expense')" id="tab-expense" class="flex-1 py-4 rounded-xl text-[10px] font-black uppercase text-left">Keluar</button>
-                </div>
-            </div>
-            <h3 class="font-black text-lg px-2 text-gray-900 uppercase tracking-widest py-4 text-left">Daftar Aliran Dana</h3>
-            <div id="detail-transaction-list" class="divide-y divide-gray-50 card p-0 overflow-hidden shadow-2xl border-none text-left"></div>
+            <div id="detail-transaction-list" class="divide-y divide-gray-50 card p-0 overflow-hidden shadow-2xl border-none mt-8 text-left text-left text-left"></div>
         </div>
 
-        <div id="view-portfolio" class="hidden space-y-8 animate-in fade-in duration-500 text-left text-left">
-            <h1 class="text-3xl font-black text-gray-900 tracking-tighter uppercase text-left">Statistik Portofolio</h1>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
-                <div class="card border-l-[12px] border-l-emerald-500 p-8 bg-white text-left text-left" id="port-simple-stats"></div>
-                <div class="card border-l-[12px] border-l-indigo-500 p-8 bg-white text-left text-left" id="port-complex-stats"></div>
-            </div>
-            <div class="card p-8 border-none shadow-xl bg-white text-left">
-                <div class="h-[500px] text-left">
-                    <canvas id="portfolioChart"></canvas>
-                </div>
-                 <div class="flex bg-gray-100 p-2 rounded-2xl gap-2 mt-8 text-left text-left">
-                    <button onclick="window.setPortChartType('total')" id="port-tab-total" class="flex-1 py-4 rounded-xl text-[10px] font-black tab-active uppercase tracking-widest text-left text-left">Saldo</button>
-                    <button onclick="window.setPortChartType('income')" id="port-tab-income" class="flex-1 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-left text-left">Masuk</button>
-                    <button onclick="window.setPortChartType('expense')" id="port-tab-expense" class="flex-1 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-left text-left text-left text-left">Keluar</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-profile" class="hidden space-y-8 max-w-2xl mx-auto animate-in fade-in text-left">
-            <h1 class="text-4xl font-black text-gray-900 tracking-tighter text-center uppercase text-left">Profil</h1>
+        <div id="view-profile" class="hidden space-y-8 max-w-2xl mx-auto animate-in fade-in text-left text-left">
+            <h1 class="text-4xl font-black text-gray-900 tracking-tighter text-center uppercase text-left text-left">Profil Saya</h1>
             <div class="card p-10 bg-white shadow-2xl border-none text-left">
                 <div class="space-y-6 text-left">
-                    <div class="space-y-2 text-left">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-left text-left">Nama Lengkap</label>
+                    <div class="space-y-2 text-left text-left">
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-left text-left text-left">Nama Lengkap</label>
                         <input type="text" id="prof-name" class="w-full p-5 border-2 border-gray-50 rounded-3xl outline-none focus:border-emerald-500 font-bold text-lg text-left">
                     </div>
                     <div class="space-y-2 text-left">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-left text-left">Hobi Utama</label>
-                        <input type="text" id="prof-hobby" class="w-full p-5 border-2 border-gray-50 rounded-3xl outline-none focus:border-emerald-500 font-bold text-lg text-left">
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-left text-left text-left">Hobi Utama</label>
+                        <input type="text" id="prof-hobby" class="w-full p-5 border-2 border-gray-50 rounded-3xl outline-none focus:border-emerald-500 font-bold text-lg text-left text-left">
                     </div>
                     <div class="space-y-2 text-left">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-left">Visi Keuangan</label>
-                        <textarea id="prof-goal" class="w-full p-5 border-2 border-gray-50 rounded-3xl outline-none focus:border-emerald-500 h-32 font-bold text-lg text-left"></textarea>
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-left text-left text-left">Visi Keuangan</label>
+                        <textarea id="prof-goal" class="w-full p-5 border-2 border-gray-50 rounded-3xl outline-none focus:border-emerald-500 h-32 font-bold text-lg text-left text-left"></textarea>
                     </div>
                 </div>
-                <button onclick="window.saveProfile()" class="w-full btn-primary text-sm font-black shadow-2xl shadow-emerald-200 mt-10 py-5 rounded-3xl text-left text-left text-left">SIMPAN PROFIL</button>
+                <button onclick="window.saveProfile()" class="w-full btn-primary text-sm font-black shadow-2xl shadow-emerald-200 mt-10 py-5 rounded-3xl text-left">SIMPAN PROFIL</button>
             </div>
         </div>
 
-        <div id="view-settings" class="hidden space-y-8 max-w-2xl mx-auto animate-in fade-in text-left text-left text-left">
-            <h1 class="text-4xl font-black text-gray-900 tracking-tighter text-center uppercase text-left">Settings</h1>
-            <div class="card p-12 bg-white shadow-2xl text-center border-none text-left text-left text-left">
-                <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-10 text-left text-left">Pilih Warna Dasar</p>
-                <div class="grid grid-cols-4 gap-8 mb-12 text-left text-left text-left">
+        <div id="view-settings" class="hidden space-y-8 max-w-2xl mx-auto animate-in fade-in text-left text-left">
+            <h1 class="text-4xl font-black text-gray-900 tracking-tighter text-center uppercase text-left text-left">Settings</h1>
+            <div class="card p-12 bg-white shadow-2xl text-center border-none text-left">
+                <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-10 text-left text-left text-left">Pilih Warna Dasar</p>
+                <div class="grid grid-cols-4 gap-8 mb-12 text-left">
                     <button onclick="window.changeTheme('green')" class="flex flex-col items-center gap-4 group text-left">
                         <div class="h-20 w-20 bg-emerald-500 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left"></div>
-                        <span class="text-[9px] font-black text-gray-400 uppercase text-left">Emerald</span>
+                        <span class="text-[9px] font-black text-gray-400 uppercase text-left text-left">Emerald</span>
                     </button>
                     <button onclick="window.changeTheme('red')" class="flex flex-col items-center gap-4 group text-left">
-                        <div class="h-20 w-20 bg-red-500 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left"></div>
-                        <span class="text-[9px] font-black text-gray-400 uppercase text-left">Rose</span>
+                        <div class="h-20 w-20 bg-red-500 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left text-left"></div>
+                        <span class="text-[9px] font-black text-gray-400 uppercase text-left text-left text-left">Rose</span>
                     </button>
                     <button onclick="window.changeTheme('purple')" class="flex flex-col items-center gap-4 group text-left">
-                        <div class="h-20 w-20 bg-purple-500 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left"></div>
-                        <span class="text-[9px] font-black text-gray-400 uppercase text-left">Royal</span>
+                        <div class="h-20 w-20 bg-purple-500 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left text-left text-left"></div>
+                        <span class="text-[9px] font-black text-gray-400 uppercase text-left text-left text-left">Royal</span>
                     </button>
-                    <button onclick="window.changeTheme('black')" class="flex flex-col items-center gap-4 group text-left text-left">
-                        <div class="h-20 w-20 bg-gray-800 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left"></div>
-                        <span class="text-[9px] font-black text-gray-400 uppercase text-left">Night</span>
+                    <button onclick="window.changeTheme('black')" class="flex flex-col items-center gap-4 group text-left">
+                        <div class="h-20 w-20 bg-gray-800 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left text-left"></div>
+                        <span class="text-[9px] font-black text-gray-400 uppercase text-left text-left">Night</span>
                     </button>
                 </div>
-                <button onclick="window.clearData()" class="w-full p-5 text-red-500 font-black border-4 border-red-50 rounded-3xl hover:bg-red-500 hover:text-white transition-all uppercase tracking-[0.3em] text-xs text-left">Hapus Semua Data</button>
+                <button onclick="window.clearData()" class="w-full p-5 text-red-500 font-black border-4 border-red-50 rounded-3xl hover:bg-red-500 hover:text-white transition-all uppercase tracking-[0.3em] text-xs text-left">Reset Sistem Data</button>
             </div>
         </div>
     </main>
 
-    <!-- Chart Interaction Box -->
-    <div id="chart-info-box" class="card bg-gray-900 text-white p-6 rounded-[2.5rem] shadow-2xl border border-white/10 w-72 text-left">
-        <p id="chart-info-date" class="text-[10px] uppercase font-black text-gray-500 mb-2 tracking-[0.2em] text-left"></p>
-        <div class="flex justify-between items-end text-left text-left">
-            <div class="text-left text-left text-left">
-                <p id="chart-info-label" class="text-xs font-bold text-gray-400 mb-1 text-left"></p>
-                <p id="chart-info-value" class="text-2xl font-black text-left"></p>
-            </div>
-            <div id="chart-info-icon" class="text-3xl mb-1 text-left text-left text-left"></div>
-        </div>
-    </div>
-
-    <!-- Modals (Record, Transaction) -->
+    <!-- Modals -->
     <div id="modal-record" class="hidden fixed inset-0 z-[1000] modal-overlay flex items-center justify-center p-4">
         <div class="card w-full max-w-md bg-white shadow-2xl text-left text-left">
             <h2 id="modal-record-title" class="text-2xl font-black mb-6 text-gray-900 tracking-tight text-left">Buku Baru</h2>
             <div class="space-y-5 text-left text-left">
-                <input type="text" id="rec-name" placeholder="Misal: Januari 2024" class="w-full p-4 border rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 font-bold text-left">
+                <input type="text" id="rec-name" placeholder="Misal: Januari 2024" class="w-full p-4 border rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/10 font-bold text-left text-left">
                 <div class="grid grid-cols-2 gap-4 text-left">
                     <select id="rec-month" class="w-full p-4 border rounded-2xl outline-none bg-gray-50 font-bold text-left">
                         <option value="Januari">Januari</option><option value="Februari">Februari</option><option value="Maret">Maret</option>
@@ -377,9 +351,9 @@
                         <option value="Juli">Juli</option><option value="Agustus">Agustus</option><option value="September">September</option>
                         <option value="Oktober">Oktober</option><option value="November">November</option><option value="Desember">Desember</option>
                     </select>
-                    <input type="number" id="rec-amount" placeholder="Gaji Pokok" class="w-full p-4 border rounded-2xl outline-none font-black text-left">
+                    <input type="number" id="rec-amount" placeholder="Gaji Pokok" class="w-full p-4 border rounded-2xl outline-none font-black text-left text-left">
                 </div>
-                <div class="flex gap-4 pt-4 text-left">
+                <div class="flex gap-4 pt-4 text-left text-left">
                     <button onclick="window.closeModal('record')" class="flex-1 p-4 bg-gray-100 rounded-2xl font-black text-xs text-gray-500 text-left">BATAL</button>
                     <button id="btn-save-record" class="flex-1 btn-primary font-black text-xs text-left">SIMPAN</button>
                 </div>
@@ -387,33 +361,64 @@
         </div>
     </div>
 
-    <div id="modal-transaction" class="hidden fixed inset-0 z-[1000] modal-overlay flex items-center justify-center p-4">
+    <div id="modal-transaction" class="hidden fixed inset-0 z-[1000] modal-overlay flex items-center justify-center p-4 text-left text-left">
         <div class="card w-full max-w-md bg-white shadow-2xl text-left text-left text-left">
             <div class="flex justify-between items-center mb-6">
                 <h2 id="modal-trans-title" class="text-xl font-black text-gray-900 text-left text-left">Catat Aliran</h2>
-                <button onclick="window.setTransactionToRealTime()" class="text-[9px] bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full font-black uppercase text-left">Realtime</button>
+                <button onclick="window.setTransactionToRealTime()" class="text-[9px] bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full font-black uppercase text-left text-left text-left">Realtime</button>
             </div>
-            <div class="space-y-4 text-left text-left">
-                <div class="grid grid-cols-2 gap-4 text-left">
-                    <select id="trans-type" onchange="window.updateCategories(this.value)" class="w-full p-4 border rounded-2xl outline-none font-black bg-gray-50 text-left text-left text-left">
+            <div class="space-y-4 text-left">
+                <div class="grid grid-cols-2 gap-4 text-left text-left text-left">
+                    <select id="trans-type" onchange="window.updateCategories(this.value)" class="w-full p-4 border rounded-2xl outline-none font-black bg-gray-50 text-left">
                         <option value="expense">KELUAR (-)</option>
                         <option value="income">MASUK (+)</option>
                     </select>
-                    <select id="trans-category" class="w-full p-4 border rounded-2xl outline-none bg-gray-50 font-bold text-left"></select>
+                    <select id="trans-category" class="w-full p-4 border rounded-2xl outline-none bg-gray-50 font-bold text-left text-left text-left"></select>
                 </div>
-                <input type="date" id="trans-date" class="w-full p-4 border rounded-2xl outline-none bg-gray-50 font-bold text-left">
-                <input type="text" id="trans-desc" placeholder="Keterangan" class="w-full p-4 border rounded-2xl outline-none font-bold text-left text-left">
+                <input type="date" id="trans-date" class="w-full p-4 border rounded-2xl outline-none bg-gray-50 font-bold text-left text-left text-left">
+                <input type="text" id="trans-desc" placeholder="Keterangan" class="w-full p-4 border rounded-2xl outline-none font-semibold text-left text-left">
                 <input type="number" id="trans-amount" placeholder="Nominal" class="w-full p-4 border rounded-2xl outline-none font-black text-lg text-left">
-                <div class="flex gap-4 pt-4 text-left">
-                    <button onclick="window.closeModal('transaction')" class="flex-1 p-4 bg-gray-100 rounded-2xl font-black text-xs text-gray-500 text-left">BATAL</button>
-                    <button id="btn-save-trans" class="flex-1 btn-primary font-black text-xs text-left">CATAT</button>
+                <div class="flex gap-4 pt-4 text-left text-left text-left">
+                    <button onclick="window.closeModal('transaction')" class="flex-1 p-4 bg-gray-100 rounded-2xl font-black text-xs text-gray-500 text-left text-left">BATAL</button>
+                    <button id="btn-save-trans" class="flex-1 btn-primary font-black text-xs text-left">SIMPAN</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Chart Interaction Box -->
+    <div id="chart-info-box" class="card bg-gray-900 text-white p-6 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.4)] border border-white/10 w-72 text-left">
+        <p id="chart-info-date" class="text-[10px] uppercase font-black text-gray-500 mb-2 tracking-[0.2em] text-left"></p>
+        <div class="flex justify-between items-end text-left text-left">
+            <div class="text-left text-left text-left">
+                <p id="chart-info-label" class="text-xs font-bold text-gray-400 mb-1 text-left text-left"></p>
+                <p id="chart-info-value" class="text-2xl font-black text-left text-left"></p>
+            </div>
+            <div id="chart-info-icon" class="text-3xl mb-1 text-left text-left"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-auto border-t border-gray-800 text-center text-left text-left">
+        <div class="max-w-6xl mx-auto px-4 space-y-8 text-left text-left">
+            <div class="flex justify-center gap-10 text-left text-left">
+                <a href="https://www.instagram.com/jv_rvnd?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="p-4 bg-gray-800 rounded-full hover:bg-pink-600 transition-all hover:scale-110 text-left">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-left"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                </a>
+                <a href="https://www.tiktok.com/@coffee_latte96?is_from_webapp=1&sender_device=pc" target="_blank" class="p-4 bg-gray-800 rounded-full hover:bg-white hover:text-black transition-all hover:scale-110 text-left">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-left"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+                </a>
+            </div>
+            <div class="space-y-2 text-center text-left">
+                <p class="font-black tracking-[0.5em] text-sm opacity-60 uppercase text-center text-left text-left">JOVA RIVANDA</p>
+                <p class="text-[10px] text-emerald-500 font-black uppercase tracking-widest text-center text-left text-left">Secure Financial Ecosystem • Encrypted</p>
+                <p class="text-[9px] text-gray-500 uppercase tracking-tighter opacity-40 font-bold text-center text-left text-left">Exclusive Financial Ecosystem &copy; 2024</p>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        // --- 1. CORE DATA REGISTRATION (GLOBAL ACCESSIBLE) ---
+        // --- 1. CORE FUNCTIONS ---
         window.formatMoney = (val) => {
             const amount = parseFloat(val) || 0;
             if (appData.currencyMode === 'USD') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount / 15500);
@@ -421,9 +426,9 @@
         };
 
         const STATIC_LIBRARY_DATA = [
-            { id: 'lib-1', name: 'Atomic Habits', desc: 'Perubahan kecil yang memberikan hasil luar biasa dalam pengelolaan habit finansial.', file: 'modul 1', sampul: 'smodul 1' },
-            { id: 'lib-2', name: 'Berani Tidak Disukai', desc: 'Melihat hidup dan kebebasan finansial dari sudut pandang psikologi Adler.', file: 'modul 2', sampul: 'smodul 2' },
-            { id: 'lib-3', name: 'Berdamai Dengan Diri Sendiri', desc: 'Seni menerima diri dan mengelola emosi dalam setiap transaksi keuangan.', file: 'modul 3', sampul: 'smodul 3' },
+            { id: 'lib-1', name: 'Atomic Habits', desc: 'Perubahan kecil yang memberikan hasil luar biasa dalam habit finansial.', file: 'modul 1', sampul: 'smodul 1' },
+            { id: 'lib-2', name: 'Berani Tidak Disukai', desc: 'Melihat hidup dan kebebasan finansial dari sudut pandang Adler.', file: 'modul 2', sampul: 'smodul 2' },
+            { id: 'lib-3', name: 'Berdamai Dengan Diri Sendiri', desc: 'Seni menerima diri dan mengelola emosi dalam setiap transaksi.', file: 'modul 3', sampul: 'smodul 3' },
             { id: 'lib-4', name: 'Bicara Itu Ada Seninya', desc: 'Seni berkomunikasi secara efektif dalam negosiasi dan hubungan profesional.', file: 'modul 4', sampul: 'smodul 4' },
             { id: 'lib-5', name: 'Black Holes', desc: 'Menjelajahi misteri terdalam alam semesta melalui pemahaman fisika modern.', file: 'modul 5', sampul: 'smodul 5' },
             { id: 'lib-6', name: 'Dark Psychology', desc: 'Memahami teknik persuasi dan manipulasi psikologis untuk proteksi diri.', file: 'modul 6', sampul: 'smodul 6' },
@@ -436,7 +441,7 @@
             { id: 'lib-13', name: 'Seni Membaca Pikiran dan Perasaan Orang Lain', desc: 'Meningkatkan empati dan kemampuan observasi karakter melalui bahasa tubuh.', file: 'modul 13', sampul: 'smodul 13' }
         ];
 
-        // --- 2. APP STATE ---
+        // --- 2. STATE ---
         let appData = {
             profile: { name: "User", hobby: "", goal: "" },
             settings: { theme: 'green', fontSize: 16, mode: 'simple' },
@@ -460,7 +465,7 @@
         let portfolioChart = null, bookChart = null, dashQuickChart = null;
         let chartDataCache = {};
 
-        // --- 3. STORAGE & LOAD ---
+        // --- 3. PERSISTENCE ---
         window.saveData = () => {
             localStorage.setItem(STORAGE_KEY, CryptoJS.AES.encrypt(JSON.stringify(appData), ENCRYPT_KEY).toString());
         };
@@ -525,7 +530,7 @@
             const label = document.getElementById('current-mode-label'); if(label) label.innerText = mode === 'simple' ? 'Sederhana' : 'Kompleks';
             const sBtn = document.getElementById('mode-simple-btn'); const cBtn = document.getElementById('mode-complex-btn');
             if(sBtn && cBtn) {
-                if(mode === 'simple') { sBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all mode-btn-active"; cBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 bg-transparent"; }
+                if(mode === 'simple') { sBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all mode-btn-active"; cBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-600 bg-transparent"; }
                 else { cBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all mode-btn-active"; sBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-500 bg-transparent"; }
             }
 
@@ -539,7 +544,6 @@
                 const r = recs.find(rec => rec.id === appData.selectedRecordId);
                 if (r) {
                     let inc = 0, exp = 0; (r.transactions||[]).forEach(t => t.type === 'income' ? inc += (parseFloat(t.amount)||0) : exp += (parseFloat(t.amount)||0));
-                    const dt = document.getElementById('detail-title'); if(dt) dt.innerText = r.name;
                     const db = document.getElementById('detail-balance'); if(db) db.innerText = window.formatMoney((parseFloat(r.baseAmount)||0) + inc - exp);
                     const di = document.getElementById('detail-income-total'); if(di) di.innerText = window.formatMoney((parseFloat(r.baseAmount)||0) + inc);
                     const de = document.getElementById('detail-expense'); if(de) de.innerText = window.formatMoney(exp);
@@ -551,19 +555,19 @@
 
         window.renderRecordsList = (recs) => {
             const container = document.getElementById('monthly-records-container'); if (!container) return;
-            if (!recs.length) { container.innerHTML = '<div class="col-span-full p-10 border-2 border-dashed rounded-[2.5rem] text-center text-gray-300 font-bold uppercase text-[10px]">EMPTY</div>'; return; }
+            if (!recs.length) { container.innerHTML = '<div class="col-span-full p-10 border-2 border-dashed rounded-[2rem] text-center text-gray-300 font-bold uppercase text-[10px]">BELUM ADA DATA</div>'; return; }
             container.innerHTML = recs.map(r => {
                 let bal = parseFloat(r.baseAmount) || 0; (r.transactions||[]).forEach(t => t.type === 'income' ? bal += (parseFloat(t.amount)||0) : bal -= (parseFloat(t.amount)||0));
                 return `<div onclick="window.openRecordDetail('${r.id}')" class="card card-clickable border-l-[12px] border-l-emerald-500 relative group text-left">
-                        <div class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                             <button onclick="event.stopPropagation(); window.openModal('record', '${r.id}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-                             <button onclick="event.stopPropagation(); window.deleteRecord('${r.id}')" class="p-2 bg-red-50 text-red-600 rounded-xl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                        <div class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all text-left">
+                             <button onclick="event.stopPropagation(); window.openModal('record', '${r.id}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-500 hover:text-white text-left"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                             <button onclick="event.stopPropagation(); window.deleteRecord('${r.id}')" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-500 hover:text-white text-left text-left"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
                         </div>
-                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">${r.month}</p>
-                        <h4 class="font-black text-lg text-gray-900 leading-tight">${r.name}</h4>
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mb-1 text-left">${r.month}</p>
+                        <h4 class="font-black text-lg text-gray-900 leading-tight text-left text-left">${r.name}</h4>
                         <div class="mt-4 pt-3 border-t border-gray-50 flex justify-between items-center text-left">
-                            <span class="text-[8px] font-black text-gray-300 uppercase tracking-widest text-left">ENDING BALANCE</span>
-                            <span class="text-sm font-black text-emerald-600 text-left">${window.formatMoney(bal)}</span>
+                            <span class="text-[8px] font-black text-gray-300 uppercase tracking-widest text-left">SALDO</span>
+                            <span class="text-sm font-black text-emerald-600 text-left text-left">${window.formatMoney(bal)}</span>
                         </div>
                     </div>`;
             }).join('');
@@ -572,18 +576,17 @@
         window.renderDetailTransactions = (ts) => {
             const list = document.getElementById('detail-transaction-list'); if (!list) return;
             let display = [...(ts || [])].sort((a,b) => b.date.localeCompare(a.date));
-            if (!display.length) { list.innerHTML = '<div class="p-10 text-center text-gray-300 italic font-bold">NO TRANSACTIONS</div>'; return; }
+            if (!display.length) { list.innerHTML = '<div class="p-10 text-center text-gray-300 font-bold italic text-sm text-left">KOSONG</div>'; return; }
             list.innerHTML = display.map(t => `<div class="p-5 flex justify-between items-center hover:bg-gray-50 transition-all group text-left">
                     <div class="flex gap-4 items-center text-left">
-                        <div class="w-12 h-12 rounded-2xl ${t.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'} flex items-center justify-center font-black text-[10px] shadow-sm">${t.type === 'income' ? 'IN' : 'OUT'}</div>
-                        <div class="text-left">
+                        <div class="w-12 h-12 rounded-2xl ${t.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'} flex items-center justify-center font-black text-[10px] shadow-sm text-left">${t.type === 'income' ? 'IN' : 'OUT'}</div>
+                        <div class="text-left text-left">
                             <p class="text-sm font-black text-gray-800 leading-tight text-left">${t.desc}</p>
                             <p class="text-[9px] text-gray-400 uppercase font-black tracking-widest mt-1 text-left">${t.date} • ${t.category}</p>
                         </div>
                     </div>
                     <div class="text-right text-left">
-                        <p class="font-black ${t.type === 'income' ? 'text-emerald-600' : 'text-red-600'} text-sm leading-tight">${t.type === 'income' ? '+' : '-'} ${window.formatMoney(t.amount)}</p>
-                        <button onclick="window.deleteTransaction('${t.id}')" class="mt-1 opacity-0 group-hover:opacity-100 text-[9px] text-red-400 font-bold uppercase tracking-widest hover:underline transition-all">Remove</button>
+                        <p class="font-black ${t.type === 'income' ? 'text-emerald-600' : 'text-red-600'} text-sm leading-tight text-left">${t.type === 'income' ? '+' : '-'} ${window.formatMoney(t.amount)}</p>
                     </div>
                 </div>`).join('');
         };
@@ -594,13 +597,13 @@
             STATIC_LIBRARY_DATA.forEach(mod => {
                 html += `
                 <div class="card library-card p-0 text-left relative group">
-                    <div class="library-thumb text-left">
+                    <div class="library-thumb text-left text-left">
                         <img src="./sampul_modul/${mod.sampul}.jpg" alt="${mod.name}" onerror="this.src='https://placehold.co/300x400?text=${mod.name}'">
                         <div class="absolute top-3 right-3 bg-black/60 backdrop-blur px-2.5 py-1.5 rounded-xl text-[8px] text-white font-black uppercase tracking-widest text-left">SECURE</div>
                     </div>
                     <div class="p-6 flex-grow flex flex-col text-left">
                         <h3 class="font-black text-xs text-gray-900 line-clamp-2 leading-tight uppercase text-left">${mod.name}</h3>
-                        <p class="text-[10px] text-gray-400 mt-2 line-clamp-3 leading-relaxed text-left">${mod.desc}</p>
+                        <p class="text-[10px] text-gray-400 mt-2 line-clamp-3 leading-relaxed text-left text-left text-left">${mod.desc}</p>
                         <div class="mt-auto pt-6 text-left">
                             <a href="./modul/${mod.file}.pdf" target="_blank" class="w-full inline-flex justify-center items-center py-3 bg-emerald-50 text-emerald-600 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
                                 Buka Modul
@@ -614,21 +617,13 @@
 
         // --- 5. LOGIC ACTIONS ---
         window.setAppMode = (mode) => { appData.settings.mode = mode; window.saveData(); window.updateUI(); window.updateDashboardGraph(); };
-        window.toggleTargetEdit = () => {
-            const form = document.getElementById('target-edit-form');
-            if(form) form.classList.toggle('hidden');
-        };
-        window.saveCurrentTarget = () => {
-            const v = parseFloat(document.getElementById('target-input').value) || 0;
-            appData.settings.mode === 'simple' ? appData.simpleTarget = v : appData.complexTarget = v;
-            const form = document.getElementById('target-edit-form'); if(form) form.classList.add('hidden');
-            window.saveData(); window.updateUI();
-        };
-        window.deleteRecord = (id) => { if (confirm("Hapus selamanya?")) { if (appData.settings.mode === 'simple') appData.simpleRecords = appData.simpleRecords.filter(r => r.id !== id); else appData.complexRecords = appData.complexRecords.filter(r => r.id !== id); window.saveData(); window.updateUI(); window.updateDashboardGraph(); } };
+        window.toggleTargetEdit = () => { const form = document.getElementById('target-edit-form'); if(form) form.classList.toggle('hidden'); };
+        window.saveCurrentTarget = () => { const v = parseFloat(document.getElementById('target-input').value) || 0; appData.settings.mode === 'simple' ? appData.simpleTarget = v : appData.complexTarget = v; const form = document.getElementById('target-edit-form'); if(form) form.classList.add('hidden'); window.saveData(); window.updateUI(); };
+        window.deleteRecord = (id) => { if (confirm("Hapus?")) { if (appData.settings.mode === 'simple') appData.simpleRecords = appData.simpleRecords.filter(r => r.id !== id); else appData.complexRecords = appData.complexRecords.filter(r => r.id !== id); window.saveData(); window.updateUI(); window.updateDashboardGraph(); } };
         window.deleteTransaction = (tid) => { if (confirm("Hapus?")) { const recs = appData.settings.mode === 'simple' ? appData.simpleRecords : appData.complexRecords; const r = recs.find(x => x.id === appData.selectedRecordId); if(r) { r.transactions = r.transactions.filter(x => x.id !== tid); window.saveData(); window.updateUI(); window.updateBookChart(); } } };
-        window.saveProfile = () => { appData.profile.name = document.getElementById('prof-name').value || "User"; appData.profile.hobby = document.getElementById('prof-hobby').value; appData.profile.goal = document.getElementById('prof-goal').value; window.saveData(); window.updateUI(); };
-        window.changeTheme = (t) => { document.body.classList.remove('theme-green', 'theme-red', 'theme-purple', 'theme-black'); document.body.classList.add(`theme-${t}`); const c = {green:'#10b981', red:'#ef4444', purple:'#a855f7', black:'#374151'}; document.documentElement.style.setProperty('--primary-color', c[t]); appData.settings.theme = t; window.saveData(); if(dashQuickChart) window.updateDashboardGraph(); };
-        window.clearData = () => { if (confirm("Reset?")) { localStorage.clear(); location.reload(); } };
+        window.saveProfile = () => { appData.profile.name = document.getElementById('prof-name').value || "Jova User"; appData.profile.hobby = document.getElementById('prof-hobby').value; appData.profile.goal = document.getElementById('prof-goal').value; window.saveData(); window.updateUI(); alert("Profil diupdate!"); };
+        window.changeTheme = (t) => { document.body.classList.remove('theme-green', 'theme-red', 'theme-purple', 'theme-black'); document.body.classList.add(`theme-${t}`); const colors = {green:'#10b981', red:'#ef4444', purple:'#a855f7', black:'#374151'}; document.documentElement.style.setProperty('--primary-color', colors[t]); appData.settings.theme = t; window.saveData(); if(dashQuickChart) window.updateDashboardGraph(); };
+        window.clearData = () => { if (confirm("Hapus selamanya?")) { localStorage.clear(); location.reload(); } };
         window.setCurrency = (c) => { appData.currencyMode = c; window.updateUI(); };
         window.setChartType = (t) => { appData.activeBookChart = t; ['total','income','expense'].forEach(x => { const el = document.getElementById('tab-'+x); if(el) el.classList.toggle('tab-active', x === t); }); window.updateBookChart(); };
         window.setPortChartType = (t) => { appData.activePortChart = t; ['total','income','expense'].forEach(x => { const el = document.getElementById('port-tab-'+x); if(el) el.classList.toggle('tab-active', x === t); }); window.updatePortfolio(); };
@@ -636,45 +631,39 @@
         window.openRecordDetail = (id) => { appData.selectedRecordId = id; window.setView('record-detail'); };
 
         window.openModal = (type, editId = null) => { 
-            const modal = document.getElementById(`modal-${type}`);
-            if(!modal) return; // FIX FOR CLASSLIST ERROR
+            const modal = document.getElementById(`modal-${type}`); if(!modal) return;
             modal.classList.remove('hidden');
 
             const recs = appData.settings.mode === 'simple' ? appData.simpleRecords : appData.complexRecords;
             if(type === 'record') {
-                const btn = document.getElementById('btn-save-record');
+                const btn = document.getElementById('btn-save-record'), title = document.getElementById('modal-record-title');
                 if(editId) { 
-                    const r = recs.find(x => x.id === editId); document.getElementById('modal-record-title').innerText = "Edit Buku"; document.getElementById('rec-name').value = r.name; document.getElementById('rec-amount').value = r.baseAmount; document.getElementById('rec-month').value = r.month;
+                    const r = recs.find(x => x.id === editId); title.innerText = "Edit Buku"; document.getElementById('rec-name').value = r.name; document.getElementById('rec-amount').value = r.baseAmount; document.getElementById('rec-month').value = r.month;
                     btn.onclick = () => { r.name = document.getElementById('rec-name').value; r.month = document.getElementById('rec-month').value; r.baseAmount = parseFloat(document.getElementById('rec-amount').value) || 0; window.saveData(); window.closeModal('record'); window.updateUI(); window.updateDashboardGraph(); };
                 } else {
-                    document.getElementById('modal-record-title').innerText = "Buku Baru"; document.getElementById('rec-name').value = ""; document.getElementById('rec-amount').value = "";
+                    title.innerText = "Buku Baru"; document.getElementById('rec-name').value = ""; document.getElementById('rec-amount').value = "";
                     btn.onclick = () => { const nr = { id: Date.now().toString(), name: document.getElementById('rec-name').value || "Buku Baru", month: document.getElementById('rec-month').value, baseAmount: parseFloat(document.getElementById('rec-amount').value) || 0, transactions: [], timestamp: Date.now() }; if(appData.settings.mode === 'simple') appData.simpleRecords.push(nr); else appData.complexRecords.push(nr); window.saveData(); window.closeModal('record'); window.updateUI(); window.updateDashboardGraph(); };
                 }
             }
             if(type === 'transaction') {
                 window.updateCategories('expense');
-                const btn = document.getElementById('btn-save-trans');
-                btn.onclick = () => { 
+                document.getElementById('btn-save-trans').onclick = () => { 
                     const amtValue = document.getElementById('trans-amount').value;
                     const amt = parseFloat(amtValue) || 0; if(amt <= 0) return;
-                    const nt = { id: Date.now().toString(), type: document.getElementById('trans-type').value, category: document.getElementById('trans-category').value, amount: amt, desc: document.getElementById('trans-desc').value || "Keterangan", date: document.getElementById('trans-date').value, timestamp: Date.now() };
+                    const nt = { id: Date.now().toString(), type: document.getElementById('trans-type').value, category: document.getElementById('trans-category').value, amount: amt, desc: document.getElementById('trans-desc').value || "Tanpa Keterangan", date: document.getElementById('trans-date').value, timestamp: Date.now() };
                     const r = recs.find(curr => curr.id === appData.selectedRecordId); if(r) { r.transactions.push(nt); window.saveData(); window.closeModal('transaction'); window.updateUI(); window.updateBookChart(); }
                 };
             }
         };
 
-        window.closeModal = (type) => {
-            const modal = document.getElementById(`modal-${type}`);
-            if(modal) modal.classList.add('hidden');
-        };
-
+        window.closeModal = (type) => { const modal = document.getElementById(`modal-${type}`); if(modal) modal.classList.add('hidden'); };
         window.setTransactionToRealTime = () => { document.getElementById('trans-date').valueAsDate = new Date(); };
 
-        // --- 6. CHARTS ---
+        // --- 6. CHARTS INIT ---
         window.initCharts = function() {
             const opts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } }, onClick: (e, el) => { if (el.length > 0 && bookChart) { const idx = el[0].index; const key = bookChart.rawDates[idx]; const info = chartDataCache[key]; if (info) window.showChartDetail(key, info); } } };
             const dashEl = document.getElementById('dashQuickChart');
-            if (dashEl) dashQuickChart = new Chart(dashEl.getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#10b981', borderWidth: 4, tension: 0.5, pointRadius: 0, fill: true, backgroundColor: 'rgba(16, 185, 129, 0.1)' }] }, options: opts });
+            if (dashEl) dashQuickChart = new Chart(dashEl.getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#10b981', borderAlpha: 1, borderWidth: 4, tension: 0.5, pointRadius: 0, fill: true, backgroundColor: 'rgba(16, 185, 129, 0.1)' }] }, options: opts });
             const bCtx = document.getElementById('bookChart')?.getContext('2d');
             if (bCtx) bookChart = new Chart(bCtx, { type: 'bar', data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] }, options: { ...opts, scales: { x: { display: true }, y: { display: true } }, interaction: { mode: 'index', intersect: false } } });
             const pCtx = document.getElementById('portfolioChart')?.getContext('2d');
@@ -699,7 +688,7 @@
             });
             bookChart.data.labels = sortedDates.map(l => l.split('-').slice(2).join('/')); bookChart.data.datasets[0].data = data;
             if (style !== 'line' || type !== 'total') bookChart.data.datasets[0].backgroundColor = colors;
-            else { const c = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(); bookChart.data.datasets[0].borderColor = c; bookChart.data.datasets[0].backgroundColor = c + '22'; bookChart.data.datasets[0].fill = true; }
+            else { const color = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(); bookChart.data.datasets[0].borderColor = color; bookChart.data.datasets[0].backgroundColor = color + '22'; bookChart.data.datasets[0].fill = true; }
             bookChart.update();
         };
 
@@ -719,8 +708,8 @@
             const type = appData.activePortChart;
             const calc = (recs) => { let b = 0, i = 0, e = 0; recs.forEach(r => { let rb = parseFloat(r.baseAmount)||0; b += rb; i += rb; (r.transactions||[]).forEach(t => { const ta = parseFloat(t.amount)||0; if(t.type === 'income') { b += ta; i += ta; } else { b -= ta; e += ta; } }); }); return { b, i, e }; };
             const s = calc(appData.simpleRecords), c = calc(appData.complexRecords);
-            document.getElementById('port-simple-stats').innerHTML = `<p class="font-black text-xl">${window.formatMoney(s.b)}</p><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Saldo Sederhana</p>`;
-            document.getElementById('port-complex-stats').innerHTML = `<p class="font-black text-xl">${window.formatMoney(c.b)}</p><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Saldo Kompleks</p>`;
+            document.getElementById('port-simple-stats').innerHTML = `<p class="font-black text-xl text-gray-900">${window.formatMoney(s.b)}</p><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">Saldo Sederhana</p>`;
+            document.getElementById('port-complex-stats').innerHTML = `<p class="font-black text-xl text-gray-900">${window.formatMoney(c.b)}</p><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">Saldo Kompleks</p>`;
             const color = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
             portfolioChart.data.labels = ['SIMPLE', 'COMPLEX'];
             portfolioChart.data.datasets = [{ label: type.toUpperCase(), data: [ type === 'total' ? s.b : (type === 'income' ? s.i : s.e), type === 'total' ? c.b : (type === 'income' ? c.i : c.e) ], backgroundColor: [color, '#312e81'] }];
