@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jv Finance - Jova Rivanda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- CryptoJS untuk Enkripsi Lokal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #10b981; 
+            --income-color: #10b981;
+            --expense-color: #ef4444;
+            --text-base-size: 16px;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-size: var(--text-base-size);
+            transition: background-color 0.3s ease;
+            overflow-x: hidden;
+        }
+        .theme-green { --primary-color: #10b981; }
+        .theme-red { --primary-color: #ef4444; }
+        .theme-purple { --primary-color: #a855f7; }
+        .theme-black { --primary-color: #374151; }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
+        
+        * { transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease, transform 0.2s ease; }
+
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+        
+        .tab-active {
+            background-color: white !important;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important;
+            color: var(--primary-color) !important;
+            font-weight: 800 !important;
+        }
+
+        #chart-info-box {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        #dropdownMenu {
+            z-index: 100;
+            backdrop-filter: blur(16px);
+            background-color: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .mode-btn-active {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            box-shadow: 0 8px 20px -4px rgba(16, 185, 129, 0.4);
+            font-weight: 800 !important;
+            transform: scale(1.02);
+        }
+
+        .no-select {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .library-card {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid #f3f4f6;
+        }
+        .library-thumb {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background-color: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .library-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col theme-green">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-900 text-white sticky top-0 z-40 shadow-2xl">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.setView('dashboard')">
+                <img src="Gemini_Generated_Image_3ugjp93ugjp93ugj.jpg" alt="Logo" class="w-10 h-10 rounded-xl object-cover border border-gray-700 shadow-md" onerror="this.style.display='none'">
+                <span class="font-black text-xl tracking-tighter uppercase">Jv Finance</span>
+            </div>
+            
+            <div class="relative">
+                <button id="menuBtn" class="p-2.5 hover:bg-gray-800 rounded-2xl transition-all focus:outline-none flex items-center justify-center border border-transparent hover:border-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div id="dropdownMenu" class="hidden absolute right-0 top-14 w-64 rounded-[2rem] shadow-2xl py-4 overflow-hidden border bg-white text-gray-900">
+                    <div class="px-6 py-2 mb-2">
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Menu Aplikasi</p>
+                    </div>
+                    <div class="space-y-1 px-2">
+                        <button onclick="window.setView('dashboard')" class="w-full text-left flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-100 transition-all font-bold text-sm text-gray-900 group">
+                            <div class="p-2 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div>
+                            Dashboard
+                        </button>
+                        <button onclick="window.setView('portfolio')" class="w-full text-left flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-100 transition-all font-bold text-sm text-gray-900 group">
+                            <div class="p-2 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+                            Portofolio
+                        </button>
+                        <button onclick="window.setView('library')" class="w-full text-left flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-100 transition-all font-bold text-sm text-gray-900 group">
+                            <div class="p-2 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-500 group-hover:text-white transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6"/><path d="M8 11h8"/></svg></div>
+                            Library Zone
+                        </button>
+                        <button onclick="window.setView('profile')" class="w-full text-left flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-100 transition-all font-bold text-sm text-gray-900 group">
+                            <div class="p-2 rounded-xl bg-orange-50 text-orange-600 group-hover:bg-orange-500 group-hover:text-white transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                            Profil Saya
+                        </button>
+                    </div>
+                    <div class="border-t mx-6 my-3 border-gray-100"></div>
+                    <div class="px-2">
+                        <button onclick="window.setView('settings')" class="w-full text-left flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-50 transition-all font-bold text-sm text-gray-400 hover:text-gray-900 group">
+                            <div class="p-2 rounded-xl bg-gray-50 text-gray-400 group-hover:bg-gray-900 group-hover:text-white transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 1 0 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+                            Pengaturan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-6xl mx-auto w-full p-4 md:p-6 pb-24 text-left">
+        
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="space-y-8 animate-in fade-in duration-500">
+            <!-- Summary Chart -->
+            <div id="dash-chart-container" class="hidden card cursor-pointer hover:shadow-xl transition-all border-none bg-white overflow-hidden" onclick="window.setView('portfolio')">
+                <div class="p-6 pb-0 flex justify-between items-center">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">Ringkasan Saldo</h3>
+                    <span class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Detail &rarr;</span>
+                </div>
+                <div class="h-40 w-full px-2">
+                    <canvas id="dashQuickChart"></canvas>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                <div>
+                    <h1 class="text-3xl font-black text-gray-900 leading-none tracking-tight">Halo, <span id="display-name">User</span>!</h1>
+                    <p class="text-gray-500 text-sm mt-3 font-medium">Mode Aktif: <span id="current-mode-label" class="font-bold text-emerald-600 uppercase">Sederhana</span></p>
+                </div>
+                <div class="flex items-center gap-2">
+                     <div class="flex gap-1.5 bg-gray-200 p-1.5 rounded-2xl shadow-inner border border-gray-300/30">
+                        <button onclick="window.setAppMode('simple')" id="mode-simple-btn" class="px-6 py-2.5 rounded-xl text-xs font-bold transition-all">Sederhana</button>
+                        <button onclick="window.setAppMode('complex')" id="mode-complex-btn" class="px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-600">Kompleks</button>
+                    </div>
+                    <button onclick="window.openModal('record')" class="btn-primary flex items-center gap-3 text-sm shadow-2xl shadow-emerald-300/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+                        Buku Baru
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card border-l-[10px] border-l-emerald-500 bg-white">
+                    <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1 text-left">Total Kekayaan</p>
+                    <h2 id="hero-balance" class="text-3xl font-black text-gray-900 tracking-tighter text-left">Rp 0</h2>
+                </div>
+                
+                <div class="card border-l-[10px] border-l-blue-500 flex flex-col justify-between bg-white text-left">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Target Saldo</p>
+                            <h2 id="hero-target-display" class="text-2xl font-black text-gray-900 tracking-tighter">Rp 0</h2>
+                        </div>
+                        <button onclick="window.toggleTargetEdit()" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                    </div>
+                    <div id="target-edit-form" class="hidden mt-3 flex gap-2">
+                        <input type="number" id="target-input" class="flex-1 text-xs p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold" placeholder="0">
+                        <button onclick="window.saveCurrentTarget()" class="bg-blue-600 text-white px-5 rounded-xl font-black text-[10px] uppercase">Set</button>
+                    </div>
+                    <div class="mt-4">
+                        <div class="progress-bar mb-2">
+                            <div id="target-progress-fill" class="progress-fill"></div>
+                        </div>
+                        <span id="target-progress-label" class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Progress: 0%</span>
+                    </div>
+                </div>
+
+                <div class="card border-l-[10px] border-l-orange-500 bg-white text-left">
+                    <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Buku Aktif</p>
+                    <h2 id="hero-count" class="text-3xl font-black text-gray-900 tracking-tighter">0 Buku</h2>
+                </div>
+            </div>
+
+            <div class="space-y-6 text-left">
+                <h2 class="text-xl font-black text-gray-900 tracking-tight">Arsip Catatan</h2>
+                <div id="monthly-records-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+
+        <!-- View: Record Detail -->
+        <div id="view-record-detail" class="hidden space-y-6 animate-in slide-in-from-right duration-300 text-left">
+            <div id="insight-container" class="hidden space-y-2">
+                <div id="insight-alert" class="bg-red-50 border-l-8 border-red-500 p-5 rounded-r-3xl">
+                    <p id="insight-text" class="text-sm font-bold text-red-800 text-left"></p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                <div class="flex items-center gap-5">
+                    <button onclick="window.setView('dashboard')" class="p-4 bg-white rounded-2xl shadow-lg hover:bg-gray-100 transition-all border border-gray-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <div>
+                        <h1 id="detail-title" class="text-3xl font-black leading-none text-gray-900 tracking-tighter">Nama Buku</h1>
+                        <p id="detail-month" class="text-xs text-gray-400 uppercase font-black tracking-[0.4em] mt-2">Bulan</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div id="currency-toggle" class="hidden flex bg-gray-200 p-1.5 rounded-2xl shadow-inner">
+                        <button onclick="window.setCurrency('IDR')" id="curr-idr" class="px-5 py-2 rounded-xl text-[10px] font-black active transition-all">IDR</button>
+                        <button onclick="window.setCurrency('USD')" id="curr-usd" class="px-5 py-2 rounded-xl text-[10px] font-black transition-all">USD</button>
+                    </div>
+                    <button onclick="window.openModal('transaction')" class="btn-primary flex items-center justify-center gap-3 shadow-2xl shadow-emerald-200 font-black uppercase text-xs tracking-widest p-4 rounded-2xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M12 5v14M5 12h14"/></svg>
+                        Catat
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="card bg-gray-900 text-white border-none col-span-2 md:col-span-1 shadow-2xl p-7">
+                    <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Sisa Dana</p>
+                    <h2 id="detail-balance" class="text-3xl font-black mt-1 tracking-tighter">Rp 0</h2>
+                </div>
+                <div class="card bg-white border-b-8 border-b-emerald-500 p-7">
+                    <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Masuk</p>
+                    <h2 id="detail-income-total" class="text-2xl font-black text-emerald-600 tracking-tighter">Rp 0</h2>
+                </div>
+                <div class="card bg-white border-b-8 border-b-red-500 p-7">
+                    <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Keluar</p>
+                    <h2 id="detail-expense" class="text-2xl font-black text-red-600 tracking-tighter">Rp 0</h2>
+                </div>
+                <div class="card bg-white hidden md:block border-b-8 border-b-blue-500 p-7 text-left text-left">
+                    <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1 text-left">Gaji Pokok</p>
+                    <h2 id="detail-base" class="text-2xl font-black text-blue-600 tracking-tighter">Rp 0</h2>
+                </div>
+            </div>
+
+            <div class="card space-y-4 p-8">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-5">
+                    <h3 class="font-black text-gray-900 uppercase text-xs tracking-widest">Analisis Arus Kas</h3>
+                    <div class="flex gap-3">
+                        <select id="book-chart-range" onchange="window.updateBookChart()" class="text-[11px] px-4 py-2 border rounded-xl outline-none font-bold bg-gray-50">
+                                <option value="daily">Harian</option>
+                        </select>
+                        <select id="book-chart-style" onchange="window.updateBookChart()" class="text-[11px] px-4 py-2 border rounded-xl outline-none font-bold bg-gray-50">
+                            <option value="candle">Candle Stick</option>
+                            <option value="line">Line Chart</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="h-96 relative">
+                    <canvas id="bookChart"></canvas>
+                </div>
+                <div class="flex bg-gray-100 p-2 rounded-2xl overflow-x-auto gap-2 text-left">
+                    <button onclick="window.setChartType('total')" id="tab-total" class="flex-1 py-3.5 rounded-xl text-[11px] font-black transition-all px-4 tab-active uppercase text-left">Saldo</button>
+                    <button onclick="window.setChartType('income')" id="tab-income" class="flex-1 py-3.5 rounded-xl text-[11px] font-black transition-all px-4 uppercase text-left text-left">Masuk</button>
+                    <button onclick="window.setChartType('expense')" id="tab-expense" class="flex-1 py-3.5 rounded-xl text-[11px] font-black transition-all px-4 uppercase text-left text-left text-left">Keluar</button>
+                </div>
+            </div>
+
+            <h3 class="font-black text-lg px-2 text-gray-900 uppercase tracking-widest py-4 text-left">Riwayat Transaksi</h3>
+            <div id="detail-transaction-list" class="divide-y divide-gray-100 card p-0 overflow-hidden shadow-2xl border-none"></div>
+        </div>
+
+        <!-- View: Library Zone -->
+        <div id="view-library" class="hidden space-y-10 animate-in fade-in duration-500 text-left">
+            <div class="text-left border-b border-gray-100 pb-8">
+                <h1 class="text-5xl font-black text-gray-900 tracking-tighter text-left mb-2 uppercase">Library Hub</h1>
+                <p class="text-gray-400 text-sm font-bold uppercase tracking-widest opacity-60">Financial Education Center • Curated by Jova Rivanda</p>
+            </div>
+            <div id="library-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10"></div>
+        </div>
+
+        <!-- Portfolio, Profile, Settings Views remain similar -->
+        <div id="view-portfolio" class="hidden space-y-8 animate-in fade-in duration-500 text-left">
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight text-left text-left">Analisis Global</h1>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card border-l-[12px] border-l-emerald-500 space-y-5 bg-white p-8">
+                    <h3 class="font-black text-gray-400 text-[10px] uppercase tracking-[0.3em]">Mode Sederhana</h3>
+                    <div class="space-y-4" id="port-simple-stats"></div>
+                </div>
+                <div class="card border-l-[12px] border-l-indigo-500 space-y-5 bg-white p-8 text-left text-left">
+                    <h3 class="font-black text-gray-400 text-[10px] uppercase tracking-[0.3em]">Mode Kompleks</h3>
+                    <div class="space-y-4 text-left" id="port-complex-stats"></div>
+                </div>
+            </div>
+            <div class="card p-8 bg-white border-none shadow-xl text-left">
+                <div class="h-[500px] text-left">
+                    <canvas id="portfolioChart"></canvas>
+                </div>
+                 <div class="flex bg-gray-100 p-2 rounded-2xl gap-2 mt-8 text-left">
+                    <button onclick="window.setPortChartType('total')" id="port-tab-total" class="flex-1 py-4 rounded-xl text-xs font-black transition-all tab-active uppercase tracking-widest text-left">Saldo</button>
+                    <button onclick="window.setPortChartType('income')" id="port-tab-income" class="flex-1 py-4 rounded-xl text-xs font-black transition-all uppercase tracking-widest text-left">Masuk</button>
+                    <button onclick="window.setPortChartType('expense')" id="port-tab-expense" class="flex-1 py-4 rounded-xl text-xs font-black transition-all uppercase tracking-widest text-left">Keluar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-profile" class="hidden space-y-8 text-left">
+            <h1 class="text-4xl font-black text-gray-900 tracking-tighter text-center uppercase">Profil Saya</h1>
+            <div class="card max-w-2xl mx-auto p-10 bg-white shadow-2xl border-none">
+                <div class="space-y-6">
+                    <div class="space-y-2">
+                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-left text-left">Nama Lengkap</span>
+                        <input type="text" id="prof-name" class="w-full p-5 border-2 border-gray-50 rounded-3xl outline-none focus:border-emerald-500 font-bold text-lg text-left">
+                    </div>
+                    <div class="space-y-2">
+                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-left text-left text-left text-left">Hobi Utama</span>
+                        <input type="text" id="prof-hobby" class="w-full p-5 border-2 border-gray-50 rounded-3xl outline-none focus:border-emerald-500 font-bold text-lg text-left">
+                    </div>
+                    <div class="space-y-2">
+                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 text-left text-left">Visi Keuangan</span>
+                        <textarea id="prof-goal" class="w-full p-5 border-2 border-gray-50 rounded-3xl outline-none focus:border-emerald-500 h-32 font-bold text-lg text-left"></textarea>
+                    </div>
+                </div>
+                <button onclick="window.saveProfile()" class="w-full btn-primary text-sm font-black shadow-2xl shadow-emerald-200 mt-10 py-5 rounded-3xl">SIMPAN</button>
+            </div>
+        </div>
+
+        <div id="view-settings" class="hidden space-y-8 text-left">
+            <h1 class="text-4xl font-black text-gray-900 tracking-tighter text-center uppercase">Pengaturan</h1>
+            <div class="card max-w-2xl mx-auto p-12 bg-white shadow-2xl text-center border-none">
+                <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-8 text-left text-left">Tema Visual</p>
+                <div class="grid grid-cols-4 gap-8 mb-12">
+                    <button onclick="window.changeTheme('green')" class="flex flex-col items-center gap-4 group">
+                        <div class="h-20 w-20 bg-emerald-500 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left"></div>
+                        <span class="text-[9px] font-black text-gray-400 uppercase">Emerald</span>
+                    </button>
+                    <button onclick="window.changeTheme('red')" class="flex flex-col items-center gap-4 group">
+                        <div class="h-20 w-20 bg-red-500 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left"></div>
+                        <span class="text-[9px] font-black text-gray-400 uppercase text-left">Rose</span>
+                    </button>
+                    <button onclick="window.changeTheme('purple')" class="flex flex-col items-center gap-4 group text-left">
+                        <div class="h-20 w-20 bg-purple-500 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left"></div>
+                        <span class="text-[9px] font-black text-gray-400 uppercase text-left">Royal</span>
+                    </button>
+                    <button onclick="window.changeTheme('black')" class="flex flex-col items-center gap-4 group text-left">
+                        <div class="h-20 w-20 bg-gray-800 rounded-[2.5rem] border-8 border-white shadow-xl group-hover:scale-110 transition-all text-left"></div>
+                        <span class="text-[9px] font-black text-gray-400 uppercase text-left">Night</span>
+                    </button>
+                </div>
+                <button onclick="window.clearData()" class="w-full p-5 text-red-500 font-black border-4 border-red-50 rounded-3xl hover:bg-red-500 hover:text-white transition-all uppercase tracking-[0.3em] text-xs text-left text-left">Reset Sistem Data</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal PDF Viewer -->
+    <div id="modal-pdf-viewer" class="hidden fixed inset-0 z-[2000] modal-overlay flex flex-col p-4 md:p-10">
+        <div class="flex justify-between items-center mb-6 text-white text-left text-left text-left">
+            <div>
+                <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1 text-left">Safe Hub Viewer</p>
+                <h2 id="pdf-viewer-title" class="font-black text-2xl tracking-tighter text-left">Modul View</h2>
+            </div>
+            <button onclick="window.closePdfViewer()" class="p-4 bg-white/10 rounded-full hover:bg-white/30 transition-all border border-white/20 text-left">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="flex-grow bg-white rounded-[2.5rem] shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-hidden relative no-select text-left text-left" oncontextmenu="return false;">
+            <iframe id="pdf-frame" src="" class="w-full h-full border-none" style="pointer-events: auto;"></iframe>
+            <div class="absolute inset-0 bg-transparent pointer-events-none"></div>
+        </div>
+        <p class="text-white/40 text-[9px] text-center mt-6 font-black uppercase tracking-[0.5em] text-left text-left">Jv Finance Security Protocol • Downloading Prohibited</p>
+    </div>
+
+    <!-- Chart Interaction Box -->
+    <div id="chart-info-box" class="opacity-0 w-72 bg-gray-900 text-white p-6 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.4)] border border-white/10">
+        <p id="chart-info-date" class="text-[10px] uppercase font-black text-gray-500 mb-2 tracking-widest text-left"></p>
+        <div class="flex justify-between items-end text-left">
+            <div class="text-left text-left">
+                <p id="chart-info-label" class="text-xs font-bold text-gray-400 mb-1 text-left text-left text-left"></p>
+                <p id="chart-info-value" class="text-2xl font-black text-left text-left"></p>
+            </div>
+            <div id="chart-info-icon" class="text-3xl mb-1 text-left"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Core Formatting ---
+        window.formatMoney = (val) => {
+            if (appData.currencyMode === 'USD') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val / 15500);
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val);
+        };
+
+        // --- Static Modules ---
+        const STATIC_LIBRARY_DATA = [];
+        for(let i=1; i<=13; i++) {
+            STATIC_LIBRARY_DATA.push({
+                id: 'mod-' + i,
+                name: 'Modul Pelatihan ' + i,
+                desc: 'Materi eksklusif strategi keuangan berkelanjutan oleh Jova Rivanda.',
+                file: 'modul ' + i,
+                sampul: 'smodul ' + i
+            });
+        }
+
+        // --- App State ---
+        let appData = {
+            profile: { name: "User", hobby: "", goal: "" },
+            settings: { theme: 'green', fontSize: 16, mode: 'simple' },
+            simpleRecords: [],
+            complexRecords: [],
+            simpleTarget: 0,
+            complexTarget: 0,
+            currencyMode: 'IDR',
+            selectedRecordId: null,
+            activeBookChart: 'total',
+            activePortChart: 'total'
+        };
+
+        const STORAGE_KEY = 'jv_finance_local_v1';
+        const ENCRYPT_KEY = 'local-device-secret-jova'; 
+        const CATEGORIES = {
+            expense: ["Makan & Minum", "Transportasi", "Hiburan", "Top-up & Kuota", "Kesehatan", "Belanja", "Lainnya"],
+            income: ["Gaji Tambahan", "Bonus", "Jual Barang", "Hadiah", "Lain-lain"]
+        };
+
+        let portfolioChart = null, bookChart = null, dashQuickChart = null;
+        let chartDataCache = {};
+
+        // --- Storage Core ---
+        window.saveData = () => localStorage.setItem(STORAGE_KEY, CryptoJS.AES.encrypt(JSON.stringify(appData), ENCRYPT_KEY).toString());
+        window.loadData = () => {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const bytes = CryptoJS.AES.decrypt(saved, ENCRYPT_KEY);
+                    const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+                    if (decryptedText) appData = { ...appData, ...JSON.parse(decryptedText) };
+                } catch(e) {}
+            }
+        };
+
+        // --- UI Logic ---
+        window.setView = function(viewName, pushState = true) {
+            const menu = document.getElementById('dropdownMenu'); if(menu) menu.classList.add('hidden');
+            const views = ['dashboard', 'record-detail', 'portfolio', 'library', 'profile', 'settings'];
+            views.forEach(v => { const el = document.getElementById(`view-${v}`); if(el) el.classList.add('hidden'); });
+            const targetView = document.getElementById(`view-${viewName}`); if(targetView) targetView.classList.remove('hidden');
+
+            if (viewName === 'dashboard') {
+                appData.selectedRecordId = null;
+                const form = document.getElementById('target-edit-form'); if(form) form.classList.add('hidden');
+                setTimeout(() => window.updateDashboardGraph(), 100);
+            }
+            if (viewName === 'record-detail') setTimeout(window.updateBookChart, 100);
+            if (viewName === 'portfolio') setTimeout(window.updatePortfolio, 100);
+            if (viewName === 'library') window.renderLibrary();
+
+            if (pushState) history.pushState({ view: viewName }, "", "#" + viewName);
+            window.updateUI();
+        };
+
+        window.updateDashboardGraph = function() {
+            if (!dashQuickChart) return;
+            const mode = appData.settings.mode;
+            const container = document.getElementById('dash-chart-container');
+            if(container) container.classList.toggle('hidden', mode !== 'complex');
+            
+            if (mode === 'complex') {
+                const recs = appData.complexRecords;
+                let allPoints = []; 
+                recs.forEach(r => { 
+                    let b = r.baseAmount; allPoints.push(b); 
+                    const sortedT = [...r.transactions].sort((a,b) => a.date.localeCompare(b.date));
+                    sortedT.forEach(t => { t.type === 'income' ? b += t.amount : b -= t.amount; allPoints.push(b); }); 
+                });
+                if(allPoints.length === 0) allPoints = [0];
+                dashQuickChart.data.labels = allPoints.map((_, i) => i); 
+                dashQuickChart.data.datasets[0].data = allPoints; 
+                dashQuickChart.update();
+            }
+        };
+
+        window.updateUI = function() {
+            const mode = appData.settings.mode, recs = mode === 'simple' ? appData.simpleRecords : appData.complexRecords, target = mode === 'simple' ? appData.simpleTarget : appData.complexTarget;
+            let total = 0; recs.forEach(r => { let b = r.baseAmount; r.transactions.forEach(t => t.type === 'income' ? b += t.amount : b -= t.amount); total += b; });
+
+            const label = document.getElementById('current-mode-label'); if(label) label.innerText = mode === 'simple' ? 'Sederhana' : 'Kompleks';
+            const sBtn = document.getElementById('mode-simple-btn'); const cBtn = document.getElementById('mode-complex-btn');
+            if(sBtn && cBtn) {
+                if(mode === 'simple') { sBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all mode-btn-active"; cBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-600 bg-transparent"; }
+                else { cBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all mode-btn-active"; sBtn.className = "px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-gray-600 bg-transparent"; }
+            }
+
+            const nameEl = document.getElementById('display-name'); if(nameEl) nameEl.innerText = appData.profile.name;
+            const balEl = document.getElementById('hero-balance'); if(balEl) balEl.innerText = window.formatMoney(total);
+            const tarEl = document.getElementById('hero-target-display'); if(tarEl) tarEl.innerText = window.formatMoney(target);
+            const countEl = document.getElementById('hero-count'); if(countEl) countEl.innerText = `${recs.length} Buku`;
+
+            const prog = target > 0 ? Math.min((total / target) * 100, 100) : 0;
+            const fill = document.getElementById('target-progress-fill'); if(fill) fill.style.width = `${prog}%`;
+            const pLabel = document.getElementById('target-progress-label'); if(pLabel) pLabel.innerText = `Progress: ${prog.toFixed(1)}%`;
+
+            window.renderRecordsList(recs);
+            if (appData.selectedRecordId) {
+                const r = recs.find(rec => rec.id === appData.selectedRecordId);
+                if (r) {
+                    let inc = 0, exp = 0; r.transactions.forEach(t => t.type === 'income' ? inc += t.amount : exp += t.amount);
+                    const dt = document.getElementById('detail-title'); if(dt) dt.innerText = r.name;
+                    const db = document.getElementById('detail-balance'); if(db) db.innerText = window.formatMoney(r.baseAmount + inc - exp);
+                    const di = document.getElementById('detail-income-total'); if(di) di.innerText = window.formatMoney(r.baseAmount + inc);
+                    const de = document.getElementById('detail-expense'); if(de) de.innerText = window.formatMoney(exp);
+                    const dp = document.getElementById('detail-base'); if(dp) dp.innerText = window.formatMoney(r.baseAmount);
+                    window.renderDetailTransactions(r.transactions);
+                }
+            }
+        };
+
+        window.renderRecordsList = (recs) => {
+            const container = document.getElementById('monthly-records-container'); if (!container) return;
+            if (!recs.length) { container.innerHTML = '<div class="col-span-full p-10 border-2 border-dashed rounded-[2rem] text-center text-gray-300 font-bold uppercase tracking-widest text-[10px]">BELUM ADA DATA</div>'; return; }
+            container.innerHTML = recs.map(r => {
+                let bal = r.baseAmount; r.transactions.forEach(t => t.type === 'income' ? bal += t.amount : bal -= t.amount);
+                return `<div onclick="window.openRecordDetail('${r.id}')" class="card card-clickable border-l-[12px] border-l-emerald-500 relative group text-left">
+                        <div class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all text-left">
+                             <button onclick="event.stopPropagation(); window.openModal('record', '${r.id}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-500 hover:text-white text-left"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                             <button onclick="event.stopPropagation(); window.deleteRecord('${r.id}')" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-500 hover:text-white text-left"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                        </div>
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mb-1 text-left">${r.month}</p>
+                        <h4 class="font-black text-lg text-gray-900 leading-tight text-left text-left">${r.name}</h4>
+                        <div class="mt-4 pt-3 border-t border-gray-50 flex justify-between items-center text-left">
+                            <span class="text-[8px] font-black text-gray-300 uppercase tracking-widest text-left text-left">SALDO AKHIR</span>
+                            <span class="text-sm font-black text-emerald-600 text-left text-left">${window.formatMoney(bal)}</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        };
+
+        window.renderDetailTransactions = (ts) => {
+            const list = document.getElementById('detail-transaction-list'); if (!list) return;
+            let display = [...ts].sort((a,b) => b.date.localeCompare(a.date));
+            if (!display.length) { list.innerHTML = '<div class="p-10 text-center text-gray-300 italic text-sm font-bold text-left">KOSONG</div>'; return; }
+            list.innerHTML = display.map(t => `<div class="p-5 flex justify-between items-center hover:bg-gray-50 transition-all group text-left">
+                    <div class="flex gap-4 items-center text-left">
+                        <div class="w-12 h-12 rounded-2xl ${t.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'} flex items-center justify-center font-black text-[10px] shadow-sm text-left">${t.type === 'income' ? 'IN' : 'OUT'}</div>
+                        <div class="text-left">
+                            <p class="text-sm font-black text-gray-800 leading-tight text-left">${t.desc}</p>
+                            <p class="text-[9px] text-gray-400 uppercase font-black tracking-widest mt-1 text-left">${t.date} ${t.hour !== null ? '• '+t.hour+':00' : ''} • ${t.category}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-left">
+                        <p class="font-black ${t.type === 'income' ? 'text-emerald-600' : 'text-red-600'} text-sm leading-tight text-left">${t.type === 'income' ? '+' : '-'} ${window.formatMoney(t.amount)}</p>
+                    </div>
+                </div>`).join('');
+        };
+
+        window.renderLibrary = () => {
+            const container = document.getElementById('library-container'); if(!container) return;
+            let html = "";
+            STATIC_LIBRARY_DATA.forEach(mod => {
+                html += `
+                <div class="card library-card p-0 text-left relative group">
+                    <div class="library-thumb text-left text-left">
+                        <img src="./sampul_modul/${mod.sampul}.jpg" alt="${mod.name}" onerror="this.src='https://placehold.co/300x400?text=${mod.name}'">
+                        <div class="absolute top-3 right-3 bg-black/60 backdrop-blur px-2.5 py-1.5 rounded-xl text-[8px] text-white font-black uppercase tracking-widest text-left">SECURE HUB</div>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col text-left text-left">
+                        <h3 class="font-black text-xs text-gray-900 line-clamp-2 leading-tight uppercase tracking-tight text-left text-left text-left">${mod.name}</h3>
+                        <p class="text-[10px] text-gray-400 mt-2 line-clamp-3 leading-relaxed text-left text-left">${mod.desc}</p>
+                        <div class="mt-auto pt-6 text-left">
+                            <button onclick="window.openPdfViewer('./modul/${mod.file}.pdf', '${mod.name}')" class="w-full inline-flex justify-center items-center py-3 bg-emerald-50 text-emerald-600 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
+                                Buka Modul
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        };
+
+        window.openPdfViewer = (url, title) => {
+            const modal = document.getElementById('modal-pdf-viewer');
+            const frame = document.getElementById('pdf-frame');
+            const titleEl = document.getElementById('pdf-viewer-title');
+            frame.src = url + "#toolbar=0&navpanes=0&scrollbar=0"; 
+            titleEl.innerText = title;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closePdfViewer = () => {
+            const modal = document.getElementById('modal-pdf-viewer');
+            document.getElementById('pdf-frame').src = "";
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+
+        // --- Logic Handlers ---
+        window.setAppMode = (mode) => { appData.settings.mode = mode; window.saveData(); window.updateUI(); window.updateDashboardGraph(); };
+        window.toggleTargetEdit = () => document.getElementById('target-edit-form').classList.toggle('hidden');
+        window.saveCurrentTarget = () => { const v = parseFloat(document.getElementById('target-input').value) || 0; appData.settings.mode === 'simple' ? appData.simpleTarget = v : appData.complexTarget = v; document.getElementById('target-edit-form').classList.add('hidden'); window.saveData(); window.updateUI(); };
+        window.deleteRecord = (id) => { if (confirm("Hapus catatan ini?")) { if (appData.settings.mode === 'simple') appData.simpleRecords = appData.simpleRecords.filter(r => r.id !== id); else appData.complexRecords = appData.complexRecords.filter(r => r.id !== id); window.saveData(); window.updateUI(); window.updateDashboardGraph(); } };
+        window.saveProfile = () => { appData.profile.name = document.getElementById('prof-name').value || "User"; appData.profile.hobby = document.getElementById('prof-hobby').value; appData.profile.goal = document.getElementById('prof-goal').value; window.saveData(); window.updateUI(); alert("Profil diupdate!"); };
+        window.changeTheme = (t) => { document.body.classList.remove('theme-green', 'theme-red', 'theme-purple', 'theme-black'); document.body.classList.add(`theme-${t}`); const colors = {green:'#10b981', red:'#ef4444', purple:'#a855f7', black:'#374151'}; document.documentElement.style.setProperty('--primary-color', colors[t]); appData.settings.theme = t; window.saveData(); if(dashQuickChart) window.updateDashboardGraph(); };
+        window.clearData = () => { if (confirm("Reset seluruh data?")) { localStorage.clear(); location.reload(); } };
+        window.setTransactionToRealTime = () => { const n = new Date(); document.getElementById('trans-date').valueAsDate = n; document.getElementById('trans-hour').value = n.getHours(); };
+        window.setCurrency = (c) => { appData.currencyMode = c; document.getElementById('curr-idr').classList.toggle('tab-active', c === 'IDR'); document.getElementById('curr-usd').classList.toggle('tab-active', c === 'USD'); window.updateUI(); };
+        window.setChartType = (t) => { appData.activeBookChart = t; ['total','income','expense'].forEach(x => { const el = document.getElementById('tab-'+x); if(el) el.classList.toggle('tab-active', x === t); }); window.updateBookChart(); };
+        window.setPortChartType = (t) => { appData.activePortChart = t; ['total','income','expense'].forEach(x => { const el = document.getElementById('port-tab-'+x); if(el) el.classList.toggle('tab-active', x === t); }); window.updatePortfolio(); };
+        window.updateCategories = (type) => { const select = document.getElementById('trans-category'); if (select) select.innerHTML = CATEGORIES[type].map(c => `<option value="${c}">${c}</option>`).join(''); };
+        window.openRecordDetail = (id) => { appData.selectedRecordId = id; window.setView('record-detail'); };
+
+        window.openModal = (type, editId = null) => { 
+            document.getElementById(`modal-${type}`).classList.remove('hidden');
+            const recs = appData.settings.mode === 'simple' ? appData.simpleRecords : appData.complexRecords;
+            if(type === 'record') {
+                const btn = document.getElementById('btn-save-record'), title = document.getElementById('modal-record-title');
+                if(editId) { 
+                    const r = recs.find(x => x.id === editId); title.innerText = "Edit Buku"; document.getElementById('rec-name').value = r.name; document.getElementById('rec-amount').value = r.baseAmount; document.getElementById('rec-month').value = r.month;
+                    btn.onclick = () => { r.name = document.getElementById('rec-name').value; r.month = document.getElementById('rec-month').value; r.baseAmount = parseFloat(document.getElementById('rec-amount').value) || 0; window.saveData(); window.closeModal('record'); window.updateUI(); window.updateDashboardGraph(); };
+                } else {
+                    title.innerText = "Buku Baru"; document.getElementById('rec-name').value = ""; document.getElementById('rec-amount').value = "";
+                    btn.onclick = () => { const nr = { id: Date.now().toString(), name: document.getElementById('rec-name').value || "Buku Baru", month: document.getElementById('rec-month').value, baseAmount: parseFloat(document.getElementById('rec-amount').value) || 0, transactions: [], timestamp: Date.now() }; if(appData.settings.mode === 'simple') appData.simpleRecords.push(nr); else appData.complexRecords.push(nr); window.saveData(); window.closeModal('record'); window.updateUI(); window.updateDashboardGraph(); };
+                }
+            }
+            if(type === 'transaction') {
+                window.updateCategories('expense');
+                document.getElementById('trans-hour-container').classList.toggle('hidden', appData.settings.mode !== 'complex');
+                document.getElementById('btn-save-trans').onclick = () => { 
+                    const amt = parseFloat(document.getElementById('trans-amount').value) || 0; if(amt <= 0) return;
+                    const nt = { id: Date.now().toString(), type: document.getElementById('trans-type').value, category: document.getElementById('trans-category').value, amount: amt, desc: document.getElementById('trans-desc').value || "Tanpa Keterangan", date: document.getElementById('trans-date').value, hour: appData.settings.mode === 'complex' ? (parseInt(document.getElementById('trans-hour').value) || 0) : null, timestamp: Date.now() };
+                    const r = recs.find(r => r.id === appData.selectedRecordId); if(r) r.transactions.push(nt); window.saveData(); window.closeModal('transaction'); window.updateUI(); window.updateBookChart();
+                };
+            }
+        };
+
+        window.closeModal = (type) => document.getElementById(`modal-${type}`).classList.add('hidden');
+
+        // --- Init Charts ---
+        window.initCharts = function() {
+            const opts = { 
+                responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } },
+                onClick: (e, elements) => { if (elements.length > 0 && bookChart) { const index = elements[0].index; const dateKey = bookChart.rawDates[index]; const info = chartDataCache[dateKey]; if (info) window.showChartDetail(dateKey, info); } }
+            };
+            const dashEl = document.getElementById('dashQuickChart');
+            if (dashEl) dashQuickChart = new Chart(dashEl.getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#10b981', tension: 0.5, pointRadius: 0, fill: true, backgroundColor: 'rgba(16, 185, 129, 0.1)' }] }, options: opts });
+            const bCtx = document.getElementById('bookChart')?.getContext('2d');
+            if (bCtx) bookChart = new Chart(bCtx, { type: 'bar', data: { labels: [], datasets: [{ data: [], backgroundColor: [] }] }, options: { ...opts, scales: { x: { display: true }, y: { display: true } }, interaction: { mode: 'index', intersect: false } } });
+            const pCtx = document.getElementById('portfolioChart')?.getContext('2d');
+            if (pCtx) portfolioChart = new Chart(pCtx, { type: 'bar', data: { labels: [], datasets: [] }, options: { ...opts, plugins: { legend: { display: true }, tooltip: { enabled: true } }, scales: { x: { display: true }, y: { display: true } } } });
+        };
+
+        // --- Start App ---
+        window.loadData(); 
+        window.initCharts(); 
+        window.updateUI(); 
+        window.changeTheme(appData.settings.theme);
+        if (!history.state) history.replaceState({ view: 'dashboard' }, "", "#dashboard");
+
+        document.getElementById('menuBtn').onclick = (e) => { e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('hidden'); };
+        document.addEventListener('click', (e) => { if(!document.getElementById('menuBtn').contains(e.target)) document.getElementById('dropdownMenu').classList.add('hidden'); });
+
+    </script>
+</body>
+</html>
