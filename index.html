@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jv Finance - Jova Rivanda</title>
+    <title>Jv Finance</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -249,7 +249,7 @@
         <div id="view-library" class="hidden space-y-10 animate-in fade-in duration-500 text-left text-left text-left text-left">
             <div class="border-b border-gray-100 pb-8 text-left text-left">
                 <h1 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter uppercase text-left text-left text-left">Library Zone</h1>
-                <p class="text-gray-400 text-sm font-bold uppercase tracking-[0.3em] mt-2 opacity-70 text-left text-left text-left">E-Library Curated by Jova Rivanda</p>
+                <p class="text-gray-400 text-sm font-bold uppercase tracking-[0.3em] mt-2 opacity-70 text-left text-left text-left">E-Library Curated by Jv Finance</p>
             </div>
             <div id="library-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-10 text-left"></div>
         </div>
@@ -475,17 +475,9 @@
 
     <footer class="bg-gray-900 text-white py-12 mt-auto border-t border-gray-800 text-center text-left text-left">
         <div class="max-w-6xl mx-auto px-4 space-y-8 text-left text-left">
-            <div class="flex justify-center gap-10 text-left text-left">
-                <a href="https://www.instagram.com/jv_rvnd?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="p-4 bg-gray-800 rounded-full hover:bg-pink-600 transition-all hover:scale-110 text-left">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-left"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-                </a>
-                <a href="https://www.tiktok.com/@coffee_latte96?is_from_webapp=1&sender_device=pc" target="_blank" class="p-4 bg-gray-800 rounded-full hover:bg-white hover:text-black transition-all hover:scale-110 text-left">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-left"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
-                </a>
-            </div>
             <div class="space-y-2 text-center text-left">
-                <p class="font-black tracking-[0.5em] text-sm opacity-60 uppercase text-center text-left text-left">JOVA RIVANDA</p>
-                <p class="text-[10px] text-emerald-500 font-black uppercase tracking-widest text-center text-left text-left">Secure Financial Ecosystem • Encrypted</p>
+                <p class="font-black tracking-[0.5em] text-sm opacity-60 uppercase text-center text-left text-left">JV FINANCE</p>
+                <p class="text-[10px] text-emerald-500 font-black uppercase tracking-widest text-center text-left text-left">Your Trusted Platform For Smart Financial Management</p>
                 <p class="text-[9px] text-gray-500 uppercase tracking-tighter opacity-40 font-bold text-center text-left text-left">Exclusive Financial Ecosystem &copy; 2024</p>
             </div>
         </div>
@@ -779,8 +771,12 @@
                             <p class="text-[9px] text-gray-400 uppercase font-black tracking-widest mt-1 text-left">${t.date} • ${t.category}</p>
                         </div>
                     </div>
-                    <div class="text-right text-left">
+                    <div class="text-right flex flex-col items-end gap-2">
                         <p class="font-black ${t.type === 'income' ? 'text-emerald-600' : 'text-red-600'} text-sm leading-tight text-left">${t.type === 'income' ? '+' : '-'} ${window.formatMoney(t.amount)}</p>
+                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="window.openModal('transaction', '${t.id}')" class="text-[9px] bg-blue-50 text-blue-600 px-2 py-1 rounded-md font-bold uppercase tracking-wider hover:bg-blue-600 hover:text-white transition-colors">Edit</button>
+                            <button onclick="window.deleteTransaction('${t.id}')" class="text-[9px] bg-red-50 text-red-600 px-2 py-1 rounded-md font-bold uppercase tracking-wider hover:bg-red-600 hover:text-white transition-colors">Hapus</button>
+                        </div>
                     </div>
                 </div>`).join('');
         };
@@ -839,13 +835,47 @@
                 }
             }
             if(type === 'transaction') {
-                window.updateCategories('expense');
-                document.getElementById('btn-save-trans').onclick = () => { 
-                    const amtValue = document.getElementById('trans-amount').value;
-                    const amt = parseFloat(amtValue) || 0; if(amt <= 0) return;
-                    const nt = { id: Date.now().toString(), type: document.getElementById('trans-type').value, category: document.getElementById('trans-category').value, amount: amt, desc: document.getElementById('trans-desc').value || "Tanpa Keterangan", date: document.getElementById('trans-date').value, timestamp: Date.now() };
-                    const r = recs.find(curr => curr.id === appData.selectedRecordId); if(r) { r.transactions.push(nt); window.saveData(); window.closeModal('transaction'); window.updateUI(); window.updateBookChart(); }
-                };
+                const title = document.getElementById('modal-trans-title');
+                const btnSave = document.getElementById('btn-save-trans');
+                const typeSelect = document.getElementById('trans-type');
+                const catSelect = document.getElementById('trans-category');
+                const dateInput = document.getElementById('trans-date');
+                const descInput = document.getElementById('trans-desc');
+                const amountInput = document.getElementById('trans-amount');
+
+                if (editId) {
+                    title.innerText = "Edit Aliran";
+                    const r = recs.find(curr => curr.id === appData.selectedRecordId);
+                    const tToEdit = r.transactions.find(x => x.id === editId);
+                    if(!tToEdit) return;
+                    
+                    typeSelect.value = tToEdit.type;
+                    window.updateCategories(tToEdit.type);
+                    catSelect.value = tToEdit.category;
+                    dateInput.value = tToEdit.date || "";
+                    descInput.value = tToEdit.desc === "Tanpa Keterangan" ? "" : tToEdit.desc;
+                    amountInput.value = tToEdit.amount;
+
+                    btnSave.onclick = () => { 
+                        const amt = parseFloat(amountInput.value) || 0; if(amt <= 0) return;
+                        tToEdit.type = typeSelect.value;
+                        tToEdit.category = catSelect.value;
+                        tToEdit.date = dateInput.value;
+                        tToEdit.desc = descInput.value || "Tanpa Keterangan";
+                        tToEdit.amount = amt;
+                        window.saveData(); window.closeModal('transaction'); window.updateUI(); window.updateBookChart(); 
+                    };
+                } else {
+                    title.innerText = "Catat Aliran";
+                    typeSelect.value = 'expense'; window.updateCategories('expense');
+                    descInput.value = ''; amountInput.value = ''; window.setTransactionToRealTime();
+                    
+                    btnSave.onclick = () => { 
+                        const amt = parseFloat(amountInput.value) || 0; if(amt <= 0) return;
+                        const nt = { id: Date.now().toString(), type: typeSelect.value, category: catSelect.value, amount: amt, desc: descInput.value || "Tanpa Keterangan", date: dateInput.value, timestamp: Date.now() };
+                        const r = recs.find(curr => curr.id === appData.selectedRecordId); if(r) { r.transactions.push(nt); window.saveData(); window.closeModal('transaction'); window.updateUI(); window.updateBookChart(); }
+                    };
+                }
             }
         };
 
