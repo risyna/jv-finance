@@ -5,21 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jv Finance</title>
     
-    <script>
-        // Pembersih Cache Anti-Macet
-        try {
-            if (!localStorage.getItem('jv_clean_v2')) {
-                const keys = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    let k = localStorage.key(i);
-                    if (k && (k.startsWith('sb-') || k.includes('supabase'))) keys.push(k);
-                }
-                keys.forEach(k => localStorage.removeItem(k));
-                localStorage.setItem('jv_clean_v2', 'true');
-            }
-        } catch(e) {}
-    </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -33,8 +18,7 @@
         .theme-green { --primary-color: #10b981; } .theme-red { --primary-color: #ef4444; } .theme-purple { --primary-color: #a855f7; } .theme-black { --primary-color: #374151; }
 
         .btn-primary { background-color: var(--primary-color); color: white; padding: 0.75rem 1.5rem; border-radius: 1rem; transition: all 0.2s ease; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; }
-        .btn-primary:hover:not(:disabled) { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4); }
-        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4); }
         
         .card { background: white; border-radius: 1.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); padding: 1.5rem; border: 1px solid rgba(0,0,0,0.05); }
         .progress-bar { height: 8px; background: #f3f4f6; border-radius: 4px; overflow: hidden; }
@@ -105,7 +89,7 @@
                         <button onclick="window.setView('portfolio')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm transition-colors"><svg class="text-blue-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg> Portofolio</button>
                         <button onclick="window.setView('library')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm border-b border-gray-50 transition-colors"><svg class="text-purple-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6"/><path d="M8 11h8"/></svg> Library Zone</button>
                         <button onclick="window.setView('profile')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm transition-colors"><svg class="text-orange-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil Saya</button>
-                        <button onclick="window.setView('settings')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-400 font-bold text-sm transition-colors border-b border-gray-50"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 1 0 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Pengaturan</button>
+                        <button onclick="window.setView('settings')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-400 font-bold text-sm transition-colors border-b border-gray-50"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Pengaturan</button>
                         <button id="logout-menu-item" onclick="window.logout()" class="hidden w-full text-left px-6 py-3 hover:bg-red-50 flex items-center gap-4 text-red-500 font-bold text-sm transition-colors border-t border-gray-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Keluar Akun</button>
                     </div>
                 </div>
@@ -118,22 +102,29 @@
         <div id="view-feed" class="hidden space-y-8 animate-in fade-in duration-500 max-w-2xl mx-auto">
             <div class="flex justify-between items-center border-b border-gray-200 pb-4">
                 <h1 class="text-3xl font-black text-gray-900 tracking-tighter">Beranda Publik</h1>
-                <button onclick="window.syncFeedFromDB(true)" class="sync-feed-btn text-xs bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-bold uppercase tracking-wider hover:bg-gray-300 transition shadow-sm w-32 text-center">↻ Refresh</button>
+                <button onclick="window.syncFeedFromDB()" class="sync-feed-btn text-xs bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-bold uppercase tracking-wider hover:bg-gray-300 transition shadow-sm w-32 text-center">↻ Refresh</button>
             </div>
             <div id="feed-container" class="space-y-6"></div>
         </div>
 
-        <div id="modal-comments" class="hidden fixed inset-0 z-[1000] modal-overlay flex items-center justify-center p-4">
-            <div class="card w-full max-w-lg bg-white shadow-2xl h-[80vh] flex flex-col p-0 overflow-hidden">
-                <div class="p-4 border-b border-gray-100 flex justify-between items-center shrink-0">
-                    <h3 class="font-black text-lg">Komentar</h3>
-                    <button onclick="window.closeModal('comments')" class="text-gray-400 hover:text-black font-bold text-xl">✖</button>
-                </div>
-                <div id="comments-list-container" class="flex-grow overflow-y-auto p-4 space-y-4 bg-gray-50"></div>
-                <div class="p-4 border-t border-gray-100 bg-white shrink-0 flex gap-2">
-                    <input type="text" id="comment-input" placeholder="Tulis komentar..." class="flex-grow p-3 border border-gray-200 rounded-xl outline-none focus:border-emerald-500 font-medium text-sm">
-                    <button onclick="window.sendComment()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 rounded-xl font-bold transition shadow-md">Kirim</button>
-                </div>
+        <div id="view-post-detail" class="hidden animate-in slide-in-from-right duration-300 max-w-2xl mx-auto pb-20">
+            <div class="flex items-center gap-4 border-b border-gray-200 pb-4 mb-6">
+                <button onclick="window.goBack()" class="p-3 bg-white rounded-2xl shadow-sm hover:bg-gray-100 border border-gray-100 transition-all">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                <h2 class="text-xl font-black text-gray-900 tracking-tight">Komentar Postingan</h2>
+            </div>
+            
+            <div id="detail-main-post-container" class="mb-8"></div>
+            
+            <div>
+                <h3 class="font-black text-lg text-gray-900 mb-6">Balasan</h3>
+                <div id="detail-comments-list" class="space-y-4"></div>
+            </div>
+
+            <div class="fixed-comment-bar max-w-2xl mx-auto rounded-t-3xl hidden" id="comment-input-bar">
+                <input type="text" id="detail-comment-input" placeholder="Tambahkan komentar..." class="flex-grow p-4 border border-gray-200 rounded-2xl outline-none focus:border-emerald-500 font-medium text-sm shadow-inner">
+                <button onclick="window.sendDetailComment()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 rounded-2xl font-bold transition shadow-lg shadow-emerald-500/30">Kirim</button>
             </div>
         </div>
 
@@ -354,15 +345,24 @@
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="card p-4 space-y-2 h-fit">
                     <button onclick="window.openSettingsTab('profile')" class="settings-tab w-full text-left p-4 rounded-2xl font-bold hover:bg-gray-50">👤 Profile</button>
+                    <button onclick="window.openSettingsTab('notifications')" class="settings-tab w-full text-left p-4 rounded-2xl font-bold hover:bg-gray-50">🔔 Notifications</button>
                     <button onclick="window.openSettingsTab('appearance')" class="settings-tab w-full text-left p-4 rounded-2xl font-bold hover:bg-gray-50">🎨 Appearance</button>
                     <button onclick="window.openSettingsTab('data')" class="settings-tab w-full text-left p-4 rounded-2xl font-bold hover:bg-gray-50">💾 Data Management</button>
+                    <button onclick="window.openSettingsTab('privacy')" class="settings-tab w-full text-left p-4 rounded-2xl font-bold hover:bg-gray-50">🔒 Privacy</button>
                 </div>
                 <div class="md:col-span-2">
                     <div id="settings-profile" class="settings-panel card p-8 space-y-4">
                         <h2 class="font-black text-xl">Profile</h2>
                         <input id="settings-prof-name" class="w-full p-4 border rounded-xl" placeholder="Nama">
                         <input id="settings-prof-hobby" class="w-full p-4 border rounded-xl" placeholder="Hobi">
+                        <textarea id="settings-prof-goal" class="w-full p-4 border rounded-xl h-28" placeholder="Goal"></textarea>
                         <button onclick="window.saveSettingsProfile()" class="btn-primary w-full">Save Profile</button>
+                    </div>
+                    <div id="settings-notifications" class="settings-panel hidden card p-8 space-y-4">
+                        <h2 class="font-black text-xl">Notifications</h2>
+                        <label class="flex justify-between items-center cursor-pointer"><span class="font-bold">Email Notifications</span><input type="checkbox" id="notif-email" onchange="window.saveNotifications()" class="w-5 h-5 accent-emerald-500"></label>
+                        <label class="flex justify-between items-center cursor-pointer"><span class="font-bold">Transaction Alert</span><input type="checkbox" id="notif-alert" onchange="window.saveNotifications()" class="w-5 h-5 accent-emerald-500"></label>
+                        <label class="flex justify-between items-center cursor-pointer"><span class="font-bold">Budget Reminder</span><input type="checkbox" id="notif-budget" onchange="window.saveNotifications()" class="w-5 h-5 accent-emerald-500"></label>
                     </div>
                     <div id="settings-appearance" class="settings-panel hidden card p-8 space-y-6">
                         <h2 class="font-black text-xl">Appearance</h2>
@@ -376,7 +376,11 @@
                     <div id="settings-data" class="settings-panel hidden card p-8 space-y-4">
                         <h2 class="font-black text-xl">Data Management</h2>
                         <button onclick="window.hardReset()" class="w-full p-4 bg-red-500 text-white font-black rounded-xl">Reset Seluruh Data Lokal</button>
-                        <p class="text-xs text-gray-400 mt-2">Tekan ini JIKA akun lama kamu error/stuck. Ini akan menghapus memori lama browser.</p>
+                        <p class="text-xs text-gray-400">Tekan ini JIKA akun lama kamu error/stuck. Ini akan menghapus memori lama browser.</p>
+                    </div>
+                    <div id="settings-privacy" class="settings-panel hidden card p-8 space-y-4">
+                        <h2 class="font-black text-xl">Privacy</h2>
+                        <p class="text-sm text-gray-500">Data finansial kamu disimpan lokal di device (localStorage) dan dienkripsi AES. Postingan Feed bersifat publik dan dikirim ke server Supabase.</p>
                     </div>
                 </div>
             </div>
@@ -509,12 +513,8 @@
     </div>
 
     <script>
-        const DEFAULT_APP_DATA = { profile: { name: "User", hobby: "", goal: "", avatar: "" }, settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } }, simpleRecords: [], complexRecords: [], simpleTarget: 0, complexTarget: 0, currencyMode: 'IDR', selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null };
+        const DEFAULT_APP_DATA = { profile: { name: "User", hobby: "", goal: "", avatar: "" }, settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } }, simpleRecords: [], complexRecords: [], feedPosts: [], notifications: [], simpleTarget: 0, complexTarget: 0, currencyMode: 'IDR', selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null };
         let appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
-        
-        let globalFeedPosts = [];
-        let globalNotifications = [];
-        
         let currentUser = null, authMode = 'login', currentPostImage = null, currentPostIdForComment = null, currentView = 'dashboard', previousView = 'dashboard';
         let portfolioChart = null, bookChart = null, dashQuickChart = null, complexIncChart = null, complexExpChart = null;
         let chartDataCache = {};
@@ -541,7 +541,7 @@
                         const { data, error } = await supabaseClient.from('user_data').select('app_state').eq('user_id', currentUser.id).single();
                         if (data && data.app_state) { try { const cloudData = JSON.parse(data.app_state); appData = { ...DEFAULT_APP_DATA, ...cloudData }; window.saveData(false); } catch(e) {} } 
                         else { window.saveData(true); }
-                        window.updateUI(); window.syncFeedFromDB(false); window.loadNotifications();
+                        window.updateUI(); window.loadFeedFromDB(); window.loadNotifications();
                     } else { 
                         if(authBtn && logoutMenu) { authBtn.innerText = "Login"; authBtn.classList.replace('bg-gray-800', 'bg-emerald-500'); authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600'); logoutMenu.classList.add('hidden'); }
                         if(event === 'SIGNED_OUT') { appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA)); window.saveData(false); window.updateUI(); }
@@ -560,8 +560,8 @@
         window.loadData = () => {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) { try { appData = { ...appData, ...JSON.parse(CryptoJS.AES.decrypt(saved, ENCRYPT_KEY).toString(CryptoJS.enc.Utf8)) }; } catch(e) {} }
-            if(!appData.profile.avatar) appData.profile.avatar = ""; 
-            window.syncFeedFromDB(false);
+            if(!appData.feedPosts) appData.feedPosts = []; if(!appData.profile.avatar) appData.profile.avatar = ""; if(!appData.notifications) appData.notifications = [];
+            window.loadFeedFromDB();
         };
 
         window.switchAuthTab = (mode) => {
@@ -585,83 +585,44 @@
             if(!supabaseClient) return alert("Database offline.");
             const email = document.getElementById('auth-email').value, password = document.getElementById('auth-password').value;
             const errEl = document.getElementById('auth-error'), succEl = document.getElementById('auth-success');
-            const btn = document.getElementById('btn-auth-action');
             errEl.classList.add('hidden'); succEl.classList.add('hidden');
-            
             if(!email) { errEl.innerText = "Email wajib diisi!"; errEl.classList.remove('hidden'); return; }
-            
-            btn.innerText = "⏳ Memproses...";
-            btn.disabled = true;
-
-            try {
-                if(authMode === 'forgot') {
-                    const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
-                    if(error) throw error;
-                    succEl.innerText = "Link reset dikirim ke email!"; succEl.classList.remove('hidden'); setTimeout(() => window.switchAuthTab('login'), 3000);
-                } else if(authMode === 'register') {
-                    if(!password) throw new Error("Password wajib diisi!");
-                    const { error } = await supabaseClient.auth.signUp({ email, password });
-                    if(error) throw error;
-                    succEl.innerText = "Akun dibuat! Silakan Login."; succEl.classList.remove('hidden'); window.switchAuthTab('login');
-                } else {
-                    if(!password) throw new Error("Password wajib diisi!");
-                    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                    if(error) throw error;
-                    window.closeModal('auth'); alert("Berhasil Login!");
-                }
-            } catch (err) {
-                errEl.innerText = err.message; errEl.classList.remove('hidden');
-            } finally {
-                btn.innerText = authMode === 'login' ? "Masuk Sekarang" : (authMode === 'register' ? "Buat Akun Baru" : "Kirim Link Reset");
-                btn.disabled = false;
+            document.getElementById('btn-auth-action').innerText = "Memproses...";
+            if(authMode === 'forgot') {
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+                if(error) { errEl.innerText = error.message; errEl.classList.remove('hidden'); } else { succEl.innerText = "Link reset dikirim ke email!"; succEl.classList.remove('hidden'); setTimeout(() => window.switchAuthTab('login'), 3000); }
+            } else if(authMode === 'register') {
+                if(!password) { errEl.innerText = "Password wajib diisi!"; errEl.classList.remove('hidden'); document.getElementById('btn-auth-action').innerText = "Buat Akun Baru"; return; }
+                const { error } = await supabaseClient.auth.signUp({ email, password });
+                if(error) { errEl.innerText = error.message; errEl.classList.remove('hidden'); } else { succEl.innerText = "Akun dibuat! Silakan Login."; succEl.classList.remove('hidden'); window.switchAuthTab('login'); }
+            } else {
+                if(!password) { errEl.innerText = "Password wajib diisi!"; errEl.classList.remove('hidden'); document.getElementById('btn-auth-action').innerText = "Masuk Sekarang"; return; }
+                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if(error) { errEl.innerText = error.message; errEl.classList.remove('hidden'); } else { window.closeModal('auth'); alert("Berhasil Login!"); }
             }
+            if(authMode === 'login') document.getElementById('btn-auth-action').innerText = "Masuk Sekarang"; else if(authMode === 'register') document.getElementById('btn-auth-action').innerText = "Buat Akun Baru"; else document.getElementById('btn-auth-action').innerText = "Kirim Link Reset";
         };
 
-        window.logout = async () => { 
-            try { 
-                if(supabaseClient) await supabaseClient.auth.signOut(); 
-            } catch(e) {} 
-            finally { 
-                currentUser = null;
-                const authBtn = document.getElementById('auth-btn');
-                const logoutMenu = document.getElementById('logout-menu-item');
-                if(authBtn) {
-                    authBtn.innerText = "Login";
-                    authBtn.classList.replace('bg-gray-800', 'bg-emerald-500');
-                    authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600');
-                }
-                if(logoutMenu) logoutMenu.classList.add('hidden');
-                
-                appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA)); 
-                window.saveData(false); 
-                window.updateUI(); 
-                alert("Berhasil Logout."); 
-                document.getElementById('dropdownMenu').classList.add('hidden'); 
-                window.setView('dashboard'); 
-            }
-        };
-        
+        window.logout = async () => { if(supabaseClient) await supabaseClient.auth.signOut(); alert("Berhasil Logout."); document.getElementById('dropdownMenu').classList.add('hidden'); window.setView('dashboard'); };
         window.checkAuthAndOpenModal = (modalId) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk fitur ini!"); return; } window.openModal(modalId); };
         window.checkAuthAndShare = (type, id) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk membagikan portofolio!"); return; } window.shareContent(type, id); };
 
         window.loadNotifications = async () => {
             if(!currentUser || !supabaseClient) return;
-            try {
-                const { data, error } = await supabaseClient.from('notifications').select('*').eq('user_id', currentUser.id).order('id', { ascending: false }).limit(20);
-                if(!error && data) {
-                    globalNotifications = data;
-                    const unread = data.filter(n => !n.is_read).length;
-                    const badge = document.getElementById('notif-badge');
-                    if(badge) { if(unread > 0) badge.classList.remove('hidden'); else badge.classList.add('hidden'); }
-                    window.renderNotifications();
-                }
-            } catch(e) {}
+            const { data, error } = await supabaseClient.from('notifications').select('*').eq('user_id', currentUser.id).order('id', { ascending: false }).limit(20);
+            if(!error && data) {
+                appData.notifications = data;
+                const unread = data.filter(n => !n.is_read).length;
+                const badge = document.getElementById('notif-badge');
+                if(badge) { if(unread > 0) badge.classList.remove('hidden'); else badge.classList.add('hidden'); }
+                window.renderNotifications();
+            }
         };
         
         window.renderNotifications = () => {
             const container = document.getElementById('notif-list-container'); if(!container) return;
-            if(!globalNotifications || globalNotifications.length === 0) { container.innerHTML = '<div class="text-center p-4 text-gray-400 text-[10px] font-bold uppercase tracking-widest">Belum ada notifikasi</div>'; return; }
-            container.innerHTML = globalNotifications.map(n => `
+            if(!appData.notifications || appData.notifications.length === 0) { container.innerHTML = '<div class="text-center p-4 text-gray-400 text-[10px] font-bold uppercase tracking-widest">Belum ada notifikasi</div>'; return; }
+            container.innerHTML = appData.notifications.map(n => `
                 <div onclick="window.viewPost('${n.post_id}')" class="p-3 rounded-xl cursor-pointer transition ${n.is_read ? 'bg-gray-50 text-gray-500' : 'bg-emerald-50 text-emerald-900 border border-emerald-100'}">
                     <p class="text-xs font-bold leading-tight">${n.message}</p>
                 </div>
@@ -676,18 +637,18 @@
         window.markAllNotifRead = async () => {
             if(!currentUser || !supabaseClient) return;
             document.getElementById('notif-badge').classList.add('hidden');
-            try { await supabaseClient.from('notifications').update({ is_read: true }).eq('user_id', currentUser.id).eq('is_read', false); } catch(e) {}
+            await supabaseClient.from('notifications').update({ is_read: true }).eq('user_id', currentUser.id).eq('is_read', false);
             window.loadNotifications();
         };
 
-        // --- SISTEM HALAMAN POSTINGAN & KOMENTAR ---
+        // --- SISTEM HALAMAN POSTINGAN & KOMENTAR FIX ---
         window.goBack = () => { window.setView(previousView || 'feed'); };
         
         window.viewPost = (postId) => {
             currentPostIdForComment = String(postId);
             window.setView('post-detail');
             document.getElementById('comment-input-bar').classList.remove('hidden');
-            const post = globalFeedPosts.find(p => String(p.id) === currentPostIdForComment);
+            const post = appData.feedPosts.find(p => String(p.id) === currentPostIdForComment);
             const container = document.getElementById('detail-main-post-container');
             
             if(!post) { container.innerHTML = "<p class='text-center p-10 font-bold'>Postingan tidak ditemukan.</p>"; return; }
@@ -714,7 +675,7 @@
 
             try {
                 const { data, error } = await supabaseClient.from('comments').select('*').eq('post_id', Number(currentPostIdForComment)).order('id', { ascending: true });
-                if(error) throw error;
+                if(error) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Gagal memuat: ${error.message}</div>`; return; }
                 
                 if(!data || data.length === 0) { 
                     container.innerHTML = '<div class="text-center p-6 text-gray-400 text-xs font-bold uppercase tracking-widest mt-10">Belum ada balasan.<br><span class="text-[9px] font-normal lowercase">Jadilah yang pertama!</span></div>'; 
@@ -733,7 +694,7 @@
                         </div>`).join('');
                     setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
                 }
-            } catch (err) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Gagal memuat: ${err.message}</div>`; }
+            } catch (err) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Terjadi kesalahan sistem: ${err.message}</div>`; }
         };
 
         window.replyComment = (authorName) => {
@@ -746,45 +707,52 @@
             if(!currentUser) { alert("Silakan Login Terlebih Dahulu!"); window.openModal('auth'); return; }
             const input = document.getElementById('detail-comment-input'); const text = input.value.trim();
             if(!text || !currentPostIdForComment) return;
+            input.value = '';
             
-            const btn = document.getElementById('btn-send-comment');
-            btn.innerText = "⏳"; btn.disabled = true;
-
-            try {
-                if(!supabaseClient) throw new Error("Database offline");
-                
-                const newComment = { 
-                    post_id: Number(currentPostIdForComment), 
-                    user_id: currentUser.id, 
-                    author: appData.profile.name || "User", 
-                    avatar: appData.profile.avatar || "", 
-                    text: text, 
-                    date: new Date().toLocaleDateString('id-ID') 
-                };
-                
-                const { error } = await supabaseClient.from('comments').insert([newComment]);
-                if(error) throw error;
-                
-                const post = globalFeedPosts.find(p => String(p.id) === String(currentPostIdForComment));
-                if(post && post.user_id && post.user_id !== currentUser.id) {
-                    const notifMsg = `${appData.profile.name || "Seseorang"} membalas: "${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"`;
-                    await supabaseClient.from('notifications').insert([{ 
-                        user_id: post.user_id, 
+            const container = document.getElementById('detail-comments-list');
+            if(container.innerHTML.includes('Belum ada')) container.innerHTML = '';
+            container.innerHTML += `
+                <div class="flex gap-3 bg-emerald-50 p-4 rounded-2xl shadow-sm border border-emerald-100 opacity-70">
+                    <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-emerald-200 flex items-center justify-center text-emerald-700 font-black text-xs">...</div>
+                    <div class="flex-grow"><p class="font-black text-xs text-gray-900">${appData.profile.name || "User"}</p><p class="text-gray-700 text-xs mt-1 font-medium">${text}</p></div>
+                </div>`;
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            
+            if(supabaseClient) {
+                try {
+                    const newComment = { 
                         post_id: Number(currentPostIdForComment), 
-                        message: notifMsg 
-                    }]);
+                        user_id: currentUser.id, 
+                        author: appData.profile.name || "User", 
+                        avatar: appData.profile.avatar || "", 
+                        text: text, 
+                        date: new Date().toLocaleDateString('id-ID') 
+                    };
+                    
+                    const { error } = await supabaseClient.from('comments').insert([newComment]);
+                    
+                    if(error) { 
+                        alert("Gagal menyimpan komentar ke database:\n" + error.message); 
+                        window.loadPostComments(); return; 
+                    }
+                    
+                    const post = appData.feedPosts.find(p => String(p.id) === String(currentPostIdForComment));
+                    if(post && post.user_id && post.user_id !== currentUser.id) {
+                        const notifMsg = `${appData.profile.name || "Seseorang"} membalas: "${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"`;
+                        await supabaseClient.from('notifications').insert([{ 
+                            user_id: post.user_id, 
+                            post_id: Number(currentPostIdForComment), 
+                            message: notifMsg 
+                        }]);
+                    }
+                    window.loadPostComments();
+                } catch(err) {
+                    alert("Error Javascript:\n" + err.message);
                 }
-                
-                input.value = '';
-                window.loadPostComments();
-            } catch(err) {
-                alert("Gagal mengirim: \n" + err.message);
-            } finally {
-                btn.innerText = "Kirim"; btn.disabled = false;
             }
         };
 
-        // --- MEDIA & POSTINGAN ---
+        // --- MEDIA, POSTINGAN & FEED ---
         window.handleAvatarUpload = (e) => {
             const file = e.target.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = (event) => {
@@ -817,110 +785,54 @@
             if(!currentUser) return alert("Silakan Login Terlebih Dahulu");
             const caption = document.getElementById('post-caption').value; 
             if(!caption && !currentPostImage) return alert("Tulis sesuatu atau tambahkan foto!");
-
-            const btn = document.getElementById('btn-publish-post');
-            const originalText = btn.innerText;
-            btn.innerText = "⏳ Mengirim..."; btn.disabled = true;
             
-            try {
-                if(!supabaseClient) throw new Error("Database Offline");
-                // HAPUS id: Date.now() -> Biarkan Supabase buat ID otomatis dari auto increment INT/BIGINT!
-                const newPost = { 
-                    user_id: currentUser.id, 
-                    author: appData.profile.name || "User", 
-                    author_avatar: appData.profile.avatar || "", 
-                    caption: caption, 
-                    date: new Date().toLocaleDateString('id-ID'), 
-                    is_share_card: !!currentPostImage, 
-                    image_data: currentPostImage || "", 
-                    likes: 0 
-                };
-                
-                const { data, error } = await supabaseClient.from('posts').insert([newPost]).select(); 
-                if (error) throw error;
-                
-                if (data && data.length > 0) {
-                    globalFeedPosts.unshift(data[0]);
-                }
-                
-                document.getElementById('post-caption').value = ''; window.removePostImage(); window.closeModal('create-post'); window.setView('feed');
-                window.syncFeedFromDB(false);
-                
-            } catch (err) {
-                alert("Gagal memposting:\n" + err.message + "\n\nPastikan struktur tabel 'posts' benar dan RLS terbuka!");
-            } finally {
-                btn.innerText = originalText; btn.disabled = false;
-            }
+            const newPost = { id: Date.now(), user_id: currentUser.id, author: appData.profile.name || "User", author_avatar: appData.profile.avatar || "", caption: caption, date: new Date().toLocaleDateString('id-ID'), is_share_card: !!currentPostImage, image_data: currentPostImage || "", likes: 0 };
+            appData.feedPosts.unshift(newPost); window.saveData(false);
+            document.getElementById('post-caption').value = ''; window.removePostImage(); window.closeModal('create-post'); window.setView('feed');
+            if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); if (error) alert("Gagal sync: " + error.message); }
         };
 
-        window.postShareCardToFeed = async () => {
-            if(!currentUser) return; 
-            
-            const btn = document.getElementById('btn-post-share');
-            const originalText = btn.innerText;
-            btn.innerText = "⏳ Menyiapkan..."; btn.disabled = true;
-
-            try {
-                const canvas = await html2canvas(document.getElementById('capture-area'), { backgroundColor: '#18181b', scale: 2 });
+        window.postShareCardToFeed = () => {
+            if(!currentUser) return; document.getElementById('btn-post-share').innerText = "Menyiapkan...";
+            html2canvas(document.getElementById('capture-area'), { backgroundColor: '#18181b', scale: 2 }).then(async canvas => {
                 const imgData = canvas.toDataURL('image/png', 0.8), data = appData.currentShareData;
-                const newPost = { 
-                    user_id: currentUser.id, 
-                    author: appData.profile.name || "User", 
-                    author_avatar: appData.profile.avatar || "", 
-                    caption: `Update ${data.title}! Return saat ini di angka ${data.isPlus ? '+' : ''}${data.percentage.toFixed(2)}%. 🚀`, 
-                    date: new Date().toLocaleDateString('id-ID'), 
-                    is_share_card: true, 
-                    image_data: imgData, 
-                    likes: 0 
-                };
-                
-                if(!supabaseClient) throw new Error("Database Offline");
-                
-                const { data: returnData, error } = await supabaseClient.from('posts').insert([newPost]).select(); 
-                if (error) throw error;
-                
-                if(returnData) globalFeedPosts.unshift(returnData[0]);
-                
-                window.closeModal('share-preview'); window.setView('feed'); 
-                window.syncFeedFromDB(false);
-                
-            } catch (err) {
-                alert("Gagal memposting Share Card:\n" + err.message);
-            } finally {
-                btn.innerText = originalText; btn.disabled = false;
-            }
+                const newPost = { id: Date.now(), user_id: currentUser.id, author: appData.profile.name || "User", author_avatar: appData.profile.avatar || "", caption: `Update ${data.title}! Return saat ini di angka ${data.isPlus ? '+' : ''}${data.percentage.toFixed(2)}%. 🚀`, date: new Date().toLocaleDateString('id-ID'), is_share_card: true, image_data: imgData, likes: 0 };
+                appData.feedPosts.unshift(newPost); window.saveData(false); window.closeModal('share-preview'); window.setView('feed'); document.getElementById('btn-post-share').innerText = "🚀 Post Feed";
+                if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); if (error) alert("Gagal sync: " + error.message); }
+            });
         };
 
-        window.syncFeedFromDB = async (isManual = false) => {
+        window.syncFeedFromDB = async () => {
             if(!supabaseClient) return;
             
-            if(isManual) {
-                document.querySelectorAll('.sync-feed-btn').forEach(btn => { btn.innerHTML = "⏳ Memuat..."; btn.disabled = true; });
-            }
+            // Berikan efek visual loading pada semua tombol sync
+            document.querySelectorAll('.sync-feed-btn').forEach(btn => {
+                btn.innerHTML = "⏳ Memuat..."; btn.disabled = true;
+            });
 
             try { 
                 const { data, error } = await supabaseClient.from('posts').select('*').order('id', { ascending: false }); 
-                if (error) throw error;
-                if (data) { 
-                    globalFeedPosts = data; 
+                if (!error && data) { 
+                    appData.feedPosts = data; 
+                    window.saveData(false); 
                     if(currentView === 'feed') window.renderFeed(); 
                     if(currentView === 'profile') window.renderProfileFeed(); 
                 } 
-            } catch (err) {
-                if(isManual) alert("Gagal menyinkronkan: " + err.message);
-            } finally {
-                if(isManual) {
-                    setTimeout(() => { document.querySelectorAll('.sync-feed-btn').forEach(btn => { btn.innerHTML = "↻ Refresh"; btn.disabled = false; }); }, 500);
-                }
-            }
+            } catch (err) {}
+            
+            // Kembalikan tombol setelah 0.5 detik
+            setTimeout(() => {
+                document.querySelectorAll('.sync-feed-btn').forEach(btn => {
+                    btn.innerHTML = "↻ Refresh"; btn.disabled = false;
+                });
+            }, 500);
         };
-        
         window.loadFeedFromDB = window.syncFeedFromDB; 
 
         window.renderFeed = () => {
             const container = document.getElementById('feed-container');
-            if(globalFeedPosts.length === 0) { container.innerHTML = '<div class="text-center p-10 text-gray-400 font-bold border-2 border-dashed rounded-3xl">Belum ada postingan komunitas. Jadilah yang pertama!</div>'; return; }
-            container.innerHTML = globalFeedPosts.map(post => `
+            if(appData.feedPosts.length === 0) { container.innerHTML = '<div class="text-center p-10 text-gray-400 font-bold border-2 border-dashed rounded-3xl">Belum ada postingan komunitas. Jadilah yang pertama!</div>'; return; }
+            container.innerHTML = appData.feedPosts.map(post => `
                 <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-6 cursor-pointer hover:shadow-md transition" onclick="window.viewPost('${post.id}')">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-black overflow-hidden border border-gray-200 shrink-0">
@@ -949,7 +861,9 @@
         window.renderProfileFeed = () => {
             const photoContainer = document.getElementById('profile-feed-photo-container'), textContainer = document.getElementById('profile-feed-text-container');
             
-            const myPosts = currentUser ? globalFeedPosts.filter(p => p.user_id === currentUser.id) : [];
+            // FIX TERPENTING: Gunakan hanya currentUser.id agar tidak nyasar!
+            const myPosts = currentUser ? appData.feedPosts.filter(p => p.user_id === currentUser.id) : [];
+            
             const imagePosts = myPosts.filter(p => p.image_data), textPosts = myPosts.filter(p => !p.image_data);
 
             if(imagePosts.length === 0) { photoContainer.innerHTML = '<div class="col-span-3 text-center p-5 text-gray-400 text-xs font-bold uppercase tracking-widest">Belum ada foto.</div>'; }
@@ -978,32 +892,66 @@
         };
 
         window.editPost = async (postId) => {
-            const post = globalFeedPosts.find(p => String(p.id) === String(postId)); if(!post) return;
+            const post = appData.feedPosts.find(p => String(p.id) === String(postId)); if(!post) return;
             const newCaption = prompt("Edit teks postingan kamu:", post.caption);
             if(newCaption !== null && newCaption.trim() !== "") {
-                try {
-                    if(supabaseClient) { const { error } = await supabaseClient.from('posts').update({ caption: newCaption }).eq('id', postId); if(error) throw error; }
-                    window.syncFeedFromDB(false);
-                } catch(e) { alert("Gagal update: " + e.message); }
+                post.caption = newCaption; window.saveData(false); window.renderProfileFeed(); window.renderFeed();
+                if(supabaseClient) { const { error } = await supabaseClient.from('posts').update({ caption: newCaption }).eq('id', postId); if(error) alert("Gagal update: " + error.message); }
             }
         };
 
         window.deletePost = async (postId) => {
             if(!confirm("Yakin ingin menghapus postingan ini?")) return;
-            try {
-                if(supabaseClient) { const { error } = await supabaseClient.from('posts').delete().eq('id', postId); if(error) throw error; }
-                window.syncFeedFromDB(false);
-            } catch(e) { alert("Gagal hapus: " + e.message); }
+            appData.feedPosts = appData.feedPosts.filter(p => String(p.id) !== String(postId)); window.saveData(false); window.renderProfileFeed(); window.renderFeed();
+            if(supabaseClient) { const { error } = await supabaseClient.from('posts').delete().eq('id', postId); if(error) alert("Gagal hapus: " + error.message); }
         };
 
-        // --- TAMPILAN DAN FUNGSI STANDAR ---
-        const STATIC_LIBRARY_DATA = [ { id: 'lib-1', name: 'Atomic Habits', desc: 'Perubahan kecil yang memberikan hasil luar biasa dalam habit finansial.', file: 'modul 1', sampul: 'smodul 1' }, { id: 'lib-2', name: 'Berani Tidak Disukai', desc: 'Melihat hidup dan kebebasan finansial dari sudut pandang Adler.', file: 'modul 2', sampul: 'smodul 2' }, { id: 'lib-3', name: 'Berdamai Dengan Diri Sendiri', desc: 'Seni menerima diri dan mengelola emosi dalam setiap transaksi.', file: 'modul 3', sampul: 'smodul 3' }, { id: 'lib-4', name: 'Bicara Itu Ada Seninya', desc: 'Seni berkomunikasi secara efektif dalam negosiasi dan hubungan profesional.', file: 'modul 4', sampul: 'smodul 4' }, { id: 'lib-5', name: 'Black Holes', desc: 'Menjelajahi misteri terdalam alam semesta melalui pemahaman fisika modern.', file: 'modul 5', sampul: 'smodul 5' }, { id: 'lib-6', name: 'Dark Psychology', desc: 'Memahami teknik persuasi dan manipulasi psikologis untuk proteksi diri.', file: 'modul 6', sampul: 'smodul 6' }, { id: 'lib-7', name: 'The Principles of Power', desc: 'Strategi kekuasaan dan kepemimpinan dalam lingkungan yang kompetitif.', file: 'modul 7', sampul: 'smodul 7' }, { id: 'lib-8', name: 'Filosofi Teras', desc: 'Penerapan Stoikisme untuk hidup yang lebih tenang di dunia yang kacau.', file: 'modul 8', sampul: 'smodul 8' }, { id: 'lib-9', name: 'Is it Bad or Good Habits', desc: 'Analisis mendalam mengenai kebiasaan harian dan dampaknya bagi masa depan.', file: 'modul 9', sampul: 'smodul 9' }, { id: 'lib-10', name: 'The Psychology of Money', desc: 'Memahami hubungan psikologis antara manusia dengan uang dan kekayaan.', file: 'modul 10', sampul: 'smodul 10' }, { id: 'lib-11', name: 'Rahasia Bersikap Tenang Dalam Kondisi Apapun', desc: 'Teknik kontrol diri dan manajemen stres dalam situasi krisis.', file: 'modul 11', sampul: 'smodul 11' }, { id: 'lib-12', name: 'Sebuah Seni Untuk Bersikap Bodo Amat', desc: 'Cara memilih hal-hal yang benar-benar layak dipedulikan dalam hidup.', file: 'modul 12', sampul: 'smodul 12' }, { id: 'lib-13', name: 'Seni Membaca Pikiran dan Perasaan Orang Lain', desc: 'Meningkatkan empati dan kemampuan observasi karakter melalui bahasa tubuh.', file: 'modul 13', sampul: 'smodul 13' } ];
+// LIBRARY DATA
+        const STATIC_LIBRARY_DATA = [
+            { id: 'lib-1', name: 'Atomic Habits', desc: 'Perubahan kecil yang memberikan hasil luar biasa.', file: 'modul 1', sampul: 'smodul 1' },
+            { id: 'lib-2', name: 'Berani Tidak Disukai', desc: 'Melihat hidup dari sudut pandang Adler.', file: 'modul 2', sampul: 'smodul 2' },
+            { id: 'lib-3', name: 'Berdamai Dengan Diri Sendiri', desc: 'Seni menerima diri dan emosi.', file: 'modul 3', sampul: 'smodul 3' },
+            { id: 'lib-4', name: 'Bicara Itu Ada Seninya', desc: 'Seni berkomunikasi secara efektif.', file: 'modul 4', sampul: 'smodul 4' },
+            { id: 'lib-5', name: 'Black Holes', desc: 'Menjelajahi misteri terdalam alam semesta.', file: 'modul 5', sampul: 'smodul 5' },
+            { id: 'lib-6', name: 'Dark Psychology', desc: 'Memahami teknik persuasi psikologis.', file: 'modul 6', sampul: 'smodul 6' },
+            { id: 'lib-7', name: 'The Principles of Power', desc: 'Strategi kekuasaan dan kepemimpinan.', file: 'modul 7', sampul: 'smodul 7' },
+            { id: 'lib-8', name: 'Filosofi Teras', desc: 'Stoikisme untuk hidup tenang.', file: 'modul 8', sampul: 'smodul 8' },
+            { id: 'lib-9', name: 'Is it Bad or Good Habits', desc: 'Analisis mendalam kebiasaan harian.', file: 'modul 9', sampul: 'smodul 9' },
+            { id: 'lib-10', name: 'The Psychology of Money', desc: 'Hubungan manusia dengan uang.', file: 'modul 10', sampul: 'smodul 10' },
+            { id: 'lib-11', name: 'Rahasia Bersikap Tenang', desc: 'Teknik kontrol diri situasi krisis.', file: 'modul 11', sampul: 'smodul 11' },
+            { id: 'lib-12', name: 'Sebuah Seni Bersikap Bodo Amat', desc: 'Cara memilih hal layak dipedulikan.', file: 'modul 12', sampul: 'smodul 12' },
+            { id: 'lib-13', name: 'Seni Membaca Pikiran Orang', desc: 'Meningkatkan empati & observasi.', file: 'modul 13', sampul: 'smodul 13' }
+        ];
 
         window.renderLibrary = () => {
             const container = document.getElementById('library-container'); if(!container) return;
-            container.innerHTML = STATIC_LIBRARY_DATA.map(mod => `<div class="card library-card p-0 text-left relative group"><div class="library-thumb text-left"><img src="./sampul_modul/${mod.sampul}.jpg" alt="${mod.name}" onerror="this.src='https://placehold.co/300x400?text=${mod.name}'"><div class="absolute top-3 right-3 bg-black/60 backdrop-blur px-2.5 py-1.5 rounded-xl text-[8px] text-white font-black uppercase tracking-widest text-left">SECURE</div></div><div class="p-6 flex-grow flex flex-col text-left"><h3 class="font-black text-xs text-gray-900 line-clamp-2 leading-tight uppercase text-left">${mod.name}</h3><p class="text-[10px] text-gray-400 mt-2 line-clamp-3 leading-relaxed text-left">${mod.desc}</p><div class="mt-auto pt-6 text-left"><a href="./modul/${mod.file}.pdf" target="_blank" class="w-full inline-flex justify-center items-center py-3 bg-emerald-50 text-emerald-600 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-emerald-500 hover:text-white transition-all shadow-sm">Buka Modul</a></div></div></div>`).join('');
+            container.innerHTML = STATIC_LIBRARY_DATA.map(mod => `
+                <div class="card library-card p-0 relative group">
+                    <img src="./sampul_modul/${mod.sampul}.jpg" alt="${mod.name}" onerror="this.src='https://placehold.co/300x400?text=${mod.name}'">
+                    <div class="p-6">
+                        <h3 class="font-black text-xs text-gray-900 leading-tight uppercase">${mod.name}</h3>
+                        <p class="text-[10px] text-gray-400 mt-2 line-clamp-3">${mod.desc}</p>
+                        <div class="mt-4"><a href="./modul/${mod.file}.pdf" target="_blank" class="w-full block text-center py-3 bg-emerald-50 text-emerald-600 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all">Buka Modul</a></div>
+                    </div>
+                </div>`).join('');
         };
 
+        // --- SHARE CARD LOGIC ---
+        window.shareContent = (type, id) => {
+            try {
+                let title = "", base = 0, current = 0; const recs = appData.settings.mode === 'simple' ? appData.simpleRecords : appData.complexRecords;
+                if(type === 'portfolio') { title = "Total Portofolio"; recs.forEach(r => { base += parseFloat(r.baseAmount)||0; let b = parseFloat(r.baseAmount)||0; (r.transactions||[]).forEach(t => t.type === 'income' ? b += (parseFloat(t.amount)||0) : b -= (parseFloat(t.amount)||0)); current += b; }); } 
+                else if (type === 'book') { const r = recs.find(x => String(x.id) === String(id)); if(!r) { alert("Buku tidak ditemukan!"); return; } title = `Buku ${r.name}`; base = parseFloat(r.baseAmount)||0; current = base; (r.transactions||[]).forEach(t => t.type === 'income' ? current += (parseFloat(t.amount)||0) : current -= (parseFloat(t.amount)||0)); }
+
+                let diff = current - base; let percentage = base > 0 ? (diff / base) * 100 : 0; let isPlus = diff >= 0;
+                document.getElementById('share-card-subtitle').innerText = `Return ${title}`; document.getElementById('share-card-base').innerText = window.formatMoney(base); document.getElementById('share-card-current').innerText = window.formatMoney(current);
+                const percEl = document.getElementById('share-card-percentage'); percEl.innerText = `${isPlus ? '+' : ''}${percentage.toFixed(2)}%`; percEl.style.color = isPlus ? '#10b981' : '#ef4444';
+                appData.currentShareData = { title, percentage, isPlus }; window.openModal('share-preview');
+            } catch(e) { alert("Error Share: " + e.message); }
+        };
+        window.downloadShareCard = () => { html2canvas(document.getElementById('capture-area'), { backgroundColor: '#18181b', scale: 2 }).then(canvas => { const link = document.createElement('a'); link.download = `JvFinance_Share_${Date.now()}.png`; link.href = canvas.toDataURL('image/png'); link.click(); }); };
+
+        // --- NAVIGATION & LOKAL CRUD ---
         window.setView = function(viewName, pushState = true) {
             document.getElementById('dropdownMenu').classList.add('hidden');
             
@@ -1017,7 +965,7 @@
             if (viewName === 'record-detail') setTimeout(window.updateBookChart, 100);
             if (viewName === 'portfolio') setTimeout(window.updatePortfolio, 100);
             if (viewName === 'library') window.renderLibrary();
-            if (viewName === 'feed') { window.renderFeed(); window.syncFeedFromDB(false); }
+            if (viewName === 'feed') { window.renderFeed(); window.syncFeedFromDB(); }
             if (viewName === 'profile') window.renderProfileFeed();
 
             if (pushState) history.pushState({ view: viewName }, "", "#" + viewName);
@@ -1027,20 +975,64 @@
         window.onpopstate = (e) => window.setView((e.state && e.state.view) ? e.state.view : 'dashboard', false);
 
         window.updateDashboardGraph = function() {
-            const mode = appData.settings.mode; const container = document.getElementById('dash-chart-container'); const aiSection = document.getElementById('complex-analytics-section');
-            if(container) container.classList.toggle('hidden', mode !== 'complex'); if(aiSection) aiSection.classList.toggle('hidden', mode !== 'complex');
+            const mode = appData.settings.mode; 
+            const container = document.getElementById('dash-chart-container'); 
+            const aiSection = document.getElementById('complex-analytics-section');
+            
+            if(container) container.classList.toggle('hidden', mode !== 'complex'); 
+            if(aiSection) aiSection.classList.toggle('hidden', mode !== 'complex');
+            
             if (mode === 'complex') {
-                const recs = appData.complexRecords; let pts = [], totalIncome = 0, totalExpense = 0, labelsAI = [], incomeAI = [], expenseAI = [];
+                const recs = appData.complexRecords; 
+                let pts = [], totalIncome = 0, totalExpense = 0, labelsAI = [], incomeAI = [], expenseAI = [];
+                
                 recs.forEach(r => { 
-                    let b = parseFloat(r.baseAmount) || 0; pts.push(b); let rInc = b, rExp = 0;
+                    let b = parseFloat(r.baseAmount) || 0; 
+                    pts.push(b); 
+                    let rInc = b, rExp = 0;
                     const sortedT = [...(r.transactions || [])].sort((a,b) => a.date.localeCompare(b.date));
-                    sortedT.forEach(t => { const amt = parseFloat(t.amount) || 0; if(t.type === 'income') { b += amt; rInc += amt; } else { b -= amt; rExp += amt; } pts.push(b); }); 
-                    labelsAI.push(r.name || r.month); incomeAI.push(rInc); expenseAI.push(rExp); totalIncome += rInc; totalExpense += rExp;
+                    sortedT.forEach(t => { 
+                        const amt = parseFloat(t.amount) || 0; 
+                        if(t.type === 'income') { b += amt; rInc += amt; } 
+                        else { b -= amt; rExp += amt; } 
+                        pts.push(b); 
+                    }); 
+                    labelsAI.push(r.name || r.month); 
+                    incomeAI.push(rInc); 
+                    expenseAI.push(rExp); 
+                    totalIncome += rInc; 
+                    totalExpense += rExp;
                 });
-                if(pts.length === 0) pts = [0];
-                if(dashQuickChart) { dashQuickChart.data.labels = pts.map((_, i) => i); dashQuickChart.data.datasets[0].data = pts; dashQuickChart.update(); }
-                if(complexIncChart) { complexIncChart.data.labels = labelsAI; complexIncChart.data.datasets[0].data = incomeAI; complexIncChart.update(); }
-                if(complexExpChart) { complexExpChart.data.labels = labelsAI; complexExpChart.data.datasets[0].data = expenseAI; complexExpChart.update(); }
+                
+                // PERBAIKAN: Jika data kosong atau cuma 1 titik, buat jadi garis lurus agar terbaca oleh grafik
+                if (pts.length === 0) pts = [0, 0];
+                if (pts.length === 1) pts.push(pts[0]); 
+                
+                if(dashQuickChart) { 
+                    dashQuickChart.data.labels = pts.map((_, i) => i); 
+                    dashQuickChart.data.datasets[0].data = pts; 
+                    dashQuickChart.update(); 
+                }
+                if(complexIncChart) { 
+                    complexIncChart.data.labels = labelsAI; 
+                    complexIncChart.data.datasets[0].data = incomeAI; 
+                    complexIncChart.update(); 
+                }
+                if(complexExpChart) { 
+                    complexExpChart.data.labels = labelsAI; 
+                    complexExpChart.data.datasets[0].data = expenseAI; 
+                    complexExpChart.update(); 
+                }
+                
+                // Memaksa grafik muncul (resize) saat mode kompleks dibuka
+                if (currentView === 'dashboard') {
+                    setTimeout(() => {
+                        if(dashQuickChart) dashQuickChart.resize();
+                        if(complexIncChart) complexIncChart.resize();
+                        if(complexExpChart) complexExpChart.resize();
+                    }, 50);
+                }
+                
                 window.calculateAIBudget(totalIncome, totalExpense);
             }
         };
@@ -1100,7 +1092,7 @@
                         <div class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all text-left">
                              <button onclick="event.stopPropagation(); window.checkAuthAndShare('book', '${r.id}')" class="p-2 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-500 hover:text-white text-left shadow-sm" title="Bagikan"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></button>
                              <button onclick="event.stopPropagation(); window.openModal('record', '${r.id}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-500 hover:text-white text-left"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-                             <button onclick="event.stopPropagation(); window.deleteRecord('${r.id}')" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-500 hover:text-white text-left"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                             <button onclick="event.stopPropagation(); window.deleteRecord('${r.id}')" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-500 hover:text-white text-left text-left"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
                         </div>
                         <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mb-1 text-left">${r.month}</p><h4 class="font-black text-lg text-gray-900 leading-tight text-left">${r.name}</h4>
                         <div class="mt-4 pt-3 border-t border-gray-50 flex justify-between items-center text-left"><span class="text-[8px] font-black text-gray-300 uppercase tracking-widest text-left">SALDO</span><span class="text-sm font-black text-emerald-600 text-left">${window.formatMoney(bal)}</span></div>
@@ -1134,13 +1126,7 @@
         window.deleteTransaction = (tid) => { if (confirm("Hapus Transaksi?")) { const recs = appData.settings.mode === 'simple' ? appData.simpleRecords : appData.complexRecords; const r = recs.find(x => x.id === appData.selectedRecordId); if(r) { r.transactions = r.transactions.filter(x => x.id !== tid); window.saveData(); window.updateUI(); window.updateBookChart(); } } };
         window.changeTheme = (t) => { document.body.classList.remove('theme-green', 'theme-red', 'theme-purple', 'theme-black'); document.body.classList.add(`theme-${t}`); const colors = {green:'#10b981', red:'#ef4444', purple:'#a855f7', black:'#374151'}; document.documentElement.style.setProperty('--primary-color', colors[t]); appData.settings.theme = t; window.saveData(); if(dashQuickChart) window.updateDashboardGraph(); window.updateUI(); };
         
-        window.hardReset = () => { 
-            if (confirm("YAKIN HAPUS SELURUH DATA LOKAL? Ini akan mengatasi akun yang nyangkut/stuck.")) { 
-                localStorage.removeItem(STORAGE_KEY);
-                location.reload(); 
-            } 
-        };
-        
+        window.hardReset = () => { if (confirm("YAKIN HAPUS SELURUH DATA LOKAL? Ini akan mengatasi akun yang nyangkut/stuck.")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } };
         window.clearData = () => { window.hardReset(); }; 
         
         window.setCurrency = (c) => { appData.currencyMode = c; window.updateUI(); };
@@ -1224,13 +1210,8 @@
             window.loadData(); window.initCharts(); window.updateUI(); window.changeTheme(appData.settings.theme);
             const hash = window.location.hash.replace('#', '');
             const validViews = ['dashboard', 'record-detail', 'portfolio', 'library', 'profile', 'settings', 'feed', 'post-detail'];
-            
-            // JIKA URL MENGANDUNG HASH, TETAP DI HALAMAN ITU
-            if (hash && validViews.includes(hash)) {
-                window.setView(hash, false);
-            } else {
-                window.setView('dashboard', false);
-            }
+            if (hash && validViews.includes(hash)) window.setView(hash, false);
+            else window.setView('dashboard', false);
         });
 
         const menuBtn = document.getElementById('menuBtn');
