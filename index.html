@@ -12,7 +12,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8568574931430136" crossorigin="anonymous"></script>
     <style>
         :root { --primary-color: #10b981; --income-color: #10b981; --expense-color: #ef4444; }
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease; overflow-x: hidden; background-color: #f9fafb; }
@@ -36,7 +35,6 @@
         
         .library-card img { transition: transform 0.5s ease; } .library-card:hover img { transform: scale(1.05); }
         .modal-overlay { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 1000; }
-        
         .auth-tab-active { border-bottom: 3px solid var(--primary-color); color: var(--primary-color); }
         #capture-area { background: #1e1e1e; }
         
@@ -157,7 +155,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 <div class="card border-l-[10px] border-l-emerald-500 bg-white relative group">
-                    <button onclick="window.checkAuthAndShare('portfolio', 'all')" class="absolute top-4 right-4 p-2 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-500 hover:text-white transition-all opacity-0 group-hover:opacity-100 shadow-sm" title="Bagikan ke Publik">
+                    <button onclick="window.checkAuthAndShare('portfolio', 'all')" class="absolute top-4 right-4 p-2 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-all opacity-0 group-hover:opacity-100 shadow-sm" title="Bagikan ke Publik">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                     </button>
                     <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1 text-left">Kekayaan Total</p>
@@ -225,8 +223,8 @@
         <div id="view-portfolio" class="hidden space-y-8 animate-in fade-in duration-500 text-left">
             <h1 class="text-3xl font-black text-gray-900 tracking-tighter uppercase text-left">Analisis Global</h1>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
-                <div class="card border-l-[12px] border-l-emerald-500 p-8 bg-white" id="port-simple-stats"></div>
-                <div class="card border-l-[12px] border-l-indigo-500 p-8 bg-white" id="port-complex-stats"></div>
+                <div class="card border-l-[12px] border-l-emerald-500 p-8 bg-white text-left" id="port-simple-stats"></div>
+                <div class="card border-l-[12px] border-l-indigo-500 p-8 bg-white text-left" id="port-complex-stats"></div>
             </div>
             <div class="card p-8 border-none shadow-xl bg-white text-left">
                 <div class="h-[500px] w-full relative text-left"><canvas id="portfolioChart"></canvas></div>
@@ -617,7 +615,7 @@
             const container = document.getElementById('notif-list-container'); if(!container) return;
             if(!appData.notifications || appData.notifications.length === 0) { container.innerHTML = '<div class="text-center p-4 text-gray-400 text-[10px] font-bold uppercase tracking-widest">Belum ada notifikasi</div>'; return; }
             container.innerHTML = appData.notifications.map(n => `
-                <div onclick="window.viewPost(${n.post_id})" class="p-3 rounded-xl cursor-pointer transition ${n.is_read ? 'bg-gray-50 text-gray-500' : 'bg-emerald-50 text-emerald-900 border border-emerald-100'}">
+                <div onclick="window.viewPost('${n.post_id}')" class="p-3 rounded-xl cursor-pointer transition ${n.is_read ? 'bg-gray-50 text-gray-500' : 'bg-emerald-50 text-emerald-900 border border-emerald-100'}">
                     <p class="text-xs font-bold leading-tight">${n.message}</p>
                 </div>
             `).join('');
@@ -639,10 +637,10 @@
         window.goBack = () => { window.setView(previousView || 'feed'); };
         
         window.viewPost = (postId) => {
-            currentPostIdForComment = postId;
+            currentPostIdForComment = String(postId);
             window.setView('post-detail');
             document.getElementById('comment-input-bar').classList.remove('hidden');
-            const post = appData.feedPosts.find(p => p.id === postId);
+            const post = appData.feedPosts.find(p => String(p.id) === currentPostIdForComment);
             const container = document.getElementById('detail-main-post-container');
             
             if(!post) { container.innerHTML = "<p class='text-center p-10 font-bold'>Postingan tidak ditemukan.</p>"; return; }
@@ -668,8 +666,8 @@
             if(!supabaseClient) { container.innerHTML = '<div class="text-center p-4 text-red-400 text-xs font-bold">Mode Offline.</div>'; return; }
 
             try {
-                const { data, error } = await supabaseClient.from('comments').select('*').eq('post_id', currentPostIdForComment).order('id', { ascending: true });
-                if(error) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Gagal: ${error.message}</div>`; return; }
+                const { data, error } = await supabaseClient.from('comments').select('*').eq('post_id', Number(currentPostIdForComment)).order('id', { ascending: true });
+                if(error) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Gagal memuat: ${error.message}</div>`; return; }
                 
                 if(!data || data.length === 0) { 
                     container.innerHTML = '<div class="text-center p-6 text-gray-400 text-xs font-bold uppercase tracking-widest mt-10">Belum ada balasan.<br><span class="text-[9px] font-normal lowercase">Jadilah yang pertama!</span></div>'; 
@@ -688,7 +686,7 @@
                         </div>`).join('');
                     setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
                 }
-            } catch (err) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Terjadi kesalahan sistem.</div>`; }
+            } catch (err) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Terjadi kesalahan sistem: ${err.message}</div>`; }
         };
 
         window.replyComment = (authorName) => {
@@ -713,18 +711,36 @@
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             
             if(supabaseClient) {
-                const commentId = Date.now() + Math.floor(Math.random() * 1000); 
-                const newComment = { id: commentId, post_id: currentPostIdForComment, user_id: currentUser.id, author: appData.profile.name || "User", avatar: appData.profile.avatar || "", text: text, date: new Date().toLocaleDateString('id-ID') };
-                
-                const { error } = await supabaseClient.from('comments').insert([newComment]);
-                if(error) { alert("Gagal mengirim: " + error.message); window.loadPostComments(); return; }
-                
-                const post = appData.feedPosts.find(p => p.id === currentPostIdForComment);
-                if(post && post.user_id && post.user_id !== currentUser.id) {
-                    const notifMsg = `${appData.profile.name || "Seseorang"} membalas: "${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"`;
-                    await supabaseClient.from('notifications').insert([{ id: Date.now() + Math.floor(Math.random() * 1000), user_id: post.user_id, post_id: currentPostIdForComment, message: notifMsg, is_read: false }]);
+                try {
+                    const newComment = { 
+                        post_id: Number(currentPostIdForComment), 
+                        user_id: currentUser.id, 
+                        author: appData.profile.name || "User", 
+                        avatar: appData.profile.avatar || "", 
+                        text: text, 
+                        date: new Date().toLocaleDateString('id-ID') 
+                    };
+                    
+                    const { error } = await supabaseClient.from('comments').insert([newComment]);
+                    
+                    if(error) { 
+                        alert("Gagal menyimpan komentar ke database:\n" + error.message); 
+                        window.loadPostComments(); return; 
+                    }
+                    
+                    const post = appData.feedPosts.find(p => String(p.id) === String(currentPostIdForComment));
+                    if(post && post.user_id && post.user_id !== currentUser.id) {
+                        const notifMsg = `${appData.profile.name || "Seseorang"} membalas: "${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"`;
+                        await supabaseClient.from('notifications').insert([{ 
+                            user_id: post.user_id, 
+                            post_id: Number(currentPostIdForComment), 
+                            message: notifMsg 
+                        }]);
+                    }
+                    window.loadPostComments();
+                } catch(err) {
+                    alert("Error Javascript:\n" + err.message);
                 }
-                window.loadPostComments();
             }
         };
 
@@ -788,7 +804,7 @@
             const container = document.getElementById('feed-container');
             if(appData.feedPosts.length === 0) { container.innerHTML = '<div class="text-center p-10 text-gray-400 font-bold border-2 border-dashed rounded-3xl">Belum ada postingan komunitas. Jadilah yang pertama!</div>'; return; }
             container.innerHTML = appData.feedPosts.map(post => `
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-6 cursor-pointer hover:shadow-md transition" onclick="window.viewPost(${post.id})">
+                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-6 cursor-pointer hover:shadow-md transition" onclick="window.viewPost('${post.id}')">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-black overflow-hidden border border-gray-200 shrink-0">
                             ${post.author_avatar ? `<img src="${post.author_avatar}" class="w-full h-full object-cover">` : `<span class="text-white">${(post.author || "U").charAt(0)}</span>`}
@@ -821,21 +837,21 @@
             if(imagePosts.length === 0) { photoContainer.innerHTML = '<div class="col-span-3 text-center p-5 text-gray-400 text-xs font-bold uppercase tracking-widest">Belum ada foto.</div>'; }
             else {
                 photoContainer.innerHTML = imagePosts.map(post => `
-                    <div class="relative aspect-square bg-gray-100 rounded-xl overflow-hidden border border-gray-200 group cursor-pointer" onclick="window.viewPost(${post.id})">
+                    <div class="relative aspect-square bg-gray-100 rounded-xl overflow-hidden border border-gray-200 group cursor-pointer" onclick="window.viewPost('${post.id}')">
                         <img src="${post.image_data}" class="w-full h-full object-cover object-top" />
                         <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="event.stopPropagation(); window.editPost(${post.id})" class="bg-blue-500 text-white p-1.5 rounded-lg text-[10px] shadow-md hover:bg-blue-600 transition">Edit</button>
-                            <button onclick="event.stopPropagation(); window.deletePost(${post.id})" class="bg-red-500 text-white p-1.5 rounded-lg text-[10px] shadow-md hover:bg-red-600 transition">Hapus</button>
+                            <button onclick="event.stopPropagation(); window.editPost('${post.id}')" class="bg-blue-500 text-white p-1.5 rounded-lg text-[10px] shadow-md hover:bg-blue-600 transition">Edit</button>
+                            <button onclick="event.stopPropagation(); window.deletePost('${post.id}')" class="bg-red-500 text-white p-1.5 rounded-lg text-[10px] shadow-md hover:bg-red-600 transition">Hapus</button>
                         </div>
                     </div>`).join('');
             }
             if(textPosts.length === 0) { textContainer.innerHTML = '<div class="text-center p-5 text-gray-400 text-xs font-bold uppercase tracking-widest">Belum ada status teks.</div>'; }
             else {
                 textContainer.innerHTML = textPosts.map(post => `
-                    <div class="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm relative group mb-4 cursor-pointer hover:shadow-md transition" onclick="window.viewPost(${post.id})">
+                    <div class="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm relative group mb-4 cursor-pointer hover:shadow-md transition" onclick="window.viewPost('${post.id}')">
                         <div class="absolute top-4 right-4 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="event.stopPropagation(); window.editPost(${post.id})" class="text-blue-500 text-xs font-bold hover:underline">Edit</button>
-                            <button onclick="event.stopPropagation(); window.deletePost(${post.id})" class="text-red-500 text-xs font-bold hover:underline">Hapus</button>
+                            <button onclick="event.stopPropagation(); window.editPost('${post.id}')" class="text-blue-500 text-xs font-bold hover:underline">Edit</button>
+                            <button onclick="event.stopPropagation(); window.deletePost('${post.id}')" class="text-red-500 text-xs font-bold hover:underline">Hapus</button>
                         </div>
                         <p class="text-[9px] text-gray-400 uppercase tracking-widest mb-3 font-black">${post.date}</p>
                         <p class="text-gray-800 font-medium text-sm whitespace-pre-line pr-16">${post.caption}</p>
@@ -844,7 +860,7 @@
         };
 
         window.editPost = async (postId) => {
-            const post = appData.feedPosts.find(p => p.id === postId); if(!post) return;
+            const post = appData.feedPosts.find(p => String(p.id) === String(postId)); if(!post) return;
             const newCaption = prompt("Edit teks postingan kamu:", post.caption);
             if(newCaption !== null && newCaption.trim() !== "") {
                 post.caption = newCaption; window.saveData(false); window.renderProfileFeed(); window.renderFeed();
@@ -854,18 +870,26 @@
 
         window.deletePost = async (postId) => {
             if(!confirm("Yakin ingin menghapus postingan ini?")) return;
-            appData.feedPosts = appData.feedPosts.filter(p => p.id !== postId); window.saveData(false); window.renderProfileFeed(); window.renderFeed();
+            appData.feedPosts = appData.feedPosts.filter(p => String(p.id) !== String(postId)); window.saveData(false); window.renderProfileFeed(); window.renderFeed();
             if(supabaseClient) { const { error } = await supabaseClient.from('posts').delete().eq('id', postId); if(error) alert("Gagal hapus: " + error.message); }
         };
 
-        // --- TAMPILAN DAN FUNGSI STANDAR ---
-        const STATIC_LIBRARY_DATA = [ { id: 'lib-1', name: 'Atomic Habits', desc: 'Perubahan kecil yang memberikan hasil luar biasa dalam habit finansial.', file: 'modul 1', sampul: 'smodul 1' }, { id: 'lib-2', name: 'Berani Tidak Disukai', desc: 'Melihat hidup dan kebebasan finansial dari sudut pandang Adler.', file: 'modul 2', sampul: 'smodul 2' }, { id: 'lib-3', name: 'Berdamai Dengan Diri Sendiri', desc: 'Seni menerima diri dan mengelola emosi dalam setiap transaksi.', file: 'modul 3', sampul: 'smodul 3' }, { id: 'lib-4', name: 'Bicara Itu Ada Seninya', desc: 'Seni berkomunikasi secara efektif dalam negosiasi dan hubungan profesional.', file: 'modul 4', sampul: 'smodul 4' }, { id: 'lib-5', name: 'Black Holes', desc: 'Menjelajahi misteri terdalam alam semesta melalui pemahaman fisika modern.', file: 'modul 5', sampul: 'smodul 5' }, { id: 'lib-6', name: 'Dark Psychology', desc: 'Memahami teknik persuasi dan manipulasi psikologis untuk proteksi diri.', file: 'modul 6', sampul: 'smodul 6' }, { id: 'lib-7', name: 'The Principles of Power', desc: 'Strategi kekuasaan dan kepemimpinan dalam lingkungan yang kompetitif.', file: 'modul 7', sampul: 'smodul 7' }, { id: 'lib-8', name: 'Filosofi Teras', desc: 'Penerapan Stoikisme untuk hidup yang lebih tenang di dunia yang kacau.', file: 'modul 8', sampul: 'smodul 8' }, { id: 'lib-9', name: 'Is it Bad or Good Habits', desc: 'Analisis mendalam mengenai kebiasaan harian dan dampaknya bagi masa depan.', file: 'modul 9', sampul: 'smodul 9' }, { id: 'lib-10', name: 'The Psychology of Money', desc: 'Memahami hubungan psikologis antara manusia dengan uang dan kekayaan.', file: 'modul 10', sampul: 'smodul 10' }, { id: 'lib-11', name: 'Rahasia Bersikap Tenang Dalam Kondisi Apapun', desc: 'Teknik kontrol diri dan manajemen stres dalam situasi krisis.', file: 'modul 11', sampul: 'smodul 11' }, { id: 'lib-12', name: 'Sebuah Seni Untuk Bersikap Bodo Amat', desc: 'Cara memilih hal-hal yang benar-benar layak dipedulikan dalam hidup.', file: 'modul 12', sampul: 'smodul 12' }, { id: 'lib-13', name: 'Seni Membaca Pikiran dan Perasaan Orang Lain', desc: 'Meningkatkan empati dan kemampuan observasi karakter melalui bahasa tubuh.', file: 'modul 13', sampul: 'smodul 13' } ];
+        // --- SHARE CARD LOGIC ---
+        window.shareContent = (type, id) => {
+            try {
+                let title = "", base = 0, current = 0; const recs = appData.settings.mode === 'simple' ? appData.simpleRecords : appData.complexRecords;
+                if(type === 'portfolio') { title = "Total Portofolio"; recs.forEach(r => { base += parseFloat(r.baseAmount)||0; let b = parseFloat(r.baseAmount)||0; (r.transactions||[]).forEach(t => t.type === 'income' ? b += (parseFloat(t.amount)||0) : b -= (parseFloat(t.amount)||0)); current += b; }); } 
+                else if (type === 'book') { const r = recs.find(x => String(x.id) === String(id)); if(!r) { alert("Buku tidak ditemukan!"); return; } title = `Buku ${r.name}`; base = parseFloat(r.baseAmount)||0; current = base; (r.transactions||[]).forEach(t => t.type === 'income' ? current += (parseFloat(t.amount)||0) : current -= (parseFloat(t.amount)||0)); }
 
-        window.renderLibrary = () => {
-            const container = document.getElementById('library-container'); if(!container) return;
-            container.innerHTML = STATIC_LIBRARY_DATA.map(mod => `<div class="card library-card p-0 text-left relative group"><div class="library-thumb text-left"><img src="./sampul_modul/${mod.sampul}.jpg" alt="${mod.name}" onerror="this.src='https://placehold.co/300x400?text=${mod.name}'"><div class="absolute top-3 right-3 bg-black/60 backdrop-blur px-2.5 py-1.5 rounded-xl text-[8px] text-white font-black uppercase tracking-widest text-left">SECURE</div></div><div class="p-6 flex-grow flex flex-col text-left"><h3 class="font-black text-xs text-gray-900 line-clamp-2 leading-tight uppercase text-left">${mod.name}</h3><p class="text-[10px] text-gray-400 mt-2 line-clamp-3 leading-relaxed text-left text-left text-left">${mod.desc}</p><div class="mt-auto pt-6 text-left"><a href="./modul/${mod.file}.pdf" target="_blank" class="w-full inline-flex justify-center items-center py-3 bg-emerald-50 text-emerald-600 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-emerald-500 hover:text-white transition-all shadow-sm">Buka Modul</a></div></div></div>`).join('');
+                let diff = current - base; let percentage = base > 0 ? (diff / base) * 100 : 0; let isPlus = diff >= 0;
+                document.getElementById('share-card-subtitle').innerText = `Return ${title}`; document.getElementById('share-card-base').innerText = window.formatMoney(base); document.getElementById('share-card-current').innerText = window.formatMoney(current);
+                const percEl = document.getElementById('share-card-percentage'); percEl.innerText = `${isPlus ? '+' : ''}${percentage.toFixed(2)}%`; percEl.style.color = isPlus ? '#10b981' : '#ef4444';
+                appData.currentShareData = { title, percentage, isPlus }; window.openModal('share-preview');
+            } catch(e) { alert("Error Share: " + e.message); }
         };
+        window.downloadShareCard = () => { html2canvas(document.getElementById('capture-area'), { backgroundColor: '#18181b', scale: 2 }).then(canvas => { const link = document.createElement('a'); link.download = `JvFinance_Share_${Date.now()}.png`; link.href = canvas.toDataURL('image/png'); link.click(); }); };
 
+        // --- NAVIGATION & LOKAL CRUD ---
         window.setView = function(viewName, pushState = true) {
             document.getElementById('dropdownMenu').classList.add('hidden');
             
