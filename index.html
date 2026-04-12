@@ -8,19 +8,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8568574931430136" crossorigin="anonymous"></script>
-    <meta name="google-adsense-account" content="ca-pub-8568574931430136">
     <style>
-        :root {
-            --primary-color: #10b981; 
-            --income-color: #10b981;
-            --expense-color: #ef4444;
-        }
+        :root { --primary-color: #10b981; --income-color: #10b981; --expense-color: #ef4444; }
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease; overflow-x: hidden; background-color: #f9fafb; }
         .theme-green { --primary-color: #10b981; } .theme-red { --primary-color: #ef4444; } .theme-purple { --primary-color: #a855f7; } .theme-black { --primary-color: #374151; }
 
@@ -41,8 +35,7 @@
         
         .library-card img { transition: transform 0.5s ease; } .library-card:hover img { transform: scale(1.05); }
         .modal-overlay { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 1000; }
-
-        /* Styling Auth & Share */
+        
         .auth-tab-active { border-bottom: 3px solid var(--primary-color); color: var(--primary-color); }
         #capture-area { background: #1e1e1e; }
     </style>
@@ -75,27 +68,13 @@
                     </button>
                     
                     <div id="dropdownMenu" class="hidden absolute right-0 top-12 w-64 rounded-[2rem] overflow-hidden py-3 bg-white border border-gray-100 shadow-2xl">
-                        <div class="px-6 py-2 border-b border-gray-50 mb-2">
-                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Navigation</p>
-                        </div>
-                        <button onclick="window.setView('dashboard')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm transition-colors">
-                            <svg class="text-emerald-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg> Dashboard
-                        </button>
-                        <button onclick="window.setView('portfolio')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm transition-colors">
-                            <svg class="text-blue-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg> Portofolio
-                        </button>
-                        <button onclick="window.setView('library')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm border-b border-gray-50 transition-colors">
-                            <svg class="text-purple-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6"/><path d="M8 11h8"/></svg> Library Zone
-                        </button>
-                        <button onclick="window.setView('profile')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm transition-colors">
-                            <svg class="text-orange-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil Saya
-                        </button>
-                        <button onclick="window.setView('settings')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-400 font-bold text-sm transition-colors border-b border-gray-50">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 1 0 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Pengaturan
-                        </button>
-                        <button id="logout-menu-item" onclick="window.logout()" class="hidden w-full text-left px-6 py-3 hover:bg-red-50 flex items-center gap-4 text-red-500 font-bold text-sm transition-colors border-t border-gray-100">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Keluar Akun
-                        </button>
+                        <div class="px-6 py-2 border-b border-gray-50 mb-2"><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Navigation</p></div>
+                        <button onclick="window.setView('dashboard')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm transition-colors"><svg class="text-emerald-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg> Dashboard</button>
+                        <button onclick="window.setView('portfolio')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm transition-colors"><svg class="text-blue-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg> Portofolio</button>
+                        <button onclick="window.setView('library')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm border-b border-gray-50 transition-colors"><svg class="text-purple-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6"/><path d="M8 11h8"/></svg> Library Zone</button>
+                        <button onclick="window.setView('profile')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm transition-colors"><svg class="text-orange-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil Saya</button>
+                        <button onclick="window.setView('settings')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-400 font-bold text-sm transition-colors border-b border-gray-50"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 1 0 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Pengaturan</button>
+                        <button id="logout-menu-item" onclick="window.logout()" class="hidden w-full text-left px-6 py-3 hover:bg-red-50 flex items-center gap-4 text-red-500 font-bold text-sm transition-colors border-t border-gray-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Keluar Akun</button>
                     </div>
                 </div>
             </div>
@@ -107,7 +86,7 @@
         <div id="view-feed" class="hidden space-y-8 animate-in fade-in duration-500 max-w-2xl mx-auto">
             <div class="flex justify-between items-center border-b border-gray-200 pb-4">
                 <h1 class="text-3xl font-black text-gray-900 tracking-tighter">Beranda Publik</h1>
-                <button onclick="window.loadFeedFromDB()" class="text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded-full font-bold uppercase tracking-wider hover:bg-gray-300">↻ Refresh</button>
+                <button onclick="window.loadFeedFromDB()" class="text-xs bg-gray-200 text-gray-700 px-3 py-1.5 rounded-full font-bold uppercase tracking-wider hover:bg-gray-300 transition">↻ Refresh</button>
             </div>
             <div id="feed-container" class="space-y-6"></div>
         </div>
@@ -234,7 +213,6 @@
                 <div class="flex gap-2">
                     <button onclick="window.checkAuthAndShare('book', appData.selectedRecordId)" class="bg-gray-800 text-white px-5 py-3 rounded-xl font-bold hover:bg-black transition-all flex items-center gap-2 text-xs uppercase tracking-widest">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                        Share
                     </button>
                     <button onclick="window.openModal('transaction')" class="btn-primary shadow-2xl shadow-emerald-200">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg> Catat Transaksi
@@ -316,7 +294,15 @@
             
             <div class="mt-12 pt-8">
                 <h3 class="text-2xl font-black text-gray-900 tracking-tighter mb-6 text-center">Postingan Saya</h3>
-                <div id="profile-feed-container" class="grid grid-cols-2 md:grid-cols-3 gap-2"></div>
+                
+                <div class="flex justify-center gap-4 mb-8 border-b border-gray-200 max-w-sm mx-auto">
+                    <button id="tab-profile-photo" onclick="window.switchProfileTab('photo')" class="pb-3 font-black auth-tab-active flex-1 text-center tracking-widest uppercase text-[10px]">📷 Foto</button>
+                    <button id="tab-profile-text" onclick="window.switchProfileTab('text')" class="pb-3 font-black text-gray-400 flex-1 text-center tracking-widest uppercase text-[10px]">📝 Teks</button>
+                </div>
+
+                <div id="profile-feed-photo-container" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+                
+                <div id="profile-feed-text-container" class="hidden space-y-4 max-w-lg mx-auto"></div>
             </div>
         </div>
 
@@ -394,7 +380,7 @@
                 <button onclick="window.closeModal('create-post')" class="text-gray-400 hover:text-black font-bold">✖</button>
             </div>
             <div class="space-y-4">
-                <textarea id="post-caption" placeholder="Tulis sesuatu untuk komunitas..." class="w-full p-4 border rounded-2xl outline-none h-32 font-medium"></textarea>
+                <textarea id="post-caption" placeholder="Apa yang kamu pikirkan? Tulis sesuatu..." class="w-full p-4 border rounded-2xl outline-none h-32 font-medium"></textarea>
                 
                 <div id="post-image-preview-container" class="hidden relative">
                     <img id="post-image-preview" src="" class="w-full rounded-xl object-cover max-h-64 shadow-inner">
@@ -501,8 +487,8 @@
     </footer>
 
     <script>
-        // --- 1. INISIALISASI DASAR ---
-        let appData = {
+        // --- 1. INISIALISASI DASAR LOKAL ---
+        const DEFAULT_APP_DATA = {
             profile: { name: "User", hobby: "", goal: "", avatar: "" },
             settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } },
             simpleRecords: [], complexRecords: [], feedPosts: [],
@@ -510,6 +496,7 @@
             selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null
         };
         
+        let appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
         let currentUser = null, authMode = 'login', currentPostImage = null;
         let portfolioChart = null, bookChart = null, dashQuickChart = null, complexIncChart = null, complexExpChart = null;
         let chartDataCache = {};
@@ -524,30 +511,62 @@
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
         };
 
-        window.saveData = () => { localStorage.setItem(STORAGE_KEY, CryptoJS.AES.encrypt(JSON.stringify(appData), ENCRYPT_KEY).toString()); };
+        // --- 2. SETUP SUPABASE & SINKRONISASI CLOUD ---
+        let supabaseClient = null;
+        try {
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient("https://cgqrzxlutpbnlfsfmpkv.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNncXJ6eGx1dHBibmxmc2ZtcGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NDAwNDUsImV4cCI6MjA5MTUxNjA0NX0.gjv6F5lhbfXc0Bxl1Hr7C9nB3XIe3fKmkLBgD8PfA9E");
+                
+                supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                    currentUser = session?.user || null;
+                    const authBtn = document.getElementById('auth-btn'); const logoutMenu = document.getElementById('logout-menu-item');
+                    
+                    if(currentUser) { 
+                        if(authBtn && logoutMenu) { authBtn.innerText = "Terhubung"; authBtn.classList.replace('bg-emerald-500', 'bg-gray-800'); authBtn.classList.replace('hover:bg-emerald-600', 'hover:bg-gray-700'); logoutMenu.classList.remove('hidden'); }
+                        
+                        const { data, error } = await supabaseClient.from('user_data').select('app_state').eq('user_id', currentUser.id).single();
+                        if (data && data.app_state) {
+                            try {
+                                const cloudData = JSON.parse(data.app_state);
+                                appData = { ...DEFAULT_APP_DATA, ...cloudData };
+                                window.saveData(false);
+                            } catch(e) {}
+                        } else {
+                            window.saveData(true);
+                        }
+                        window.updateUI();
+                        window.loadFeedFromDB();
+
+                    } else { 
+                        if(authBtn && logoutMenu) { authBtn.innerText = "Login"; authBtn.classList.replace('bg-gray-800', 'bg-emerald-500'); authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600'); logoutMenu.classList.add('hidden'); }
+                        if(event === 'SIGNED_OUT') {
+                            appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
+                            window.saveData(false);
+                            window.updateUI();
+                        }
+                    }
+                });
+            }
+        } catch (error) { console.error("Database tidak dapat dijangkau", error); }
+
+        window.saveData = (syncCloud = true) => { 
+            localStorage.setItem(STORAGE_KEY, CryptoJS.AES.encrypt(JSON.stringify(appData), ENCRYPT_KEY).toString()); 
+            if(syncCloud && currentUser && supabaseClient) {
+                supabaseClient.from('user_data').upsert([
+                    { user_id: currentUser.id, app_state: JSON.stringify(appData) }
+                ], { onConflict: 'user_id' }).then(({error}) => {
+                    if(error) console.error("Gagal sinkronisasi awan:", error);
+                });
+            }
+        };
+
         window.loadData = () => {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) { try { appData = { ...appData, ...JSON.parse(CryptoJS.AES.decrypt(saved, ENCRYPT_KEY).toString(CryptoJS.enc.Utf8)) }; } catch(e) {} }
             if(!appData.feedPosts) appData.feedPosts = [];
             if(!appData.profile.avatar) appData.profile.avatar = "";
+            window.loadFeedFromDB();
         };
-
-        // --- 2. SETUP SUPABASE ---
-        let supabaseClient = null;
-        try {
-            if (window.supabase) {
-                supabaseClient = window.supabase.createClient("https://cgqrzxlutpbnlfsfmpkv.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNncXJ6eGx1dHBibmxmc2ZtcGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NDAwNDUsImV4cCI6MjA5MTUxNjA0NX0.gjv6F5lhbfXc0Bxl1Hr7C9nB3XIe3fKmkLBgD8PfA9E");
-                supabaseClient.auth.onAuthStateChange((event, session) => {
-                    currentUser = session?.user || null;
-                    const authBtn = document.getElementById('auth-btn'); const logoutMenu = document.getElementById('logout-menu-item');
-                    if(authBtn && logoutMenu) {
-                        if(currentUser) { authBtn.innerText = "Terhubung"; authBtn.classList.replace('bg-emerald-500', 'bg-gray-800'); authBtn.classList.replace('hover:bg-emerald-600', 'hover:bg-gray-700'); logoutMenu.classList.remove('hidden'); } 
-                        else { authBtn.innerText = "Login"; authBtn.classList.replace('bg-gray-800', 'bg-emerald-500'); authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600'); logoutMenu.classList.add('hidden'); }
-                    }
-                });
-                setTimeout(() => window.loadFeedFromDB(), 500); 
-            }
-        } catch (error) { console.error("Database tidak dapat dijangkau", error); }
 
         // --- 3. AUTH LOGIC ---
         window.switchAuthTab = (mode) => {
@@ -555,18 +574,16 @@
             const passInput = document.getElementById('auth-password');
             if(mode === 'login') { 
                 document.getElementById('tab-login').className = "pb-2 font-bold auth-tab-active flex-1"; document.getElementById('tab-register').className = "pb-2 font-bold text-gray-400 flex-1"; 
-                document.getElementById('btn-auth-action').innerText = "Masuk Sekarang"; 
-                passInput.placeholder = "Masukkan Password";
+                document.getElementById('btn-auth-action').innerText = "Masuk Sekarang"; passInput.placeholder = "Masukkan Password";
             } 
             else { 
                 document.getElementById('tab-register').className = "pb-2 font-bold auth-tab-active flex-1"; document.getElementById('tab-login').className = "pb-2 font-bold text-gray-400 flex-1"; 
-                document.getElementById('btn-auth-action').innerText = "Buat Akun Baru"; 
-                passInput.placeholder = "Buat Password";
+                document.getElementById('btn-auth-action').innerText = "Buat Akun Baru"; passInput.placeholder = "Buat Password";
             }
         };
 
         window.processAuth = async () => {
-            if(!supabaseClient) return alert("Sistem database sedang gangguan/offline.");
+            if(!supabaseClient) return alert("Sistem database sedang offline.");
             const email = document.getElementById('auth-email').value, password = document.getElementById('auth-password').value;
             const errEl = document.getElementById('auth-error'), succEl = document.getElementById('auth-success');
             errEl.classList.add('hidden'); succEl.classList.add('hidden');
@@ -584,16 +601,14 @@
         };
 
         window.logout = async () => { if(supabaseClient) await supabaseClient.auth.signOut(); alert("Berhasil Logout."); document.getElementById('dropdownMenu').classList.add('hidden'); window.setView('dashboard'); };
-        window.checkAuthAndOpenModal = (modalId) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk membagikan info ke komunitas!"); return; } window.openModal(modalId); };
+        window.checkAuthAndOpenModal = (modalId) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk membagikan sesuatu ke publik!"); return; } window.openModal(modalId); };
         window.checkAuthAndShare = (type, id) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk membagikan portofolio kamu!"); return; } window.shareContent(type, id); };
 
-        // --- 4. MEDIA & SOCIAL LOGIC ---
+        // --- 4. MEDIA, POSTINGAN & OPTIMISTIC UI LOGIC ---
         window.handleAvatarUpload = (e) => {
-            const file = e.target.files[0]; if(!file) return;
-            const reader = new FileReader();
+            const file = e.target.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
+                const img = new Image(); img.onload = () => {
                     const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
                     let w = img.width, h = img.height, maxSize = 200;
                     if(w > h) { if(w > maxSize) { h *= maxSize/w; w = maxSize; } } else { if(h > maxSize) { w *= maxSize/h; h = maxSize; } }
@@ -605,16 +620,14 @@
         };
 
         window.handlePostImageUpload = (e) => {
-             const file = e.target.files[0]; if(!file) return;
-            const reader = new FileReader();
+             const file = e.target.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
+                const img = new Image(); img.onload = () => {
                     const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                    let w = img.width, h = img.height, maxSize = 800; // Dikompres
+                    let w = img.width, h = img.height, maxSize = 600; // Dikompres untuk efisiensi
                     if(w > h) { if(w > maxSize) { h *= maxSize/w; w = maxSize; } } else { if(h > maxSize) { w *= maxSize/h; h = maxSize; } }
                     canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
-                    currentPostImage = canvas.toDataURL('image/jpeg', 0.8);
+                    currentPostImage = canvas.toDataURL('image/jpeg', 0.7);
                     document.getElementById('post-image-preview').src = currentPostImage;
                     document.getElementById('post-image-preview-container').classList.remove('hidden');
                 }; img.src = event.target.result;
@@ -623,78 +636,154 @@
 
         window.removePostImage = () => { currentPostImage = null; document.getElementById('post-image-preview-container').classList.add('hidden'); document.getElementById('post-image-upload').value = ''; };
 
-        window.loadFeedFromDB = async () => {
-            if(!supabaseClient) return;
-            try { const { data, error } = await supabaseClient.from('posts').select('*').order('id', { ascending: false }); if (!error && data) { appData.feedPosts = data; if(!document.getElementById('view-feed').classList.contains('hidden')) window.renderFeed(); if(!document.getElementById('view-profile').classList.contains('hidden')) window.renderProfileFeed(); } } catch (err) {}
-        };
-
+        // OPTIMISTIC UI: LANGSUNG UPDATE LOKAL BIAR CEPAT
         window.publishPost = async () => {
-            if(!currentUser || !supabaseClient) return;
+            if(!currentUser) return alert("Silakan Login Terlebih Dahulu");
             const caption = document.getElementById('post-caption').value; 
-            if(!caption && !currentPostImage) return alert("Isi teks atau tambahkan gambar dulu!");
+            if(!caption && !currentPostImage) return alert("Tulis sesuatu atau tambahkan foto!");
             
-            document.getElementById('btn-publish-post').innerText = "Mengirim...";
-            const { error } = await supabaseClient.from('posts').insert([{ 
-                user_id: currentUser.id, 
-                author: appData.profile.name || "User", 
-                author_avatar: appData.profile.avatar || "",
-                caption: caption, 
-                date: new Date().toLocaleDateString('id-ID'), 
-                is_share_card: !!currentPostImage, 
-                image_data: currentPostImage || "",
-                likes: 0 
-            }]);
+            const newPost = {
+                id: Date.now(), user_id: currentUser.id, author: appData.profile.name || "User", author_avatar: appData.profile.avatar || "",
+                caption: caption, date: new Date().toLocaleDateString('id-ID'), is_share_card: !!currentPostImage, image_data: currentPostImage || "", likes: 0 
+            };
 
-            document.getElementById('btn-publish-post').innerText = "Bagikan Sekarang";
-            if (error) alert("Gagal membagikan postingan! (Pastikan ada kolom 'author_avatar' di Supabase)"); 
-            else { document.getElementById('post-caption').value = ''; window.removePostImage(); window.closeModal('create-post'); window.loadFeedFromDB(); window.setView('feed'); }
+            // 1. Simpan Lokal Dulu (Biar Langsung Tampil)
+            appData.feedPosts.unshift(newPost); window.saveData(false);
+            document.getElementById('post-caption').value = ''; window.removePostImage(); window.closeModal('create-post'); window.setView('feed');
+            
+            // 2. Kirim ke Database di Latar Belakang (Sync)
+            if(supabaseClient) {
+                const { error } = await supabaseClient.from('posts').insert([newPost]);
+                if (error) console.error("Gagal sync ke cloud:", error);
+            }
         };
 
         window.postShareCardToFeed = () => {
-            if(!currentUser || !supabaseClient) return;
-            document.getElementById('btn-post-share').innerText = "Memproses...";
+            if(!currentUser) return;
+            document.getElementById('btn-post-share').innerText = "Menyiapkan...";
             html2canvas(document.getElementById('capture-area'), { backgroundColor: '#18181b', scale: 2 }).then(async canvas => {
-                const imgData = canvas.toDataURL('image/png'), data = appData.currentShareData;
-                const { error } = await supabaseClient.from('posts').insert([{ user_id: currentUser.id, author: appData.profile.name || "User", author_avatar: appData.profile.avatar || "", caption: `Update ${data.title}! Return saat ini di angka ${data.isPlus ? '+' : ''}${data.percentage.toFixed(2)}%. 🚀`, date: new Date().toLocaleDateString('id-ID'), is_share_card: true, image_data: imgData, likes: 0 }]);
-                document.getElementById('btn-post-share').innerText = "🚀 Post Feed";
-                if(error) alert("Gagal membagikan portofolio!"); else { window.closeModal('share-preview'); window.loadFeedFromDB(); window.setView('feed'); }
+                const imgData = canvas.toDataURL('image/png', 0.8), data = appData.currentShareData;
+                
+                const newPost = {
+                    id: Date.now(), user_id: currentUser.id, author: appData.profile.name || "User", author_avatar: appData.profile.avatar || "",
+                    caption: `Update ${data.title}! Return saat ini di angka ${data.isPlus ? '+' : ''}${data.percentage.toFixed(2)}%. 🚀`,
+                    date: new Date().toLocaleDateString('id-ID'), is_share_card: true, image_data: imgData, likes: 0 
+                };
+
+                // 1. Optimistic Update (Lokal)
+                appData.feedPosts.unshift(newPost); window.saveData(false); window.closeModal('share-preview'); window.setView('feed'); document.getElementById('btn-post-share').innerText = "🚀 Post Feed";
+
+                // 2. Sync Database
+                if(supabaseClient) {
+                    const { error } = await supabaseClient.from('posts').insert([newPost]);
+                    if (error) console.error("Gagal sync Share Portofolio", error);
+                }
             });
         };
 
+        window.syncFeedFromDB = async () => {
+            if(!supabaseClient) return;
+            try { const { data, error } = await supabaseClient.from('posts').select('*').order('id', { ascending: false }); if (!error && data) { appData.feedPosts = data; window.saveData(false); if(!document.getElementById('view-feed').classList.contains('hidden')) window.renderFeed(); if(!document.getElementById('view-profile').classList.contains('hidden')) window.renderProfileFeed(); } } catch (err) {}
+        };
+        window.loadFeedFromDB = window.syncFeedFromDB; 
+
         window.renderFeed = () => {
             const container = document.getElementById('feed-container');
-            if(appData.feedPosts.length === 0) { container.innerHTML = '<div class="text-center p-10 text-gray-400 font-bold border-2 border-dashed rounded-3xl">Belum ada postingan komunitas.</div>'; return; }
+            if(appData.feedPosts.length === 0) { container.innerHTML = '<div class="text-center p-10 text-gray-400 font-bold border-2 border-dashed rounded-3xl">Belum ada postingan komunitas. Jadilah yang pertama!</div>'; return; }
             container.innerHTML = appData.feedPosts.map(post => `
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-6">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-black overflow-hidden border border-gray-200">
+                        <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-black overflow-hidden border border-gray-200 shrink-0">
                             ${post.author_avatar ? `<img src="${post.author_avatar}" class="w-full h-full object-cover">` : post.author.charAt(0)}
                         </div>
                         <div><p class="font-black text-sm">${post.author}</p><p class="text-[10px] text-gray-400 uppercase tracking-widest">${post.date}</p></div>
                     </div>
-                    ${post.image_data ? `<img src="${post.image_data}" class="w-full rounded-2xl mb-4 border border-gray-100 shadow-sm object-cover" />` : ''}
+                    ${post.image_data ? `<img src="${post.image_data}" class="w-full rounded-2xl mb-4 border border-gray-100 shadow-sm object-cover max-h-96" />` : ''}
                     ${post.caption ? `<p class="text-gray-800 font-medium text-sm leading-relaxed whitespace-pre-line">${post.caption}</p>` : ''}
                     <div class="flex gap-4 mt-6 pt-4 border-t border-gray-50">
-                        <button onclick="alert('Komentar segera hadir!')" class="flex items-center gap-2 text-gray-400 hover:text-blue-500 transition font-bold text-xs">💬 Komentar</button>
+                        <button onclick="alert('Komentar akan segera hadir!')" class="flex items-center gap-2 text-gray-400 hover:text-blue-500 transition font-bold text-xs">💬 Komentar</button>
                     </div>
                 </div>`).join('');
         };
 
-        window.renderProfileFeed = () => {
-            const container = document.getElementById('profile-feed-container');
-            const myPosts = appData.feedPosts.filter(p => p.user_id === (currentUser?.id || "none"));
-            if(myPosts.length === 0) { container.innerHTML = '<div class="col-span-3 text-center p-5 text-gray-400 text-xs font-bold uppercase tracking-widest">Belum ada postingan.</div>'; return; }
-            
-            container.innerHTML = myPosts.map(post => {
-                if(post.image_data) {
-                    return `<div class="aspect-square bg-gray-100 rounded-xl overflow-hidden border border-gray-200"><img src="${post.image_data}" class="w-full h-full object-cover object-top" /></div>`;
-                } else {
-                    return `<div class="aspect-square bg-emerald-50 rounded-xl border border-emerald-100 p-4 flex flex-col justify-center items-center text-center overflow-hidden"><p class="text-[10px] font-bold text-emerald-700 line-clamp-5">${post.caption}</p></div>`;
-                }
-            }).join('');
+        // --- PROFILE FEED TABS & EDIT LOGIC ---
+        window.switchProfileTab = (tab) => {
+            if(tab === 'photo') {
+                document.getElementById('tab-profile-photo').className = "pb-3 font-black auth-tab-active flex-1 text-center tracking-widest uppercase text-[10px]";
+                document.getElementById('tab-profile-text').className = "pb-3 font-black text-gray-400 flex-1 text-center tracking-widest uppercase text-[10px]";
+                document.getElementById('profile-feed-photo-container').classList.remove('hidden');
+                document.getElementById('profile-feed-text-container').classList.add('hidden');
+            } else {
+                document.getElementById('tab-profile-text').className = "pb-3 font-black auth-tab-active flex-1 text-center tracking-widest uppercase text-[10px]";
+                document.getElementById('tab-profile-photo').className = "pb-3 font-black text-gray-400 flex-1 text-center tracking-widest uppercase text-[10px]";
+                document.getElementById('profile-feed-text-container').classList.remove('hidden');
+                document.getElementById('profile-feed-photo-container').classList.add('hidden');
+            }
         };
 
-        // --- 5. LOKAL RECORD LOGIC ---
+        window.renderProfileFeed = () => {
+            const photoContainer = document.getElementById('profile-feed-photo-container');
+            const textContainer = document.getElementById('profile-feed-text-container');
+            const myPosts = appData.feedPosts.filter(p => p.user_id === (currentUser?.id || "none") || p.author === appData.profile.name);
+            
+            const imagePosts = myPosts.filter(p => p.image_data);
+            const textPosts = myPosts.filter(p => !p.image_data);
+
+            if(imagePosts.length === 0) { photoContainer.innerHTML = '<div class="col-span-3 text-center p-5 text-gray-400 text-xs font-bold uppercase tracking-widest">Belum ada foto.</div>'; }
+            else {
+                photoContainer.innerHTML = imagePosts.map(post => `
+                    <div class="relative aspect-square bg-gray-100 rounded-xl overflow-hidden border border-gray-200 group">
+                        <img src="${post.image_data}" class="w-full h-full object-cover object-top" />
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="window.editPost(${post.id})" class="bg-blue-500 text-white p-1.5 rounded-lg text-[10px] shadow-md hover:bg-blue-600 transition">Edit</button>
+                            <button onclick="window.deletePost(${post.id})" class="bg-red-500 text-white p-1.5 rounded-lg text-[10px] shadow-md hover:bg-red-600 transition">Hapus</button>
+                        </div>
+                    </div>`).join('');
+            }
+
+            if(textPosts.length === 0) { textContainer.innerHTML = '<div class="text-center p-5 text-gray-400 text-xs font-bold uppercase tracking-widest">Belum ada status teks.</div>'; }
+            else {
+                textContainer.innerHTML = textPosts.map(post => `
+                    <div class="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm relative group mb-4">
+                        <div class="absolute top-4 right-4 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="window.editPost(${post.id})" class="text-blue-500 text-xs font-bold hover:underline">Edit</button>
+                            <button onclick="window.deletePost(${post.id})" class="text-red-500 text-xs font-bold hover:underline">Hapus</button>
+                        </div>
+                        <p class="text-[9px] text-gray-400 uppercase tracking-widest mb-3 font-black">${post.date}</p>
+                        <p class="text-gray-800 font-medium text-sm whitespace-pre-line pr-16">${post.caption}</p>
+                    </div>`).join('');
+            }
+        };
+
+        window.editPost = async (postId) => {
+            const post = appData.feedPosts.find(p => p.id === postId); if(!post) return;
+            const newCaption = prompt("Edit teks postingan kamu:", post.caption);
+            if(newCaption !== null && newCaption.trim() !== "") {
+                post.caption = newCaption; window.saveData(false); window.renderProfileFeed(); window.renderFeed();
+                if(supabaseClient) { const { error } = await supabaseClient.from('posts').update({ caption: newCaption }).eq('id', postId); if(error) console.error("Gagal update cloud."); }
+            }
+        };
+
+        window.deletePost = async (postId) => {
+            if(!confirm("Yakin ingin menghapus postingan ini?")) return;
+            appData.feedPosts = appData.feedPosts.filter(p => p.id !== postId); window.saveData(false); window.renderProfileFeed(); window.renderFeed();
+            if(supabaseClient) { const { error } = await supabaseClient.from('posts').delete().eq('id', postId); if(error) console.error("Gagal hapus cloud."); }
+        };
+
+        // --- 5. SHARE CARD LOGIC ---
+        window.shareContent = (type, id) => {
+            let title = "", base = 0, current = 0; const recs = appData.settings.mode === 'simple' ? appData.simpleRecords : appData.complexRecords;
+            if(type === 'portfolio') { title = "Total Portofolio"; recs.forEach(r => { base += parseFloat(r.baseAmount)||0; let b = parseFloat(r.baseAmount)||0; (r.transactions||[]).forEach(t => t.type === 'income' ? b += (parseFloat(t.amount)||0) : b -= (parseFloat(t.amount)||0)); current += b; }); } 
+            else if (type === 'book') { const r = recs.find(x => x.id === id); if(!r) return; title = `Buku ${r.name}`; base = parseFloat(r.baseAmount)||0; current = base; (r.transactions||[]).forEach(t => t.type === 'income' ? current += (parseFloat(t.amount)||0) : current -= (parseFloat(t.amount)||0)); }
+
+            let diff = current - base; let percentage = base > 0 ? (diff / base) * 100 : 0; let isPlus = diff >= 0;
+            document.getElementById('share-card-subtitle').innerText = `Return ${title}`; document.getElementById('share-card-base').innerText = window.formatMoney(base); document.getElementById('share-card-current').innerText = window.formatMoney(current);
+            const percEl = document.getElementById('share-card-percentage'); percEl.innerText = `${isPlus ? '+' : ''}${percentage.toFixed(2)}%`; percEl.style.color = isPlus ? '#10b981' : '#ef4444';
+            appData.currentShareData = { title, percentage, isPlus }; window.openModal('share-preview');
+        };
+        window.downloadShareCard = () => { html2canvas(document.getElementById('capture-area'), { backgroundColor: '#18181b', scale: 2 }).then(canvas => { const link = document.createElement('a'); link.download = `JvFinance_Share_${Date.now()}.png`; link.href = canvas.toDataURL('image/png'); link.click(); }); };
+
+        // --- 6. NAVIGATION & LOKAL CRUD (AMAN DARI CRASH) ---
         window.setView = function(viewName, pushState = true) {
             document.getElementById('dropdownMenu').classList.add('hidden');
             ['dashboard', 'record-detail', 'portfolio', 'library', 'profile', 'settings', 'feed'].forEach(v => { const el = document.getElementById(`view-${v}`); if(el) el.classList.add('hidden'); });
@@ -704,7 +793,7 @@
             if (viewName === 'record-detail') setTimeout(window.updateBookChart, 100);
             if (viewName === 'portfolio') setTimeout(window.updatePortfolio, 100);
             if (viewName === 'library') window.renderLibrary();
-            if (viewName === 'feed') window.loadFeedFromDB();
+            if (viewName === 'feed') { window.renderFeed(); window.syncFeedFromDB(); }
             if (viewName === 'profile') window.renderProfileFeed();
 
             if (pushState) history.pushState({ view: viewName }, "", "#" + viewName);
@@ -755,7 +844,6 @@
 
             const dispName = document.getElementById('display-name'); if(dispName) dispName.innerText = appData.profile.name === "User" ? "User" : appData.profile.name;
             const headName = document.getElementById('profile-header-name'); if(headName) headName.innerText = appData.profile.name === "User" ? "User" : appData.profile.name;
-            
             if(appData.profile.avatar) { const preview = document.getElementById('profile-avatar-preview'); if(preview) preview.src = appData.profile.avatar; }
 
             window.renderRecordsList(recs);
@@ -790,12 +878,8 @@
                              <button onclick="event.stopPropagation(); window.openModal('record', '${r.id}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-500 hover:text-white text-left"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
                              <button onclick="event.stopPropagation(); window.deleteRecord('${r.id}')" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-500 hover:text-white text-left text-left"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
                         </div>
-                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mb-1 text-left">${r.month}</p>
-                        <h4 class="font-black text-lg text-gray-900 leading-tight text-left text-left">${r.name}</h4>
-                        <div class="mt-4 pt-3 border-t border-gray-50 flex justify-between items-center text-left">
-                            <span class="text-[8px] font-black text-gray-300 uppercase tracking-widest text-left">SALDO</span>
-                            <span class="text-sm font-black text-emerald-600 text-left text-left">${window.formatMoney(bal)}</span>
-                        </div>
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mb-1 text-left">${r.month}</p><h4 class="font-black text-lg text-gray-900 leading-tight text-left">${r.name}</h4>
+                        <div class="mt-4 pt-3 border-t border-gray-50 flex justify-between items-center text-left"><span class="text-[8px] font-black text-gray-300 uppercase tracking-widest text-left">SALDO</span><span class="text-sm font-black text-emerald-600 text-left">${window.formatMoney(bal)}</span></div>
                     </div>`;
             }).join('');
         };
@@ -837,7 +921,7 @@
 
         window.renderLibrary = () => {
             const container = document.getElementById('library-container'); if(!container) return;
-            container.innerHTML = STATIC_LIBRARY_DATA.map(mod => `<div class="card library-card p-0 text-left relative group"><div class="library-thumb text-left text-left"><img src="./sampul_modul/${mod.sampul}.jpg" alt="${mod.name}" onerror="this.src='https://placehold.co/300x400?text=${mod.name}'"><div class="absolute top-3 right-3 bg-black/60 backdrop-blur px-2.5 py-1.5 rounded-xl text-[8px] text-white font-black uppercase tracking-widest text-left">SECURE</div></div><div class="p-6 flex-grow flex flex-col text-left"><h3 class="font-black text-xs text-gray-900 line-clamp-2 leading-tight uppercase text-left">${mod.name}</h3><p class="text-[10px] text-gray-400 mt-2 line-clamp-3 leading-relaxed text-left text-left text-left">${mod.desc}</p><div class="mt-auto pt-6 text-left"><a href="./modul/${mod.file}.pdf" target="_blank" class="w-full inline-flex justify-center items-center py-3 bg-emerald-50 text-emerald-600 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-emerald-500 hover:text-white transition-all shadow-sm">Buka Modul</a></div></div></div>`).join('');
+            container.innerHTML = STATIC_LIBRARY_DATA.map(mod => `<div class="card library-card p-0 text-left relative group"><div class="library-thumb text-left"><img src="./sampul_modul/${mod.sampul}.jpg" alt="${mod.name}" onerror="this.src='https://placehold.co/300x400?text=${mod.name}'"><div class="absolute top-3 right-3 bg-black/60 backdrop-blur px-2.5 py-1.5 rounded-xl text-[8px] text-white font-black uppercase tracking-widest text-left">SECURE</div></div><div class="p-6 flex-grow flex flex-col text-left"><h3 class="font-black text-xs text-gray-900 line-clamp-2 leading-tight uppercase text-left">${mod.name}</h3><p class="text-[10px] text-gray-400 mt-2 line-clamp-3 leading-relaxed">${mod.desc}</p><div class="mt-auto pt-6 text-left"><a href="./modul/${mod.file}.pdf" target="_blank" class="w-full inline-flex justify-center items-center py-3 bg-emerald-50 text-emerald-600 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-emerald-500 hover:text-white transition-all shadow-sm">Buka Modul</a></div></div></div>`).join('');
         };
 
         window.setAppMode = (mode) => { appData.settings.mode = mode; window.saveData(); window.updateUI(); window.updateDashboardGraph(); };
@@ -883,16 +967,12 @@
         window.setTransactionToRealTime = () => { document.getElementById('trans-date').valueAsDate = new Date(); };
         window.updateCategories = (t) => { document.getElementById('trans-category').innerHTML = CATEGORIES[t].map(c => `<option value="${c}">${c}</option>`).join(''); };
 
-        window.openSettingsTab = (tabId) => {
-            document.querySelectorAll('.settings-panel').forEach(el => el.classList.add('hidden')); document.getElementById(`settings-${tabId}`).classList.remove('hidden');
-            document.querySelectorAll('.settings-tab').forEach(btn => { btn.classList.remove('bg-emerald-50', 'text-emerald-600', 'border-l-4', 'border-emerald-500'); });
-            if (event && event.currentTarget) event.currentTarget.classList.add('bg-emerald-50', 'text-emerald-600', 'border-l-4', 'border-emerald-500');
-        };
-
+        window.openSettingsTab = (tabId) => { document.querySelectorAll('.settings-panel').forEach(el => el.classList.add('hidden')); document.getElementById(`settings-${tabId}`).classList.remove('hidden'); document.querySelectorAll('.settings-tab').forEach(btn => { btn.classList.remove('bg-emerald-50', 'text-emerald-600', 'border-l-4', 'border-emerald-500'); }); if (event && event.currentTarget) event.currentTarget.classList.add('bg-emerald-50', 'text-emerald-600', 'border-l-4', 'border-emerald-500'); };
         window.saveProfile = () => { const nameVal = document.getElementById('prof-name').value; appData.profile.name = nameVal ? nameVal : "User"; appData.profile.hobby = document.getElementById('prof-hobby').value; appData.profile.goal = document.getElementById('prof-goal').value; window.saveData(); window.updateUI(); alert("Profil berhasil diperbarui!"); };
         window.saveSettingsProfile = () => { const nameVal = document.getElementById('settings-prof-name').value; appData.profile.name = nameVal ? nameVal : "User"; appData.profile.hobby = document.getElementById('settings-prof-hobby').value; appData.profile.goal = document.getElementById('settings-prof-goal').value; window.saveData(); window.updateUI(); alert("Profil berhasil diperbarui!"); };
         window.saveNotifications = () => { appData.settings.notifications = { email: document.getElementById('notif-email').checked, alert: document.getElementById('notif-alert').checked, budget: document.getElementById('notif-budget').checked }; window.saveData(); };
 
+        // --- CHARTS INIT ---
         window.initCharts = function() {
             const opts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } }, onClick: (e, el) => { if (el.length > 0 && bookChart) { const idx = el[0].index; const key = bookChart.rawDates[idx]; const info = chartDataCache[key]; if (info) window.showChartDetail(key, info); } } };
             const dashEl = document.getElementById('dashQuickChart'); if (dashEl) dashQuickChart = new Chart(dashEl.getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#10b981', borderAlpha: 1, borderWidth: 4, tension: 0.5, pointRadius: 0, fill: true, backgroundColor: 'rgba(16, 185, 129, 0.1)' }] }, options: opts });
@@ -935,7 +1015,6 @@
 
         const menuBtn = document.getElementById('menuBtn');
         const dropdownMenu = document.getElementById('dropdownMenu');
-        
         menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('hidden'); });
         document.addEventListener('click', (e) => { if (menuBtn && dropdownMenu && !menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)) { dropdownMenu.classList.add('hidden'); } });
     </script>
