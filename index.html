@@ -102,7 +102,7 @@
         <div id="view-feed" class="hidden space-y-8 animate-in fade-in duration-500 max-w-2xl mx-auto">
             <div class="flex justify-between items-center border-b border-gray-200 pb-4">
                 <h1 class="text-3xl font-black text-gray-900 tracking-tighter">Beranda Publik</h1>
-                <button onclick="window.syncFeedFromDB()" class="text-xs bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-bold uppercase tracking-wider hover:bg-gray-300 transition shadow-sm">↻ Refresh</button>
+                <button onclick="window.syncFeedFromDB()" class="sync-feed-btn text-xs bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-bold uppercase tracking-wider hover:bg-gray-300 transition shadow-sm w-32 text-center">↻ Refresh</button>
             </div>
             <div id="feed-container" class="space-y-6"></div>
         </div>
@@ -155,7 +155,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 <div class="card border-l-[10px] border-l-emerald-500 bg-white relative group">
-                    <button onclick="window.checkAuthAndShare('portfolio', 'all')" class="absolute top-4 right-4 p-2 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-all opacity-0 group-hover:opacity-100 shadow-sm" title="Bagikan ke Publik">
+                    <button onclick="window.checkAuthAndShare('portfolio', 'all')" class="absolute top-4 right-4 p-2 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-500 hover:text-white transition-all opacity-0 group-hover:opacity-100 shadow-sm" title="Bagikan ke Publik">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                     </button>
                     <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1 text-left">Kekayaan Total</p>
@@ -223,8 +223,8 @@
         <div id="view-portfolio" class="hidden space-y-8 animate-in fade-in duration-500 text-left">
             <h1 class="text-3xl font-black text-gray-900 tracking-tighter uppercase text-left">Analisis Global</h1>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
-                <div class="card border-l-[12px] border-l-emerald-500 p-8 bg-white text-left" id="port-simple-stats"></div>
-                <div class="card border-l-[12px] border-l-indigo-500 p-8 bg-white text-left" id="port-complex-stats"></div>
+                <div class="card border-l-[12px] border-l-emerald-500 p-8 bg-white" id="port-simple-stats"></div>
+                <div class="card border-l-[12px] border-l-indigo-500 p-8 bg-white" id="port-complex-stats"></div>
             </div>
             <div class="card p-8 border-none shadow-xl bg-white text-left">
                 <div class="h-[500px] w-full relative text-left"><canvas id="portfolioChart"></canvas></div>
@@ -375,8 +375,8 @@
                     </div>
                     <div id="settings-data" class="settings-panel hidden card p-8 space-y-4">
                         <h2 class="font-black text-xl">Data Management</h2>
-                        <button onclick="window.clearData()" class="w-full p-4 bg-red-500 text-white font-black rounded-xl">Reset Local Data</button>
-                        <p class="text-xs text-gray-400">Semua data transaksi akan dihapus dari perangkat ini</p>
+                        <button onclick="window.hardReset()" class="w-full p-4 bg-red-500 text-white font-black rounded-xl">Reset Seluruh Data Lokal</button>
+                        <p class="text-xs text-gray-400">Tekan ini JIKA akun lama kamu error/stuck. Ini akan menghapus memori lama browser.</p>
                     </div>
                     <div id="settings-privacy" class="settings-panel hidden card p-8 space-y-4">
                         <h2 class="font-black text-xl">Privacy</h2>
@@ -505,8 +505,13 @@
     </div>
 
     <script>
-        const DEFAULT_APP_DATA = { profile: { name: "User", hobby: "", goal: "", avatar: "" }, settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } }, simpleRecords: [], complexRecords: [], feedPosts: [], notifications: [], simpleTarget: 0, complexTarget: 0, currencyMode: 'IDR', selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null };
+        const DEFAULT_APP_DATA = { profile: { name: "User", hobby: "", goal: "", avatar: "" }, settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } }, simpleRecords: [], complexRecords: [], simpleTarget: 0, complexTarget: 0, currencyMode: 'IDR', selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null };
         let appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
+        
+        // VARIABEL GLOBAL BARU: Memisahkan Data Publik dari Data Pribadi
+        let globalFeedPosts = [];
+        let globalNotifications = [];
+        
         let currentUser = null, authMode = 'login', currentPostImage = null, currentPostIdForComment = null, currentView = 'dashboard', previousView = 'dashboard';
         let portfolioChart = null, bookChart = null, dashQuickChart = null, complexIncChart = null, complexExpChart = null;
         let chartDataCache = {};
@@ -539,9 +544,11 @@
                         if(event === 'SIGNED_OUT') { appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA)); window.saveData(false); window.updateUI(); }
                     }
                 });
+                setInterval(() => { if(currentUser && supabaseClient) { window.loadNotifications(); window.loadFeedFromDB(); } }, 15000);
             }
         } catch (error) { console.error("Database tidak dapat dijangkau", error); }
 
+        // Murni hanya menyimpan Data Pribadi (Buku & Setting)
         window.saveData = (syncCloud = true) => { 
             localStorage.setItem(STORAGE_KEY, CryptoJS.AES.encrypt(JSON.stringify(appData), ENCRYPT_KEY).toString()); 
             if(syncCloud && currentUser && supabaseClient) {
@@ -552,7 +559,7 @@
         window.loadData = () => {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) { try { appData = { ...appData, ...JSON.parse(CryptoJS.AES.decrypt(saved, ENCRYPT_KEY).toString(CryptoJS.enc.Utf8)) }; } catch(e) {} }
-            if(!appData.feedPosts) appData.feedPosts = []; if(!appData.profile.avatar) appData.profile.avatar = ""; if(!appData.notifications) appData.notifications = [];
+            if(!appData.profile.avatar) appData.profile.avatar = ""; 
             window.loadFeedFromDB();
         };
 
@@ -603,7 +610,7 @@
             if(!currentUser || !supabaseClient) return;
             const { data, error } = await supabaseClient.from('notifications').select('*').eq('user_id', currentUser.id).order('id', { ascending: false }).limit(20);
             if(!error && data) {
-                appData.notifications = data;
+                globalNotifications = data;
                 const unread = data.filter(n => !n.is_read).length;
                 const badge = document.getElementById('notif-badge');
                 if(badge) { if(unread > 0) badge.classList.remove('hidden'); else badge.classList.add('hidden'); }
@@ -613,8 +620,8 @@
         
         window.renderNotifications = () => {
             const container = document.getElementById('notif-list-container'); if(!container) return;
-            if(!appData.notifications || appData.notifications.length === 0) { container.innerHTML = '<div class="text-center p-4 text-gray-400 text-[10px] font-bold uppercase tracking-widest">Belum ada notifikasi</div>'; return; }
-            container.innerHTML = appData.notifications.map(n => `
+            if(!globalNotifications || globalNotifications.length === 0) { container.innerHTML = '<div class="text-center p-4 text-gray-400 text-[10px] font-bold uppercase tracking-widest">Belum ada notifikasi</div>'; return; }
+            container.innerHTML = globalNotifications.map(n => `
                 <div onclick="window.viewPost('${n.post_id}')" class="p-3 rounded-xl cursor-pointer transition ${n.is_read ? 'bg-gray-50 text-gray-500' : 'bg-emerald-50 text-emerald-900 border border-emerald-100'}">
                     <p class="text-xs font-bold leading-tight">${n.message}</p>
                 </div>
@@ -633,14 +640,14 @@
             window.loadNotifications();
         };
 
-        // --- SISTEM HALAMAN POSTINGAN & KOMENTAR FIX ---
+        // --- SISTEM HALAMAN POSTINGAN & KOMENTAR ---
         window.goBack = () => { window.setView(previousView || 'feed'); };
         
         window.viewPost = (postId) => {
             currentPostIdForComment = String(postId);
             window.setView('post-detail');
             document.getElementById('comment-input-bar').classList.remove('hidden');
-            const post = appData.feedPosts.find(p => String(p.id) === currentPostIdForComment);
+            const post = globalFeedPosts.find(p => String(p.id) === currentPostIdForComment);
             const container = document.getElementById('detail-main-post-container');
             
             if(!post) { container.innerHTML = "<p class='text-center p-10 font-bold'>Postingan tidak ditemukan.</p>"; return; }
@@ -722,13 +729,9 @@
                     };
                     
                     const { error } = await supabaseClient.from('comments').insert([newComment]);
+                    if(error) { alert("Gagal menyimpan komentar ke database:\n" + error.message); window.loadPostComments(); return; }
                     
-                    if(error) { 
-                        alert("Gagal menyimpan komentar ke database:\n" + error.message); 
-                        window.loadPostComments(); return; 
-                    }
-                    
-                    const post = appData.feedPosts.find(p => String(p.id) === String(currentPostIdForComment));
+                    const post = globalFeedPosts.find(p => String(p.id) === String(currentPostIdForComment));
                     if(post && post.user_id && post.user_id !== currentUser.id) {
                         const notifMsg = `${appData.profile.name || "Seseorang"} membalas: "${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"`;
                         await supabaseClient.from('notifications').insert([{ 
@@ -744,7 +747,7 @@
             }
         };
 
-        // --- MEDIA, POSTINGAN & FEED ---
+        // --- MEDIA & POSTINGAN ---
         window.handleAvatarUpload = (e) => {
             const file = e.target.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = (event) => {
@@ -779,8 +782,10 @@
             if(!caption && !currentPostImage) return alert("Tulis sesuatu atau tambahkan foto!");
             
             const newPost = { id: Date.now(), user_id: currentUser.id, author: appData.profile.name || "User", author_avatar: appData.profile.avatar || "", caption: caption, date: new Date().toLocaleDateString('id-ID'), is_share_card: !!currentPostImage, image_data: currentPostImage || "", likes: 0 };
-            appData.feedPosts.unshift(newPost); window.saveData(false);
+            
+            globalFeedPosts.unshift(newPost);
             document.getElementById('post-caption').value = ''; window.removePostImage(); window.closeModal('create-post'); window.setView('feed');
+            
             if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); if (error) alert("Gagal sync: " + error.message); }
         };
 
@@ -789,21 +794,38 @@
             html2canvas(document.getElementById('capture-area'), { backgroundColor: '#18181b', scale: 2 }).then(async canvas => {
                 const imgData = canvas.toDataURL('image/png', 0.8), data = appData.currentShareData;
                 const newPost = { id: Date.now(), user_id: currentUser.id, author: appData.profile.name || "User", author_avatar: appData.profile.avatar || "", caption: `Update ${data.title}! Return saat ini di angka ${data.isPlus ? '+' : ''}${data.percentage.toFixed(2)}%. 🚀`, date: new Date().toLocaleDateString('id-ID'), is_share_card: true, image_data: imgData, likes: 0 };
-                appData.feedPosts.unshift(newPost); window.saveData(false); window.closeModal('share-preview'); window.setView('feed'); document.getElementById('btn-post-share').innerText = "🚀 Post Feed";
+                
+                globalFeedPosts.unshift(newPost);
+                window.closeModal('share-preview'); window.setView('feed'); document.getElementById('btn-post-share').innerText = "🚀 Post Feed";
+                
                 if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); if (error) alert("Gagal sync: " + error.message); }
             });
         };
 
         window.syncFeedFromDB = async () => {
             if(!supabaseClient) return;
-            try { const { data, error } = await supabaseClient.from('posts').select('*').order('id', { ascending: false }); if (!error && data) { appData.feedPosts = data; window.saveData(false); if(currentView === 'feed') window.renderFeed(); if(currentView === 'profile') window.renderProfileFeed(); } } catch (err) {}
+            
+            document.querySelectorAll('.sync-feed-btn').forEach(btn => { btn.innerHTML = "⏳ Memuat..."; btn.disabled = true; });
+
+            try { 
+                const { data, error } = await supabaseClient.from('posts').select('*').order('id', { ascending: false }); 
+                if (!error && data) { 
+                    globalFeedPosts = data; 
+                    if(currentView === 'feed') window.renderFeed(); 
+                    if(currentView === 'profile') window.renderProfileFeed(); 
+                } 
+            } catch (err) {}
+            
+            setTimeout(() => {
+                document.querySelectorAll('.sync-feed-btn').forEach(btn => { btn.innerHTML = "↻ Refresh"; btn.disabled = false; });
+            }, 500);
         };
         window.loadFeedFromDB = window.syncFeedFromDB; 
 
         window.renderFeed = () => {
             const container = document.getElementById('feed-container');
-            if(appData.feedPosts.length === 0) { container.innerHTML = '<div class="text-center p-10 text-gray-400 font-bold border-2 border-dashed rounded-3xl">Belum ada postingan komunitas. Jadilah yang pertama!</div>'; return; }
-            container.innerHTML = appData.feedPosts.map(post => `
+            if(globalFeedPosts.length === 0) { container.innerHTML = '<div class="text-center p-10 text-gray-400 font-bold border-2 border-dashed rounded-3xl">Belum ada postingan komunitas. Jadilah yang pertama!</div>'; return; }
+            container.innerHTML = globalFeedPosts.map(post => `
                 <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-6 cursor-pointer hover:shadow-md transition" onclick="window.viewPost('${post.id}')">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-black overflow-hidden border border-gray-200 shrink-0">
@@ -831,7 +853,8 @@
 
         window.renderProfileFeed = () => {
             const photoContainer = document.getElementById('profile-feed-photo-container'), textContainer = document.getElementById('profile-feed-text-container');
-            const myPosts = appData.feedPosts.filter(p => p.user_id === (currentUser?.id || "none") || p.author === appData.profile.name);
+            
+            const myPosts = currentUser ? globalFeedPosts.filter(p => p.user_id === currentUser.id) : [];
             const imagePosts = myPosts.filter(p => p.image_data), textPosts = myPosts.filter(p => !p.image_data);
 
             if(imagePosts.length === 0) { photoContainer.innerHTML = '<div class="col-span-3 text-center p-5 text-gray-400 text-xs font-bold uppercase tracking-widest">Belum ada foto.</div>'; }
@@ -860,17 +883,17 @@
         };
 
         window.editPost = async (postId) => {
-            const post = appData.feedPosts.find(p => String(p.id) === String(postId)); if(!post) return;
+            const post = globalFeedPosts.find(p => String(p.id) === String(postId)); if(!post) return;
             const newCaption = prompt("Edit teks postingan kamu:", post.caption);
             if(newCaption !== null && newCaption.trim() !== "") {
-                post.caption = newCaption; window.saveData(false); window.renderProfileFeed(); window.renderFeed();
+                post.caption = newCaption; window.renderProfileFeed(); window.renderFeed();
                 if(supabaseClient) { const { error } = await supabaseClient.from('posts').update({ caption: newCaption }).eq('id', postId); if(error) alert("Gagal update: " + error.message); }
             }
         };
 
         window.deletePost = async (postId) => {
             if(!confirm("Yakin ingin menghapus postingan ini?")) return;
-            appData.feedPosts = appData.feedPosts.filter(p => String(p.id) !== String(postId)); window.saveData(false); window.renderProfileFeed(); window.renderFeed();
+            globalFeedPosts = globalFeedPosts.filter(p => String(p.id) !== String(postId)); window.renderProfileFeed(); window.renderFeed();
             if(supabaseClient) { const { error } = await supabaseClient.from('posts').delete().eq('id', postId); if(error) alert("Gagal hapus: " + error.message); }
         };
 
@@ -1019,7 +1042,16 @@
         window.deleteRecord = (id) => { if (confirm("Hapus Buku?")) { if (appData.settings.mode === 'simple') appData.simpleRecords = appData.simpleRecords.filter(r => r.id !== id); else appData.complexRecords = appData.complexRecords.filter(r => r.id !== id); window.saveData(); window.updateUI(); window.updateDashboardGraph(); } };
         window.deleteTransaction = (tid) => { if (confirm("Hapus Transaksi?")) { const recs = appData.settings.mode === 'simple' ? appData.simpleRecords : appData.complexRecords; const r = recs.find(x => x.id === appData.selectedRecordId); if(r) { r.transactions = r.transactions.filter(x => x.id !== tid); window.saveData(); window.updateUI(); window.updateBookChart(); } } };
         window.changeTheme = (t) => { document.body.classList.remove('theme-green', 'theme-red', 'theme-purple', 'theme-black'); document.body.classList.add(`theme-${t}`); const colors = {green:'#10b981', red:'#ef4444', purple:'#a855f7', black:'#374151'}; document.documentElement.style.setProperty('--primary-color', colors[t]); appData.settings.theme = t; window.saveData(); if(dashQuickChart) window.updateDashboardGraph(); window.updateUI(); };
-        window.clearData = () => { if (confirm("Hapus Data Lokal?")) { localStorage.clear(); location.reload(); } };
+        
+        window.hardReset = () => { 
+            if (confirm("YAKIN HAPUS SELURUH DATA LOKAL? Ini akan mengatasi akun yang nyangkut/stuck.")) { 
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload(); 
+            } 
+        };
+        
+        window.clearData = () => { window.hardReset(); }; 
+        
         window.setCurrency = (c) => { appData.currencyMode = c; window.updateUI(); };
         window.setChartType = (t) => { appData.activeBookChart = t; ['total','income','expense'].forEach(x => { const el = document.getElementById('tab-'+x); if(el) el.classList.toggle('tab-active', x === t); }); window.updateBookChart(); };
         window.setPortChartType = (t) => { appData.activePortChart = t; ['total','income','expense'].forEach(x => { const el = document.getElementById('port-tab-'+x); if(el) el.classList.toggle('tab-active', x === t); }); window.updatePortfolio(); };
