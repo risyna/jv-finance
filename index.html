@@ -25,7 +25,8 @@
         .progress-bar { height: 8px; background: #f3f4f6; border-radius: 4px; overflow: hidden; }
         .progress-fill { height: 100%; background-color: var(--primary-color); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        #dropdownMenu { z-index: 100; background: white; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15); }
+        #dropdownMenu, #notifDropdown { z-index: 100; background: white; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15); }
+        #notifDropdown { z-index: 101; }
 
         .mode-btn-active { background-color: var(--primary-color) !important; color: white !important; font-weight: 700 !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
         .tab-active { background: white !important; color: var(--primary-color) !important; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -51,7 +52,6 @@
                 <button onclick="window.checkAuthAndOpenModal('create-post')" class="p-2 hover:bg-gray-800 rounded-xl transition-all">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
-
                 <div class="flex items-center gap-3 cursor-pointer" onclick="window.setView('dashboard')">
                     <img src="Gemini_Generated_Image_3ugjp93ugjp93ugj.jpg" alt="Logo" class="w-10 h-10 rounded-xl object-cover border border-gray-700 shadow-lg" onerror="this.style.display='none'">
                     <span class="font-extrabold text-xl tracking-tight">Jv Finance</span>
@@ -63,13 +63,26 @@
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 </button>
 
+                <div class="relative">
+                    <button id="notif-btn" onclick="window.toggleNotifications()" class="p-2 hover:bg-gray-800 rounded-xl transition-all relative">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <span id="notif-badge" class="hidden absolute top-1 right-1 bg-red-500 w-2.5 h-2.5 rounded-full border-2 border-gray-900"></span>
+                    </button>
+                    <div id="notifDropdown" class="hidden absolute right-0 top-12 w-80 max-h-96 overflow-y-auto rounded-[2rem] bg-white border border-gray-100 shadow-2xl p-4 space-y-2">
+                        <div class="flex justify-between items-center mb-2 px-2 border-b border-gray-100 pb-2">
+                            <h3 class="font-black text-gray-900">Notifikasi</h3>
+                            <button onclick="window.markAllNotifRead()" class="text-[10px] text-emerald-500 font-bold hover:underline">Tandai dibaca</button>
+                        </div>
+                        <div id="notif-list-container" class="space-y-2 text-left"></div>
+                    </div>
+                </div>
+
                 <button id="auth-btn" onclick="window.openModal('auth')" class="text-[10px] font-black bg-emerald-500 hover:bg-emerald-600 uppercase px-4 py-2 rounded-xl transition-all tracking-wider shadow-lg shadow-emerald-500/30">Login</button>
 
                 <div class="relative">
                     <button id="menuBtn" class="p-2 hover:bg-gray-800 rounded-xl transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                     </button>
-                    
                     <div id="dropdownMenu" class="hidden absolute right-0 top-12 w-64 rounded-[2rem] overflow-hidden py-3 bg-white border border-gray-100 shadow-2xl">
                         <div class="px-6 py-2 border-b border-gray-50 mb-2"><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Navigation</p></div>
                         <button onclick="window.setView('dashboard')" class="w-full text-left px-6 py-3 hover:bg-gray-50 flex items-center gap-4 text-gray-900 font-bold text-sm transition-colors"><svg class="text-emerald-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg> Dashboard</button>
@@ -89,7 +102,7 @@
         <div id="view-feed" class="hidden space-y-8 animate-in fade-in duration-500 max-w-2xl mx-auto">
             <div class="flex justify-between items-center border-b border-gray-200 pb-4">
                 <h1 class="text-3xl font-black text-gray-900 tracking-tighter">Beranda Publik</h1>
-                <button onclick="window.syncFeedFromDB()" class="text-xs bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-bold uppercase tracking-wider hover:bg-gray-300 transition">↻ Sync Data</button>
+                <button onclick="window.syncFeedFromDB()" class="text-xs bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-bold uppercase tracking-wider hover:bg-gray-300 transition shadow-sm">↻ Refresh</button>
             </div>
             <div id="feed-container" class="space-y-6"></div>
         </div>
@@ -121,7 +134,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                 <div class="card border-l-[10px] border-l-emerald-500 bg-white relative group">
-                    <button onclick="window.checkAuthAndShare('portfolio', 'all')" class="absolute top-4 right-4 p-2 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-all opacity-0 group-hover:opacity-100 shadow-sm" title="Bagikan ke Publik">
+                    <button onclick="window.checkAuthAndShare('portfolio', 'all')" class="absolute top-4 right-4 p-2 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-500 hover:text-white transition-all opacity-0 group-hover:opacity-100 shadow-sm" title="Bagikan ke Publik">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                     </button>
                     <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1 text-left">Kekayaan Total</p>
@@ -180,14 +193,14 @@
 
         <div id="view-library" class="hidden space-y-10 animate-in fade-in duration-500 text-left">
             <div class="border-b border-gray-100 pb-8 text-left">
-                <h1 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter uppercase text-left">Library Zone</h1>
-                <p class="text-gray-400 text-sm font-bold uppercase tracking-[0.3em] mt-2 opacity-70 text-left">E-Library Curated by Jv Finance</p>
+                <h1 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter uppercase">Library Zone</h1>
+                <p class="text-gray-400 text-sm font-bold uppercase tracking-[0.3em] mt-2 opacity-70">E-Library Curated by Jv Finance</p>
             </div>
             <div id="library-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-10 text-left"></div>
         </div>
 
         <div id="view-portfolio" class="hidden space-y-8 animate-in fade-in duration-500 text-left">
-            <h1 class="text-3xl font-black text-gray-900 tracking-tighter uppercase text-left">Analisis Global</h1>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tighter uppercase">Analisis Global</h1>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
                 <div class="card border-l-[12px] border-l-emerald-500 p-8 bg-white" id="port-simple-stats"></div>
                 <div class="card border-l-[12px] border-l-indigo-500 p-8 bg-white" id="port-complex-stats"></div>
@@ -229,7 +242,6 @@
                     <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest text-left">Dana Tersedia</p>
                     <h2 id="detail-balance" class="text-3xl font-black mt-2 tracking-tighter text-left">Rp 0</h2>
                 </div>
-
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-left">
                     <div class="card bg-white border-b-8 border-b-emerald-500 p-8 text-left">
                         <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest text-left">Masuk</p>
@@ -298,12 +310,10 @@
             
             <div class="mt-12 pt-8">
                 <h3 class="text-2xl font-black text-gray-900 tracking-tighter mb-6 text-center">Postingan Saya</h3>
-                
                 <div class="flex justify-center gap-4 mb-8 border-b border-gray-200 max-w-sm mx-auto">
                     <button id="tab-profile-photo" onclick="window.switchProfileTab('photo')" class="pb-3 font-black auth-tab-active flex-1 text-center tracking-widest uppercase text-[10px]">📷 Foto</button>
                     <button id="tab-profile-text" onclick="window.switchProfileTab('text')" class="pb-3 font-black text-gray-400 flex-1 text-center tracking-widest uppercase text-[10px]">📝 Teks</button>
                 </div>
-
                 <div id="profile-feed-photo-container" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
                 <div id="profile-feed-text-container" class="hidden space-y-4 max-w-lg mx-auto"></div>
             </div>
@@ -364,7 +374,7 @@
             </div>
             <div class="flex gap-4 mb-6 border-b border-gray-100">
                 <button id="tab-login" onclick="window.switchAuthTab('login')" class="pb-2 font-bold auth-tab-active flex-1">Login</button>
-                <button id="tab-register" onclick="window.switchAuthTab('register')" class="pb-2 font-bold text-gray-400 flex-1">Daftar Akun</button>
+                <button id="tab-register" onclick="window.switchAuthTab('register')" class="pb-2 font-bold text-gray-400 flex-1">Daftar</button>
             </div>
             <div class="space-y-4">
                 <input type="email" id="auth-email" placeholder="Email Google Kamu" class="w-full p-4 border rounded-2xl outline-none font-medium">
@@ -382,12 +392,12 @@
         <div class="card w-full max-w-lg bg-white shadow-2xl h-[80vh] flex flex-col p-0 overflow-hidden">
             <div class="p-4 border-b border-gray-100 flex justify-between items-center shrink-0">
                 <h3 class="font-black text-lg">Komentar</h3>
-                <button onclick="window.closeModal('comments')" class="text-gray-400 hover:text-black font-bold">✖</button>
+                <button onclick="window.closeModal('comments')" class="text-gray-400 hover:text-black font-bold text-xl">✖</button>
             </div>
             <div id="comments-list-container" class="flex-grow overflow-y-auto p-4 space-y-4 bg-gray-50"></div>
             <div class="p-4 border-t border-gray-100 bg-white shrink-0 flex gap-2">
                 <input type="text" id="comment-input" placeholder="Tulis komentar..." class="flex-grow p-3 border border-gray-200 rounded-xl outline-none focus:border-emerald-500 font-medium text-sm">
-                <button onclick="window.sendComment()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 rounded-xl font-bold transition">Kirim</button>
+                <button onclick="window.sendComment()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 rounded-xl font-bold transition shadow-md">Kirim</button>
             </div>
         </div>
     </div>
@@ -498,7 +508,7 @@
     </footer>
 
     <script>
-        const DEFAULT_APP_DATA = { profile: { name: "User", hobby: "", goal: "", avatar: "" }, settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } }, simpleRecords: [], complexRecords: [], feedPosts: [], simpleTarget: 0, complexTarget: 0, currencyMode: 'IDR', selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null };
+        const DEFAULT_APP_DATA = { profile: { name: "User", hobby: "", goal: "", avatar: "" }, settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } }, simpleRecords: [], complexRecords: [], feedPosts: [], notifications: [], simpleTarget: 0, complexTarget: 0, currencyMode: 'IDR', selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null };
         let appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
         let currentUser = null, authMode = 'login', currentPostImage = null, currentPostIdForComment = null;
         let portfolioChart = null, bookChart = null, dashQuickChart = null, complexIncChart = null, complexExpChart = null;
@@ -526,30 +536,31 @@
                         const { data, error } = await supabaseClient.from('user_data').select('app_state').eq('user_id', currentUser.id).single();
                         if (data && data.app_state) { try { const cloudData = JSON.parse(data.app_state); appData = { ...DEFAULT_APP_DATA, ...cloudData }; window.saveData(false); } catch(e) {} } 
                         else { window.saveData(true); }
-                        window.updateUI(); window.loadFeedFromDB();
+                        window.updateUI(); window.loadFeedFromDB(); window.loadNotifications();
                     } else { 
                         if(authBtn && logoutMenu) { authBtn.innerText = "Login"; authBtn.classList.replace('bg-gray-800', 'bg-emerald-500'); authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600'); logoutMenu.classList.add('hidden'); }
                         if(event === 'SIGNED_OUT') { appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA)); window.saveData(false); window.updateUI(); }
                     }
                 });
+                setInterval(() => { if(currentUser && supabaseClient) { window.loadNotifications(); window.loadFeedFromDB(); } }, 15000);
             }
-        } catch (error) { console.error("Database tidak dapat dijangkau", error); }
+        } catch (error) { console.error("Database offline", error); }
 
         window.saveData = (syncCloud = true) => { 
             localStorage.setItem(STORAGE_KEY, CryptoJS.AES.encrypt(JSON.stringify(appData), ENCRYPT_KEY).toString()); 
             if(syncCloud && currentUser && supabaseClient) {
-                supabaseClient.from('user_data').upsert([{ user_id: currentUser.id, app_state: JSON.stringify(appData) }], { onConflict: 'user_id' }).then(({error}) => { if(error) console.error("Gagal sinkronisasi awan:", error); });
+                supabaseClient.from('user_data').upsert([{ user_id: currentUser.id, app_state: JSON.stringify(appData) }], { onConflict: 'user_id' }).then(({error}) => { if(error) console.error("Sync awan gagal:", error); });
             }
         };
 
         window.loadData = () => {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) { try { appData = { ...appData, ...JSON.parse(CryptoJS.AES.decrypt(saved, ENCRYPT_KEY).toString(CryptoJS.enc.Utf8)) }; } catch(e) {} }
-            if(!appData.feedPosts) appData.feedPosts = []; if(!appData.profile.avatar) appData.profile.avatar = "";
+            if(!appData.feedPosts) appData.feedPosts = []; if(!appData.profile.avatar) appData.profile.avatar = ""; if(!appData.notifications) appData.notifications = [];
             window.loadFeedFromDB();
         };
 
-        // --- AUTH LOGIC (DENGAN LUPA PASSWORD) ---
+        // --- AUTH LOGIC ---
         window.switchAuthTab = (mode) => {
             authMode = mode; document.getElementById('auth-error').classList.add('hidden'); document.getElementById('auth-success').classList.add('hidden');
             const passInput = document.getElementById('auth-password'); const btnForgot = document.getElementById('btn-forgot-pass');
@@ -568,7 +579,7 @@
         };
 
         window.processAuth = async () => {
-            if(!supabaseClient) return alert("Sistem database sedang offline.");
+            if(!supabaseClient) return alert("Database offline.");
             const email = document.getElementById('auth-email').value, password = document.getElementById('auth-password').value;
             const errEl = document.getElementById('auth-error'), succEl = document.getElementById('auth-success');
             errEl.classList.add('hidden'); succEl.classList.add('hidden');
@@ -590,51 +601,101 @@
         };
 
         window.logout = async () => { if(supabaseClient) await supabaseClient.auth.signOut(); alert("Berhasil Logout."); document.getElementById('dropdownMenu').classList.add('hidden'); window.setView('dashboard'); };
-        window.checkAuthAndOpenModal = (modalId) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk fitur sosial!"); return; } window.openModal(modalId); };
+        window.checkAuthAndOpenModal = (modalId) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk fitur ini!"); return; } window.openModal(modalId); };
         window.checkAuthAndShare = (type, id) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk membagikan portofolio!"); return; } window.shareContent(type, id); };
 
-        // --- SISTEM KOMENTAR (BARU) ---
+        // --- SISTEM NOTIFIKASI ---
+        window.loadNotifications = async () => {
+            if(!currentUser || !supabaseClient) return;
+            const { data, error } = await supabaseClient.from('notifications').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(20);
+            if(!error && data) {
+                appData.notifications = data;
+                const unread = data.filter(n => !n.is_read).length;
+                const badge = document.getElementById('notif-badge');
+                if(badge) { if(unread > 0) badge.classList.remove('hidden'); else badge.classList.add('hidden'); }
+                window.renderNotifications();
+            }
+        };
+        
+        window.renderNotifications = () => {
+            const container = document.getElementById('notif-list-container'); if(!container) return;
+            if(!appData.notifications || appData.notifications.length === 0) { container.innerHTML = '<div class="text-center p-4 text-gray-400 text-[10px] font-bold uppercase tracking-widest">Belum ada notifikasi</div>'; return; }
+            container.innerHTML = appData.notifications.map(n => `
+                <div onclick="window.openComments(${n.post_id})" class="p-3 rounded-xl cursor-pointer transition ${n.is_read ? 'bg-gray-50 text-gray-500' : 'bg-emerald-50 text-emerald-900 border border-emerald-100'}">
+                    <p class="text-xs font-bold leading-tight">${n.message}</p>
+                </div>
+            `).join('');
+        };
+
+        window.toggleNotifications = () => {
+            const el = document.getElementById('notifDropdown');
+            if(el) { el.classList.toggle('hidden'); if(!el.classList.contains('hidden')) window.loadNotifications(); }
+        };
+
+        window.markAllNotifRead = async () => {
+            if(!currentUser || !supabaseClient) return;
+            document.getElementById('notif-badge').classList.add('hidden');
+            await supabaseClient.from('notifications').update({ is_read: true }).eq('user_id', currentUser.id).eq('is_read', false);
+            window.loadNotifications();
+        };
+
+        // --- SISTEM KOMENTAR (REAL-TIME, MANUAL ID FIX) ---
         window.openComments = async (postId) => {
             currentPostIdForComment = postId; window.openModal('comments');
             const container = document.getElementById('comments-list-container');
-            container.innerHTML = '<div class="text-center p-4 text-gray-400 text-xs font-bold loading-pulse">Memuat komentar...</div>';
-            if(supabaseClient) {
+            document.getElementById('comment-input').value = '';
+            
+            container.innerHTML = '<div class="text-center p-4 text-emerald-500 text-xs font-bold loading-pulse">Memuat komentar...</div>';
+            
+            if(!supabaseClient) { container.innerHTML = '<div class="text-center p-4 text-red-400 text-xs font-bold">Mode Offline.</div>'; return; }
+
+            try {
                 const { data, error } = await supabaseClient.from('comments').select('*').eq('post_id', postId).order('id', { ascending: true });
-                if(error) { container.innerHTML = '<div class="text-center p-4 text-red-400 text-xs">Gagal memuat komentar.</div>'; return; }
-                if(data.length === 0) { container.innerHTML = '<div class="text-center p-4 text-gray-400 text-xs">Belum ada komentar. Jadilah yang pertama!</div>'; }
+                if(error) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Gagal: ${error.message}</div>`; return; }
+                
+                if(!data || data.length === 0) { container.innerHTML = '<div class="text-center p-6 text-gray-400 text-xs font-bold uppercase tracking-widest mt-10">Belum ada komentar.<br><span class="text-[9px] font-normal lowercase">Jadilah yang pertama!</span></div>'; } 
                 else {
                     container.innerHTML = data.map(c => `
                         <div class="flex gap-3 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
                             <div class="w-8 h-8 rounded-full bg-emerald-100 overflow-hidden shrink-0 border border-gray-200">
-                                ${c.avatar ? `<img src="${c.avatar}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-emerald-600 font-black text-xs">${c.author.charAt(0)}</div>`}
+                                ${c.avatar ? `<img src="${c.avatar}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-emerald-600 font-black text-xs">${(c.author || "U").charAt(0)}</div>`}
                             </div>
                             <div>
-                                <div class="flex items-center gap-2"><p class="font-black text-xs">${c.author}</p><span class="text-[8px] text-gray-400">${c.date}</span></div>
-                                <p class="text-gray-700 text-xs mt-1 font-medium">${c.text}</p>
+                                <div class="flex items-center gap-2"><p class="font-black text-xs text-gray-900">${c.author || "User"}</p><span class="text-[8px] text-gray-400 font-bold">${c.date || ""}</span></div>
+                                <p class="text-gray-700 text-xs mt-1 font-medium leading-relaxed">${c.text}</p>
                             </div>
-                        </div>
-                    `).join('');
+                        </div>`).join('');
+                    setTimeout(() => container.scrollTop = container.scrollHeight, 100);
                 }
-            }
+            } catch (err) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Terjadi kesalahan sistem.</div>`; }
         };
 
         window.sendComment = async () => {
-            if(!currentUser) return alert("Silakan Login Terlebih Dahulu!");
+            if(!currentUser) { alert("Silakan Login Terlebih Dahulu!"); window.openModal('auth'); return; }
             const input = document.getElementById('comment-input'); const text = input.value.trim();
             if(!text || !currentPostIdForComment) return;
             input.value = '';
+            
             const container = document.getElementById('comments-list-container');
             if(container.innerHTML.includes('Belum ada')) container.innerHTML = '';
-            container.innerHTML += `
-                <div class="flex gap-3 bg-emerald-50 p-4 rounded-2xl shadow-sm border border-emerald-100 opacity-70">
-                    <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-emerald-200"><div class="w-full h-full flex items-center justify-center text-emerald-700 font-black text-xs">...</div></div>
-                    <div><p class="font-black text-xs">${appData.profile.name || "User"}</p><p class="text-gray-700 text-xs mt-1">${text}</p></div>
-                </div>`;
+            container.innerHTML += `<div class="flex gap-3 bg-emerald-50 p-4 rounded-2xl shadow-sm border border-emerald-100 opacity-70"><div class="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-emerald-200 flex items-center justify-center text-emerald-700 font-black text-xs">...</div><div><p class="font-black text-xs text-gray-900">${appData.profile.name || "User"}</p><p class="text-gray-700 text-xs mt-1 font-medium">${text}</p></div></div>`;
             container.scrollTop = container.scrollHeight;
+            
             if(supabaseClient) {
-                const newComment = { post_id: currentPostIdForComment, user_id: currentUser.id, author: appData.profile.name || "User", avatar: appData.profile.avatar || "", text: text, date: new Date().toLocaleDateString('id-ID') };
+                // GENERATE ID MANUAL AGAR TIDAK ERROR "Auto Increment"
+                const commentId = Date.now() + Math.floor(Math.random() * 1000); 
+                const newComment = { id: commentId, post_id: currentPostIdForComment, user_id: currentUser.id, author: appData.profile.name || "User", avatar: appData.profile.avatar || "", text: text, date: new Date().toLocaleDateString('id-ID') };
+                
                 const { error } = await supabaseClient.from('comments').insert([newComment]);
-                if(error) alert("Gagal mengirim komentar!"); window.openComments(currentPostIdForComment); // Reload
+                
+                if(error) { alert("Gagal mengirim komentar: " + error.message); window.openComments(currentPostIdForComment); return; }
+                
+                const post = appData.feedPosts.find(p => p.id === currentPostIdForComment);
+                if(post && post.user_id && post.user_id !== currentUser.id) {
+                    const notifMsg = `${appData.profile.name || "Seseorang"} mengomentari: "${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"`;
+                    await supabaseClient.from('notifications').insert([{ id: Date.now() + Math.floor(Math.random() * 1000), user_id: post.user_id, post_id: currentPostIdForComment, message: notifMsg, is_read: false }]);
+                }
+                window.openComments(currentPostIdForComment);
             }
         };
 
@@ -675,7 +736,7 @@
             const newPost = { id: Date.now(), user_id: currentUser.id, author: appData.profile.name || "User", author_avatar: appData.profile.avatar || "", caption: caption, date: new Date().toLocaleDateString('id-ID'), is_share_card: !!currentPostImage, image_data: currentPostImage || "", likes: 0 };
             appData.feedPosts.unshift(newPost); window.saveData(false);
             document.getElementById('post-caption').value = ''; window.removePostImage(); window.closeModal('create-post'); window.setView('feed');
-            if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); if (error) console.error("Gagal sync ke cloud:", error); }
+            if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); if (error) alert("Gagal sync: " + error.message); }
         };
 
         window.postShareCardToFeed = () => {
@@ -684,7 +745,7 @@
                 const imgData = canvas.toDataURL('image/png', 0.8), data = appData.currentShareData;
                 const newPost = { id: Date.now(), user_id: currentUser.id, author: appData.profile.name || "User", author_avatar: appData.profile.avatar || "", caption: `Update ${data.title}! Return saat ini di angka ${data.isPlus ? '+' : ''}${data.percentage.toFixed(2)}%. 🚀`, date: new Date().toLocaleDateString('id-ID'), is_share_card: true, image_data: imgData, likes: 0 };
                 appData.feedPosts.unshift(newPost); window.saveData(false); window.closeModal('share-preview'); window.setView('feed'); document.getElementById('btn-post-share').innerText = "🚀 Post Feed";
-                if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); if (error) console.error("Gagal sync", error); }
+                if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); if (error) alert("Gagal sync: " + error.message); }
             });
         };
 
@@ -701,14 +762,14 @@
                 <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-6">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-black overflow-hidden border border-gray-200 shrink-0">
-                            ${post.author_avatar ? `<img src="${post.author_avatar}" class="w-full h-full object-cover">` : post.author.charAt(0)}
+                            ${post.author_avatar ? `<img src="${post.author_avatar}" class="w-full h-full object-cover">` : `<span class="text-white">${(post.author || "U").charAt(0)}</span>`}
                         </div>
-                        <div><p class="font-black text-sm">${post.author}</p><p class="text-[10px] text-gray-400 uppercase tracking-widest">${post.date}</p></div>
+                        <div><p class="font-black text-sm">${post.author || "User"}</p><p class="text-[10px] text-gray-400 uppercase tracking-widest">${post.date}</p></div>
                     </div>
                     ${post.image_data ? `<img src="${post.image_data}" class="w-full rounded-2xl mb-4 border border-gray-100 shadow-sm object-cover max-h-96" />` : ''}
                     ${post.caption ? `<p class="text-gray-800 font-medium text-sm leading-relaxed whitespace-pre-line">${post.caption}</p>` : ''}
                     <div class="flex gap-4 mt-6 pt-4 border-t border-gray-50">
-                        <button onclick="window.openComments(${post.id})" class="flex items-center gap-2 text-gray-400 hover:text-blue-500 transition font-bold text-xs">💬 Komentar</button>
+                        <button onclick="window.openComments(${post.id})" class="flex items-center gap-2 text-gray-400 hover:text-emerald-500 transition font-bold text-xs">💬 Komentar</button>
                     </div>
                 </div>`).join('');
         };
@@ -758,17 +819,17 @@
             const newCaption = prompt("Edit teks postingan kamu:", post.caption);
             if(newCaption !== null && newCaption.trim() !== "") {
                 post.caption = newCaption; window.saveData(false); window.renderProfileFeed(); window.renderFeed();
-                if(supabaseClient) { const { error } = await supabaseClient.from('posts').update({ caption: newCaption }).eq('id', postId); if(error) console.error("Gagal update cloud."); }
+                if(supabaseClient) { const { error } = await supabaseClient.from('posts').update({ caption: newCaption }).eq('id', postId); if(error) alert("Gagal update: " + error.message); }
             }
         };
 
         window.deletePost = async (postId) => {
             if(!confirm("Yakin ingin menghapus postingan ini?")) return;
             appData.feedPosts = appData.feedPosts.filter(p => p.id !== postId); window.saveData(false); window.renderProfileFeed(); window.renderFeed();
-            if(supabaseClient) { const { error } = await supabaseClient.from('posts').delete().eq('id', postId); if(error) console.error("Gagal hapus cloud."); }
+            if(supabaseClient) { const { error } = await supabaseClient.from('posts').delete().eq('id', postId); if(error) alert("Gagal hapus: " + error.message); }
         };
 
-        // --- TAMPILAN DAN FUNGSI STANDAR (TETAP AMAN) ---
+        // --- TAMPILAN DAN FUNGSI STANDAR ---
         const STATIC_LIBRARY_DATA = [
             { id: 'lib-1', name: 'Atomic Habits', desc: 'Perubahan kecil yang memberikan hasil luar biasa dalam habit finansial.', file: 'modul 1', sampul: 'smodul 1' },
             { id: 'lib-2', name: 'Berani Tidak Disukai', desc: 'Melihat hidup dan kebebasan finansial dari sudut pandang Adler.', file: 'modul 2', sampul: 'smodul 2' },
@@ -993,13 +1054,21 @@
             portfolioChart.data.labels = ['SIMPLE', 'COMPLEX']; portfolioChart.data.datasets = [{ label: type.toUpperCase(), data: [ type === 'total' ? s.b : (type === 'income' ? s.i : s.e), type === 'total' ? c.b : (type === 'income' ? c.i : c.e) ], backgroundColor: [color, '#312e81'] }]; portfolioChart.update();
         };
 
+        // --- 8. BOOTSTRAP EVENT LISTENERS ---
         window.loadData(); window.initCharts(); window.updateUI(); window.changeTheme(appData.settings.theme);
         if (!history.state) history.replaceState({ view: 'dashboard' }, "", "#dashboard");
 
         const menuBtn = document.getElementById('menuBtn');
         const dropdownMenu = document.getElementById('dropdownMenu');
         menuBtn.addEventListener('click', (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('hidden'); });
-        document.addEventListener('click', (e) => { if (menuBtn && dropdownMenu && !menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)) { dropdownMenu.classList.add('hidden'); } });
+        
+        const notifBtn = document.getElementById('notif-btn');
+        const notifMenu = document.getElementById('notifDropdown');
+
+        document.addEventListener('click', (e) => { 
+            if (menuBtn && dropdownMenu && !menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)) { dropdownMenu.classList.add('hidden'); } 
+            if (notifBtn && notifMenu && !notifBtn.contains(e.target) && !notifMenu.contains(e.target)) { notifMenu.classList.add('hidden'); } 
+        });
     </script>
 </body>
 </html>
