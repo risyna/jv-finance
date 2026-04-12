@@ -17,8 +17,9 @@
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease; overflow-x: hidden; background-color: #f9fafb; }
         .theme-green { --primary-color: #10b981; } .theme-red { --primary-color: #ef4444; } .theme-purple { --primary-color: #a855f7; } .theme-black { --primary-color: #374151; }
 
-        .btn-primary { background-color: var(--primary-color); color: white; padding: 0.75rem 1.5rem; border-radius: 1rem; transition: all 0.2s ease; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; }
-        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4); }
+        .btn-primary { background-color: var(--primary-color); color: white; padding: 0.75rem 1.5rem; border-radius: 1rem; transition: all 0.2s ease; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; border: none; outline: none; }
+        .btn-primary:hover:not(:disabled) { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
         
         .card { background: white; border-radius: 1.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); padding: 1.5rem; border: 1px solid rgba(0,0,0,0.05); }
         .progress-bar { height: 8px; background: #f3f4f6; border-radius: 4px; overflow: hidden; }
@@ -513,7 +514,8 @@
     </div>
 
     <script>
-        const DEFAULT_APP_DATA = { profile: { name: "User", hobby: "", goal: "", avatar: "" }, settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } }, simpleRecords: [], complexRecords: [], feedPosts: [], notifications: [], simpleTarget: 0, complexTarget: 0, currencyMode: 'IDR', selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null };
+        const DEFAULT_APP_DATA = { profile: { name: "User", hobby: "", goal: "", avatar: "" }, settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } }, simpleRecords: [], complexRecords: [], feedPosts: [], localComments: {}, postComments: {}, notifications: [], simpleTarget: 0, complexTarget: 0, currencyMode: 'IDR', selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null };
+
         let appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
         let currentUser = null, authMode = 'login', currentPostImage = null, currentPostIdForComment = null, currentView = 'dashboard', previousView = 'dashboard';
         let portfolioChart = null, bookChart = null, dashQuickChart = null, complexIncChart = null, complexExpChart = null;
@@ -521,6 +523,20 @@
         
         const STORAGE_KEY = 'jv_finance_local_v1'; const ENCRYPT_KEY = 'local-device-secret-jova'; 
         const CATEGORIES = { expense: ["Makan & Minum", "Transportasi", "Hiburan", "Top-up & Kuota", "Kesehatan", "Belanja", "Lainnya"], income: ["Gaji Tambahan", "Bonus", "Jual Barang", "Hadiah", "Lain-lain"] };
+
+        function deepMerge(target, source) {
+            const merged = { ...target };
+            for (const key in source) {
+                if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                    merged[key] = deepMerge(merged[key] || {}, source[key]);
+                } else if (Array.isArray(source[key])) {
+                    merged[key] = [...(merged[key] || []), ...source[key]];
+                } else {
+                    merged[key] = source[key];
+                }
+            }
+            return merged;
+        }
 
         window.formatMoney = (val) => {
             const amount = parseFloat(val) || 0;
@@ -533,18 +549,64 @@
         try {
             if (window.supabase) {
                 supabaseClient = window.supabase.createClient("https://cgqrzxlutpbnlfsfmpkv.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNncXJ6eGx1dHBibmxmc2ZtcGt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NDAwNDUsImV4cCI6MjA5MTUxNjA0NX0.gjv6F5lhbfXc0Bxl1Hr7C9nB3XIe3fKmkLBgD8PfA9E");
-                supabaseClient.auth.onAuthStateChange(async (event, session) => {
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
                     currentUser = session?.user || null;
-                    const authBtn = document.getElementById('auth-btn'); const logoutMenu = document.getElementById('logout-menu-item');
+                    const authBtn = document.getElementById('auth-btn'); 
+                    const logoutMenu = document.getElementById('logout-menu-item');
+                    if(event === 'SIGNED_OUT') {
+                        currentUser = null;
+                        localStorage.clear();
+                        appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
+                        if(authBtn) {
+                            authBtn.innerText = "Login"; 
+                            authBtn.classList.replace('bg-gray-800', 'bg-emerald-500'); 
+                            authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600'); 
+                        }
+                        if(logoutMenu) logoutMenu.classList.add('hidden'); 
+                        window.updateUI(); 
+                        return; // CRITICAL: Skip ALL cloud sync
+                    }
                     if(currentUser) { 
-                        if(authBtn && logoutMenu) { authBtn.innerText = "Terhubung"; authBtn.classList.replace('bg-emerald-500', 'bg-gray-800'); authBtn.classList.replace('hover:bg-emerald-600', 'hover:bg-gray-700'); logoutMenu.classList.remove('hidden'); }
-                        const { data, error } = await supabaseClient.from('user_data').select('app_state').eq('user_id', currentUser.id).single();
-                        if (data && data.app_state) { try { const cloudData = JSON.parse(data.app_state); appData = { ...DEFAULT_APP_DATA, ...cloudData }; window.saveData(false); } catch(e) {} } 
-                        else { window.saveData(true); }
-                        window.updateUI(); window.loadFeedFromDB(); window.loadNotifications();
+                        if(authBtn && logoutMenu) { 
+                            authBtn.innerText = "Terhubung"; 
+                            authBtn.classList.replace('bg-emerald-500', 'bg-gray-800'); 
+                            authBtn.classList.replace('hover:bg-emerald-600', 'hover:bg-gray-700'); 
+                            logoutMenu.classList.remove('hidden'); 
+                        }
+                        // Cloud sync: Preserve feedPosts/postComments (local social data)
+                        try {
+                            const { data: cloudDataRes, error } = await supabaseClient
+                                .from('user_data')
+                                .select('app_state')
+                                .eq('user_id', currentUser.id)
+                                .single();
+                            if (!error && cloudDataRes && cloudDataRes.app_state) { 
+                                try { 
+                                    const cloudData = JSON.parse(cloudDataRes.app_state);
+                                    // STATE PROTECTION: Don't override social/feed data
+                                    const protectedKeys = ['feedPosts', 'postComments', 'localComments'];
+                                    protectedKeys.forEach(key => delete cloudData[key]);
+                                    const localData = JSON.parse(JSON.stringify(appData));
+                                    appData = deepMerge(localData, cloudData);
+                                    window.saveData(false);
+                                } catch(e) { console.error('Cloud data parse error:', e); }
+                            } else {
+                                window.saveData(true);
+                            }
+                        } catch(e) {
+                            console.error('Cloud sync error:', e);
+                        }
+                        window.updateUI(); 
+                        window.loadFeedFromDB(); 
+                        window.loadNotifications();
                     } else { 
-                        if(authBtn && logoutMenu) { authBtn.innerText = "Login"; authBtn.classList.replace('bg-gray-800', 'bg-emerald-500'); authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600'); logoutMenu.classList.add('hidden'); }
-                        if(event === 'SIGNED_OUT') { appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA)); window.saveData(false); window.updateUI(); }
+                        if(authBtn && logoutMenu) { 
+                            authBtn.innerText = "Login"; 
+                            authBtn.classList.replace('bg-gray-800', 'bg-emerald-500'); 
+                            authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600'); 
+                            logoutMenu.classList.add('hidden'); 
+                        }
+                        window.updateUI();
                     }
                 });
             }
@@ -559,10 +621,20 @@
 
         window.loadData = () => {
             const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) { try { appData = { ...appData, ...JSON.parse(CryptoJS.AES.decrypt(saved, ENCRYPT_KEY).toString(CryptoJS.enc.Utf8)) }; } catch(e) {} }
-            if(!appData.feedPosts) appData.feedPosts = []; if(!appData.profile.avatar) appData.profile.avatar = ""; if(!appData.notifications) appData.notifications = [];
-            window.loadFeedFromDB();
+            if (saved) { 
+                try { 
+                    const parsed = JSON.parse(CryptoJS.AES.decrypt(saved, ENCRYPT_KEY).toString(CryptoJS.enc.Utf8));
+                    appData = { ...DEFAULT_APP_DATA, ...parsed };
+                } catch(e) { console.error('Load data failed:', e); }
+            }
+            // Ensure required fields exist
+            if(!appData.feedPosts) appData.feedPosts = [];
+            if(!appData.localComments) appData.localComments = {};
+            if(!appData.postComments) appData.postComments = {};
+            if(!appData.profile.avatar) appData.profile.avatar = "";
+            if(!appData.notifications) appData.notifications = [];
         };
+
 
         window.switchAuthTab = (mode) => {
             authMode = mode; document.getElementById('auth-error').classList.add('hidden'); document.getElementById('auth-success').classList.add('hidden');
@@ -597,13 +669,22 @@
                 if(error) { errEl.innerText = error.message; errEl.classList.remove('hidden'); } else { succEl.innerText = "Akun dibuat! Silakan Login."; succEl.classList.remove('hidden'); window.switchAuthTab('login'); }
             } else {
                 if(!password) { errEl.innerText = "Password wajib diisi!"; errEl.classList.remove('hidden'); document.getElementById('btn-auth-action').innerText = "Masuk Sekarang"; return; }
-                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                if(error) { errEl.innerText = error.message; errEl.classList.remove('hidden'); } else { window.closeModal('auth'); alert("Berhasil Login!"); }
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if(error) { errEl.innerText = error.message; errEl.classList.remove('hidden'); } else { window.closeModal('auth'); }
             }
             if(authMode === 'login') document.getElementById('btn-auth-action').innerText = "Masuk Sekarang"; else if(authMode === 'register') document.getElementById('btn-auth-action').innerText = "Buat Akun Baru"; else document.getElementById('btn-auth-action').innerText = "Kirim Link Reset";
         };
 
-        window.logout = async () => { if(supabaseClient) await supabaseClient.auth.signOut(); alert("Berhasil Logout."); document.getElementById('dropdownMenu').classList.add('hidden'); window.setView('dashboard'); };
+window.logout = async () => { 
+            if(!confirm('Yakin logout? Data lokal akan direset. Social data aman di cloud.')) return;
+            localStorage.clear(); // Clear FIRST
+            appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
+            currentUser = null;
+            try {
+                if(supabaseClient) await supabaseClient.auth.signOut();
+            } catch(e) { console.log('Supabase signout failed:', e); }
+            window.updateUI(); // No reload - smooth transition
+        };
         window.checkAuthAndOpenModal = (modalId) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk fitur ini!"); return; } window.openModal(modalId); };
         window.checkAuthAndShare = (type, id) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk membagikan portofolio!"); return; } window.shareContent(type, id); };
 
@@ -644,8 +725,9 @@
         // --- SISTEM HALAMAN POSTINGAN & KOMENTAR FIX ---
         window.goBack = () => { window.setView(previousView || 'feed'); };
         
-        window.viewPost = (postId) => {
-            currentPostIdForComment = String(postId);
+      window.viewPost = (postId) => {
+            currentPostIdForComment = String(postId); 
+            localStorage.setItem('jv_last_post_id', currentPostIdForComment); // Mengingat ID post
             window.setView('post-detail');
             document.getElementById('comment-input-bar').classList.remove('hidden');
             const post = appData.feedPosts.find(p => String(p.id) === currentPostIdForComment);
@@ -668,34 +750,84 @@
             window.loadPostComments();
         };
 
-        window.loadPostComments = async () => {
+window.loadPostComments = async () => {
             const container = document.getElementById('detail-comments-list');
             container.innerHTML = '<div class="text-center p-4 text-emerald-500 text-xs font-bold loading-pulse">Memuat balasan...</div>';
-            if(!supabaseClient) { container.innerHTML = '<div class="text-center p-4 text-red-400 text-xs font-bold">Mode Offline.</div>'; return; }
-
-            try {
-                const { data, error } = await supabaseClient.from('comments').select('*').eq('post_id', Number(currentPostIdForComment)).order('id', { ascending: true });
-                if(error) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Gagal memuat: ${error.message}</div>`; return; }
-                
-                if(!data || data.length === 0) { 
-                    container.innerHTML = '<div class="text-center p-6 text-gray-400 text-xs font-bold uppercase tracking-widest mt-10">Belum ada balasan.<br><span class="text-[9px] font-normal lowercase">Jadilah yang pertama!</span></div>'; 
-                } 
-                else {
-                    container.innerHTML = data.map(c => `
-                        <div class="flex gap-3 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+            
+            // STEP 3 ✅ ROBUST CACHE-FIRST + MERGE
+            // 1. Load postComments (per-post)
+            let allComments = [];
+            if (appData.postComments[currentPostIdForComment]) {
+                allComments = [...appData.postComments[currentPostIdForComment]];
+            }
+            // 2. Merge localComments (legacy/global)
+            if (appData.localComments[currentPostIdForComment]) {
+                allComments.push(...appData.localComments[currentPostIdForComment]);
+            }
+            
+            // 3. Background DB fetch + MERGE + DEDUPE + SORT
+            if(supabaseClient && currentUser) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('comments')
+                        .select('*')
+                        .eq('post_id', Number(currentPostIdForComment))
+                        .order('created_at', { ascending: true });
+                    if(!error && data) {
+                        const dbComments = data.map(c => ({
+                            ...c, 
+                            source: 'db', 
+                            timestamp: new Date(c.created_at).getTime()
+                        }));
+                        // FULL MERGE: local + DB
+                        const merged = [...allComments, ...dbComments];
+                        // ROBUST DEDUPE by id OR timestamp
+                        const seen = new Set();
+                        allComments = merged.filter(c => {
+                            const key = c.id || `ts_${c.timestamp}`;
+                            if (seen.has(key)) return false;
+                            seen.add(key);
+                            return true;
+                        }).sort((a,b) => (b.timestamp || b.id || 0) - (a.timestamp || a.id || 0));
+                        
+                        // PERSIST TO postComments cache
+                        appData.postComments[currentPostIdForComment] = allComments;
+                        // Migrate legacy localComments → postComments
+                        delete appData.localComments[currentPostIdForComment];
+                        window.saveData();
+                    }
+                } catch(err) {
+                    console.error('DB comments fetch failed:', err);
+                }
+            }
+            
+            // 4. RENDER (cache-first, offline-first)
+            if(allComments.length === 0) { 
+                container.innerHTML = '<div class="text-center p-6 text-gray-400 text-xs font-bold uppercase tracking-widest mt-10">Belum ada balasan.<br><span class="text-[9px] font-normal lowercase">Jadilah yang pertama!</span></div>'; 
+            } else {
+                container.innerHTML = allComments.map(c => {
+                    const isPending = c.source === 'local' && !c.db_synced;
+                    return `
+                        <div class="flex gap-3 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 ${isPending ? 'border-emerald-200 bg-emerald-50/50 animate-pulse' : ''}">
                             <div class="w-8 h-8 rounded-full bg-emerald-100 overflow-hidden shrink-0 border border-gray-200">
-                                ${c.avatar ? `<img src="${c.avatar}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-emerald-600 font-black text-xs">${(c.author || "U").charAt(0)}</div>`}
+                                ${c.avatar ? `<img src="${c.avatar}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-emerald-600 font-bold text-xs">${(c.author || "U").charAt(0)}</div>`}
                             </div>
                             <div class="flex-grow">
-                                <div class="flex items-center gap-2"><p class="font-black text-xs text-gray-900">${c.author || "User"}</p><span class="text-[8px] text-gray-400 font-bold">${c.date || ""}</span></div>
+                                <div class="flex items-center gap-2">
+                                    <p class="font-bold text-xs text-gray-900">${c.author || "User"}</p>
+                                    <span class="text-[8px] text-gray-400 font-bold">${c.date || new Date(c.timestamp || 0).toLocaleDateString('id-ID')}</span>
+                                </div>
                                 <p class="text-gray-700 text-xs mt-1 font-medium leading-relaxed">${c.text}</p>
                                 <button onclick="window.replyComment('${c.author}')" class="text-[10px] text-emerald-500 font-bold mt-2 hover:underline">Balas</button>
+                                ${isPending ? '<div class="text-[9px] text-emerald-500 font-bold mt-1 flex items-center gap-1">⏳ Syncing...</div>' : ''}
                             </div>
-                        </div>`).join('');
-                    setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
-                }
-            } catch (err) { container.innerHTML = `<div class="text-center p-4 text-red-500 text-xs font-bold">Terjadi kesalahan sistem: ${err.message}</div>`; }
+                        </div>`;
+                }).join('');
+                setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
+            }
         };
+
+
 
         window.replyComment = (authorName) => {
             const input = document.getElementById('detail-comment-input');
@@ -709,24 +841,36 @@
             if(!text || !currentPostIdForComment) return;
             input.value = '';
             
-            const container = document.getElementById('detail-comments-list');
-            if(container.innerHTML.includes('Belum ada')) container.innerHTML = '';
-            container.innerHTML += `
-                <div class="flex gap-3 bg-emerald-50 p-4 rounded-2xl shadow-sm border border-emerald-100 opacity-70">
-                    <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-emerald-200 flex items-center justify-center text-emerald-700 font-black text-xs">...</div>
-                    <div class="flex-grow"><p class="font-black text-xs text-gray-900">${appData.profile.name || "User"}</p><p class="text-gray-700 text-xs mt-1 font-medium">${text}</p></div>
-                </div>`;
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            // STEP 4 ✅ OPTIMISTIC sendDetailComment() + sync flag
+            // Optimistic UI + local cache FIRST (no db_synced = pending)
+            const optimisticId = Date.now().toString();
+
+            const optimisticComment = {
+                id: optimisticId,
+                post_id: Number(currentPostIdForComment),
+                user_id: currentUser.id,
+                author: appData.profile.name || "User",
+                avatar: appData.profile.avatar || "",
+                text: text,
+                date: new Date().toLocaleDateString('id-ID'),
+                timestamp: Date.now(),
+                source: 'local',
+                db_synced: false  // PENDING SYNC INDICATOR
+            };
+
+
+            
+            // Add to cache immediately
+            if(!appData.postComments[currentPostIdForComment]) appData.postComments[currentPostIdForComment] = [];
+            appData.postComments[currentPostIdForComment].unshift(optimisticComment);
+            window.saveData();
+            
+            // Refresh UI with cache
+            window.loadPostComments();
             
             if(supabaseClient) {
                 try {
-                    const newComment = { 
-                        post_id: Number(currentPostIdForComment), 
-                        user_id: currentUser.id, 
-                        author: appData.profile.name || "User", 
-                        avatar: appData.profile.avatar || "", 
-                        text: text, 
-                        date: new Date().toLocaleDateString('id-ID') 
+                    const newComment = { id: Date.now(), post_id: Number(currentPostIdForComment), user_id: currentUser.id, author: appData.profile.name, avatar: appData.profile.avatar, text, date: new Date().toLocaleDateString('id-ID') 
                     };
                     
                     const { error } = await supabaseClient.from('comments').insert([newComment]);
@@ -783,7 +927,7 @@
 
         window.publishPost = async () => {
             if(!currentUser) return alert("Silakan Login Terlebih Dahulu");
-            const caption = document.getElementById('post-caption').value; 
+            const caption = document.getElementById('post-caption').value.trim(); 
             if(!caption && !currentPostImage) return alert("Tulis sesuatu atau tambahkan foto!");
             
             const newPost = { id: Date.now(), user_id: currentUser.id, author: appData.profile.name || "User", author_avatar: appData.profile.avatar || "", caption: caption, date: new Date().toLocaleDateString('id-ID'), is_share_card: !!currentPostImage, image_data: currentPostImage || "", likes: 0 };
@@ -802,12 +946,14 @@
             });
         };
 
-        window.syncFeedFromDB = async () => {
+window.syncFeedFromDB = async () => {
             if(!supabaseClient) return;
             
-            // Berikan efek visual loading pada semua tombol sync
-            document.querySelectorAll('.sync-feed-btn').forEach(btn => {
-                btn.innerHTML = "⏳ Memuat..."; btn.disabled = true;
+            const btns = document.querySelectorAll('.sync-feed-btn');
+            btns.forEach(btn => {
+                btn.disabled = true;
+                btn.innerHTML = '⏳ Syncing...';
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
             });
 
             try { 
@@ -818,14 +964,18 @@
                     if(currentView === 'feed') window.renderFeed(); 
                     if(currentView === 'profile') window.renderProfileFeed(); 
                 } 
-            } catch (err) {}
+            } catch (err) {
+                console.error('Feed sync error:', err);
+            }
             
-            // Kembalikan tombol setelah 0.5 detik
+            // Reset buttons after fixed delay for UX
             setTimeout(() => {
-                document.querySelectorAll('.sync-feed-btn').forEach(btn => {
-                    btn.innerHTML = "↻ Refresh"; btn.disabled = false;
+                btns.forEach(btn => {
+                    btn.disabled = false;
+                    btn.innerHTML = '↻ Refresh';
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
                 });
-            }, 500);
+            }, 1000);
         };
         window.loadFeedFromDB = window.syncFeedFromDB; 
 
@@ -858,11 +1008,17 @@
             }
         };
 
-        window.renderProfileFeed = () => {
-            const photoContainer = document.getElementById('profile-feed-photo-container'), textContainer = document.getElementById('profile-feed-text-container');
+window.renderProfileFeed = () => {
+            if(!currentUser) {
+                document.getElementById('profile-feed-photo-container').innerHTML = '<div class="col-span-full text-center p-8 text-gray-400 font-bold text-sm">Login untuk melihat postingan pribadi</div>';
+                document.getElementById('profile-feed-text-container').innerHTML = '<div class="text-center p-8 text-gray-400 font-bold text-sm">Login untuk melihat postingan pribadi</div>';
+                return;
+            }
             
-            // FIX TERPENTING: Gunakan hanya currentUser.id agar tidak nyasar!
-            const myPosts = currentUser ? appData.feedPosts.filter(p => p.user_id === currentUser.id) : [];
+            const photoContainer = document.getElementById('profile-feed-photo-container');
+            const textContainer = document.getElementById('profile-feed-text-container');
+            
+            const myPosts = appData.feedPosts.filter(p => p.user_id === currentUser.id);
             
             const imagePosts = myPosts.filter(p => p.image_data), textPosts = myPosts.filter(p => !p.image_data);
 
@@ -1008,31 +1164,17 @@
                 if (pts.length === 0) pts = [0, 0];
                 if (pts.length === 1) pts.push(pts[0]); 
                 
-                if(dashQuickChart) { 
-                    dashQuickChart.data.labels = pts.map((_, i) => i); 
-                    dashQuickChart.data.datasets[0].data = pts; 
-                    dashQuickChart.update(); 
-                }
-                if(complexIncChart) { 
-                    complexIncChart.data.labels = labelsAI; 
-                    complexIncChart.data.datasets[0].data = incomeAI; 
-                    complexIncChart.update(); 
-                }
-                if(complexExpChart) { 
-                    complexExpChart.data.labels = labelsAI; 
-                    complexExpChart.data.datasets[0].data = expenseAI; 
-                    complexExpChart.update(); 
-                }
+             if(dashQuickChart) { dashQuickChart.data.labels = pts.map((_, i) => i); dashQuickChart.data.datasets[0].data = pts; dashQuickChart.update(); }
+                if(complexIncChart) { complexIncChart.data.labels = labelsAI; complexIncChart.data.datasets[0].data = incomeAI; complexIncChart.update(); }
+                if(complexExpChart) { complexExpChart.data.labels = labelsAI; complexExpChart.data.datasets[0].data = expenseAI; complexExpChart.update(); }
                 
-                // Memaksa grafik muncul (resize) saat mode kompleks dibuka
-                if (currentView === 'dashboard') {
-                    setTimeout(() => {
-                        if(dashQuickChart) dashQuickChart.resize();
-                        if(complexIncChart) complexIncChart.resize();
-                        if(complexExpChart) complexExpChart.resize();
-                    }, 50);
-                }
-                
+                // Memancing grafik agar muncul ukurannya saat mode dipindah
+                setTimeout(() => {
+                    if (dashQuickChart) dashQuickChart.resize();
+                    if (complexIncChart) complexIncChart.resize();
+                    if (complexExpChart) complexExpChart.resize();
+                }, 50);
+
                 window.calculateAIBudget(totalIncome, totalExpense);
             }
         };
@@ -1138,16 +1280,20 @@
         window.openModal = (type, editId = null) => { 
             const modal = document.getElementById(`modal-${type}`); if(!modal) return; modal.classList.remove('hidden');
             const recs = appData.settings.mode === 'simple' ? appData.simpleRecords : appData.complexRecords;
-            if(type === 'record') {
-                const btn = document.getElementById('btn-save-record'), title = document.getElementById('modal-record-title');
-                if(editId) { 
-                    const r = recs.find(x => x.id === editId); title.innerText = "Edit Buku"; document.getElementById('rec-name').value = r.name; document.getElementById('rec-amount').value = r.baseAmount; document.getElementById('rec-month').value = r.month;
-                    btn.onclick = () => { r.name = document.getElementById('rec-name').value; r.month = document.getElementById('rec-month').value; r.baseAmount = parseFloat(document.getElementById('rec-amount').value) || 0; window.saveData(); window.closeModal('record'); window.updateUI(); window.updateDashboardGraph(); };
-                } else {
-                    title.innerText = "Buku Baru"; document.getElementById('rec-name').value = ""; document.getElementById('rec-amount').value = "";
-                    btn.onclick = () => { const nr = { id: Date.now().toString(), name: document.getElementById('rec-name').value || "Buku Baru", month: document.getElementById('rec-month').value, baseAmount: parseFloat(document.getElementById('rec-amount').value) || 0, transactions: [], timestamp: Date.now() }; if(appData.settings.mode === 'simple') appData.simpleRecords.push(nr); else appData.complexRecords.push(nr); window.saveData(); window.closeModal('record'); window.updateUI(); window.updateDashboardGraph(); };
+                if(type === 'record') {
+                    const btn = document.getElementById('btn-save-record'), title = document.getElementById('modal-record-title'), recNameInput = document.getElementById('rec-name'), recMonthSelect = document.getElementById('rec-month');
+                    if(editId) { 
+                        const r = recs.find(x => x.id === editId); title.innerText = "Edit Buku"; recNameInput.value = r.name; document.getElementById('rec-amount').value = r.baseAmount; recMonthSelect.value = r.month;
+                        btn.onclick = () => { r.name = recNameInput.value; r.month = recMonthSelect.value; r.baseAmount = parseFloat(document.getElementById('rec-amount').value) || 0; window.saveData(); window.closeModal('record'); window.updateUI(); window.updateDashboardGraph(); };
+                    } else {
+                        // Monthly auto-suggest
+                        const now = new Date();
+                        const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+                        const suggestedName = `${months[now.getMonth()]} ${now.getFullYear()}`;
+                        title.innerText = "Buku Baru"; recNameInput.value = suggestedName; recMonthSelect.value = months[now.getMonth()]; document.getElementById('rec-amount').value = "0";
+                        btn.onclick = () => { const nr = { id: Date.now().toString(), name: recNameInput.value || "Buku Baru", month: recMonthSelect.value, baseAmount: parseFloat(document.getElementById('rec-amount').value) || 0, transactions: [], timestamp: Date.now() }; if(appData.settings.mode === 'simple') appData.simpleRecords.push(nr); else appData.complexRecords.push(nr); window.saveData(); window.closeModal('record'); window.updateUI(); window.updateDashboardGraph(); };
+                    }
                 }
-            }
             if(type === 'transaction') {
                 const title = document.getElementById('modal-trans-title'), btnSave = document.getElementById('btn-save-trans'), typeSelect = document.getElementById('trans-type'), catSelect = document.getElementById('trans-category'), dateInput = document.getElementById('trans-date'), descInput = document.getElementById('trans-desc'), amountInput = document.getElementById('trans-amount');
                 if (editId) {
@@ -1206,12 +1352,23 @@
             portfolioChart.data.labels = ['SIMPLE', 'COMPLEX']; portfolioChart.data.datasets = [{ label: type.toUpperCase(), data: [ type === 'total' ? s.b : (type === 'income' ? s.i : s.e), type === 'total' ? c.b : (type === 'income' ? c.i : c.e) ], backgroundColor: [color, '#312e81'] }]; portfolioChart.update();
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
+     window.addEventListener('DOMContentLoaded', () => {
             window.loadData(); window.initCharts(); window.updateUI(); window.changeTheme(appData.settings.theme);
             const hash = window.location.hash.replace('#', '');
             const validViews = ['dashboard', 'record-detail', 'portfolio', 'library', 'profile', 'settings', 'feed', 'post-detail'];
-            if (hash && validViews.includes(hash)) window.setView(hash, false);
-            else window.setView('dashboard', false);
+            
+            if (hash && validViews.includes(hash)) {
+                if (hash === 'post-detail') {
+                    const savedId = localStorage.getItem('jv_last_post_id');
+                    if (savedId) {
+                        setTimeout(() => window.viewPost(savedId), 500); 
+                    } else {
+                        window.setView('feed', false);
+                    }
+                } else {
+                    window.setView(hash, false);
+                }
+            } else window.setView('dashboard', false);
         });
 
         const menuBtn = document.getElementById('menuBtn');
