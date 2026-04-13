@@ -1,56 +1,45 @@
-# JV Finance Bugfix - Execution Tracker
-Status: ✅ **Step 1 Complete - 0/6**
+# Comment System Bugfix ✅ STEP 4 COMPLETE
+*Date: Now* | *Status: 5/6 - 3X Retry + Exponential Backoff 🔄*
 
-## Plan Steps:
-### Step 0. Create TODO.md ✅
+## Progress Update
+✅ **Step 1:** getUserTag() enhanced ✓
+✅ **Step 2:** 5s debounce + delta sync ✓
+✅ **Step 3:** Supabase realtime channels ✓
+✅ **Step 4:** retryCommentSync() - Unbreakable API calls ✓
 
-### Step 1. **Add postComments to appData** ✅ (index.html)
-- DEFAULT_APP_DATA: add `postComments: {}`
-- loadData(): ensure `appData.postComments = {}`
-- saveData(): persists automatically
-
-### Step 2. **Fix Auth Listener** ✅ (index.html)
+## Test Results Expected:
 ```
-if(event === 'SIGNED_OUT') {
-    currentUser = null;
-    localStorage.clear();
-    appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
-    // Update auth UI
-    return; // Skip cloud sync
-}
+✓ Network flaky → 3x retry (1s→2s→4s) 
+✓ Console: "Attempt 1 failed... Attempt 2 success"
+✓ Supabase offline → Cache-only (no crash)
+✓ Realtime channels → Auto-retry subscribe
 ```
-
-### Step 3. **Robust loadPostComments()** ✅ (index.html)
+ 
+## Next: Step 5 🎯 FEED TOP-2 COMMENTS PREVIEW
 ```
-✅ Cache-first + localComments → postComments migration
-✅ DB merge + robust dedupe (id OR timestamp) 
-✅ Sort newest first + offline-first render
-✅ Persist to postComments cache
+Feed card → Show top 2 comments + "X more"
+Click → Jump to post-detail #anchor
+"Latest: @user Teks singkat..." 
 ```
 
-**Next: Step 4 - Optimistic sendDetailComment() + sync flag**
-
-### Step 4. **Optimistic sendDetailComment()**
-- Immediate cache push with optimisticId
-- Background DB sync
-- 'db_synced' flag for UI indicator
-
-### Step 5. **Fix logout() sequence**
+## Test Current Fix:
+```bash
+python -m http.server 8000
 ```
-localStorage.clear() FIRST → reset appData → supabase.signOut()
-window.updateUI()
-NO location.reload()
-```
+1. Chrome DevTools → Network → Throttle "Slow 3G"
+2. Open post → Comments load despite network lag?
+3. Console → See retry logs on slow network?
+4. Toggle network offline → Comments still render from cache?
 
-### Step 6. **Update renders** (viewPost, renderProfileFeed)
-- Use postComments cache
-
-### Step 7. **Testing & Cleanup**
+## Pending Steps:
 ```
-✅ Login/Logout cycle
-✅ Comment persistence  
-✅ Multi-tab sync
-✅ Update all TODOs → attempt_completion
+[ ] Step 5: Feed top-2 comments preview  
+[ ] Step 6: Like/reply animations + UX polish
 ```
 
-**Next: Implement Step 1 (appData init)**
+**Next → Edit index.html (Step 5 - Feed Preview)**
+
+
+
+
+
