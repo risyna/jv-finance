@@ -860,8 +860,9 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
                             logoutMenu.classList.remove('hidden'); 
                         }
                         await window.ensureUserId(true);
-                        window.setView('dashboard');  // FIX: Show dashboard immediately
                         window.updateUI();  // FIX: Full UI refresh
+
+                        // Preserve current view after login instead of forcing dashboard
                         
                         await window.migrateUserTags();
                         
@@ -895,9 +896,9 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
                             authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600'); 
                             logoutMenu.classList.add('hidden'); 
                         }
-                        window.setView('dashboard');
                         window.updateUI();
                     }
+
                 });
             }
         } catch (error) { }
@@ -1420,9 +1421,11 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
                 likes: 0 
             };
             appData.feedPosts.unshift(newPost); window.saveData(false);
-            document.getElementById('post-caption').value = ''; window.removePostImage(); window.closeModal('create-post'); window.setView('feed');
+window.setView('feed');
+            window.renderFeed();
             if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); }
         };
+
 
         window.postShareCardToFeed = () => {
             if(!currentUser) return; document.getElementById('btn-post-share').innerText = "Menyiapkan...";
@@ -1440,10 +1443,13 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
                     image_data: imgData, 
                     likes: 0 
                 };
-                appData.feedPosts.unshift(newPost); window.saveData(false); window.closeModal('share-preview'); window.setView('feed'); document.getElementById('btn-post-share').innerText = "🚀 Post Feed";
-                if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); }
-            });
-        };
+window.setView('feed');
+            window.renderFeed();
+            document.getElementById('btn-post-share').innerText = "🚀 Post Feed";
+            if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); }
+        });
+    };
+
 
 window.syncFeedFromDB = async () => {
             if(!supabaseClient) {
@@ -1469,7 +1475,7 @@ window.syncFeedFromDB = async () => {
                 console.error('Feed sync error:', err);
             }
             
-            // Always render feed after sync
+            // FIXED: Always renderFeed + reset pagination after sync
             window.renderFeed();
             feedPage = 0;
             allFeedPosts = [];
@@ -1586,8 +1592,10 @@ window.syncFeedFromDB = async () => {
 
         window.downloadShareCard = () => { html2canvas(document.getElementById('capture-area'), { backgroundColor: '#18181b', scale: 2 }).then(canvas => { const link = document.createElement('a'); link.download = `JvFinance_Share_${Date.now()}.png`; link.href = canvas.toDataURL('image/png'); link.click(); }); };
 
-        window.setView = function(viewName, pushState = true) {
+window.setView = function(viewName, pushState = true) {
+            localStorage.setItem('jv_current_view', viewName);
             document.getElementById('dropdownMenu').classList.add('hidden');
+
             
             if (currentView === 'post-detail' && viewName !== 'post-detail') {
                 window.unsubscribeFromPostComments(currentPostIdForComment);
@@ -1858,19 +1866,21 @@ window.syncFeedFromDB = async () => {
             const hash = window.location.hash.replace('#', '');
             const validViews = ['dashboard', 'record-detail', 'portfolio', 'library', 'profile', 'settings', 'feed', 'post-detail'];
             
-            if (hash && validViews.includes(hash)) {
-                if (hash === 'post-detail') {
-                    const savedId = localStorage.getItem('jv_last_post_id');
-                    if (savedId) {
-                        setTimeout(() => window.viewPost(savedId), 500); 
-                    } else {
-                        window.setView('feed', false);
-                    }
+            const savedView = localStorage.getItem('jv_current_view') || hash;
+            const targetView = validViews.includes(savedView) ? savedView : 'dashboard';
+            
+            if (targetView === 'post-detail') {
+                const savedId = localStorage.getItem('jv_last_post_id');
+                if (savedId) {
+                    setTimeout(() => window.viewPost(savedId), 500); 
                 } else {
-                    window.setView(hash, false);
+                    window.setView('feed', false);
                 }
-            } else window.setView('dashboard', false);
+            } else {
+                window.setView(targetView, false);
+            }
         });
+
 
         const menuBtn = document.getElementById('menuBtn');
         const dropdownMenu = document.getElementById('dropdownMenu');
