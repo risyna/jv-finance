@@ -521,31 +521,29 @@
     </div>
 
     <script>
-const DEFAULT_APP_DATA = { 
-  profile: { name: "User", hobby: "", goal: "", avatar: "", user_id_display: null }, 
-  settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } }, 
-  simpleRecords: [], complexRecords: [], feedPosts: [], localComments: {}, postComments: {}, 
-  notifications: [], simpleTarget: 0, complexTarget: 0, currencyMode: 'IDR', 
-  selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null,
-  nextUserId: 1  // Sequential counter for #000001+
-};
+        const DEFAULT_APP_DATA = { 
+          profile: { name: "User", hobby: "", goal: "", avatar: "", user_id_display: null }, 
+          settings: { theme: 'green', fontSize: 16, mode: 'simple', notifications: { email: true, alert: true, budget: false } }, 
+          simpleRecords: [], complexRecords: [], feedPosts: [], localComments: {}, postComments: {}, 
+          notifications: [], simpleTarget: 0, complexTarget: 0, currencyMode: 'IDR', 
+          selectedRecordId: null, activeBookChart: 'total', activePortChart: 'total', currentShareData: null,
+          nextUserId: 1
+        };
 
-let appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
-appData.lastCommentSync = {};
+        let appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
+        appData.lastCommentSync = {};
 
-// User tag cache for migration - ENHANCED
-window.userTagCache = JSON.parse(localStorage.getItem('jv_user_tags') || '{}');
-window.userCreationOrder = JSON.parse(localStorage.getItem('jv_user_orders') || '{}');
+        window.userTagCache = JSON.parse(localStorage.getItem('jv_user_tags') || '{}');
+        window.userCreationOrder = JSON.parse(localStorage.getItem('jv_user_orders') || '{}');
 
-// Migrate existing feedPosts to add likes
-appData.feedPosts = appData.feedPosts.map(post => ({
-    ...post,
-    likes: post.likes || 0,
-    liked_by: post.liked_by || [],
-    timestamp: post.timestamp || Date.now()
-}));
+        appData.feedPosts = appData.feedPosts.map(post => ({
+            ...post,
+            likes: post.likes || 0,
+            liked_by: post.liked_by || [],
+            timestamp: post.timestamp || Date.now()
+        }));
 
-let currentUser = null, authMode = 'login', currentPostImage = null, currentPostIdForComment = null, currentView = 'dashboard', previousView = 'dashboard';
+        let currentUser = null, authMode = 'login', currentPostImage = null, currentPostIdForComment = null, currentView = 'dashboard', previousView = 'dashboard';
         let portfolioChart = null, bookChart = null, dashQuickChart = null, complexIncChart = null, complexExpChart = null;
         let chartDataCache = {};
         
@@ -566,353 +564,270 @@ let currentUser = null, authMode = 'login', currentPostImage = null, currentPost
             return merged;
         }
 
-window.formatMoney = (val) => {
-    const amount = parseFloat(val) || 0;
-    if (appData.currencyMode === 'USD') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount / 15500);
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
-};
+        window.formatMoney = (val) => {
+            const amount = parseFloat(val) || 0;
+            if (appData.currencyMode === 'USD') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount / 15500);
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+        };
 
-window.getRelativeTime = (timestamp) => {
-    const now = Date.now();
-    const diff = now - timestamp;
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    
-    if (seconds < 60) return 'Baru saja';
-    if (minutes < 60) return `${minutes}m`;
-    if (hours < 24) return `${hours}j`;
-    if (days < 7) return `${days}h`;
-    if (days < 30) return 'Minggu lalu';
-    return new Date(timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-};
-
-let feedPage = 0;
-let feedLoading = false;
-let allFeedPosts = []; // Cache all loaded posts
-
-const feedObserver = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting && !feedLoading) loadMoreFeed();
-}, { threshold: 0.1 });
-
-window.loadMoreFeed = async () => {
-    if (feedLoading) return;
-    feedLoading = true;
-    
-    try {
-        // Show loading
-        const infiniteTrigger = document.querySelector('.infinite-trigger');
-        if (infiniteTrigger) {
-            infiniteTrigger.innerHTML = '<div class="text-center py-8 text-gray-400 text-sm">⏳ Loading more posts...</div>';
-        }
-        
-        // Paginated fetch from Supabase (or local if offline)
-        const pageSize = 6;
-        let newPosts = [];
-        
-        if (supabaseClient) {
-            const { data, error } = await supabaseClient
-                .from('posts')
-                .select('*')
-                .order('id', { ascending: false })
-                .range(feedPage * pageSize, (feedPage + 1) * pageSize - 1);
+        window.getRelativeTime = (timestamp) => {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
             
-            if (!error && data) {
-                // Migrate user tags
-                for (let post of data) {
-                    if (!post.user_tag) {
-                        post.user_tag = await getUserTag(post.user_id);
+            if (seconds < 60) return 'Baru saja';
+            if (minutes < 60) return `${minutes}m`;
+            if (hours < 24) return `${hours}j`;
+            if (days < 7) return `${days}h`;
+            if (days < 30) return 'Minggu lalu';
+            return new Date(timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        };
+
+        let feedPage = 0;
+        let feedLoading = false;
+        let allFeedPosts = [];
+
+        const feedObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !feedLoading) loadMoreFeed();
+        }, { threshold: 0.1 });
+
+        window.loadMoreFeed = async () => {
+            if (feedLoading) return;
+            feedLoading = true;
+            
+            try {
+                const infiniteTrigger = document.querySelector('.infinite-trigger');
+                if (infiniteTrigger) infiniteTrigger.innerHTML = '<div class="text-center py-8 text-gray-400 text-sm">⏳ Loading more posts...</div>';
+                
+                const pageSize = 6;
+                let newPosts = [];
+                
+                if (supabaseClient) {
+                    const { data, error } = await supabaseClient
+                        .from('posts')
+                        .select('*')
+                        .order('id', { ascending: false })
+                        .range(feedPage * pageSize, (feedPage + 1) * pageSize - 1);
+                    
+                    if (!error && data) {
+                        for (let post of data) {
+                            if (!post.user_tag) post.user_tag = await getUserTag(post.user_id);
+                        }
+                        newPosts = data;
                     }
                 }
-                newPosts = data;
+                
+                if (newPosts.length === 0) newPosts = appData.feedPosts.slice(feedPage * pageSize, (feedPage + 1) * pageSize);
+                
+                allFeedPosts = [...allFeedPosts, ...newPosts];
+                appData.feedPosts = [...new Array(...new Set(allFeedPosts.map(p => p.id)))
+                    .map(id => allFeedPosts.find(p => p.id === id))
+                    .sort((a,b) => b.id - a.id)];
+                
+                window.saveData();
+                if (document.getElementById('feed-container')) window.renderFeed();
+                
+                feedPage++;
+                const newTrigger = document.querySelector('.infinite-trigger');
+                if (newTrigger && !newTrigger.hasAttribute('observed')) {
+                    feedObserver.observe(newTrigger);
+                    newTrigger.setAttribute('observed', 'true');
+                }
+            } catch (error) {
+                console.error('Load more feed error:', error);
+            } finally {
+                feedLoading = false;
             }
-        }
-        
-        // Fallback to local + simulate pagination
-        if (newPosts.length === 0) {
-            newPosts = appData.feedPosts.slice(feedPage * pageSize, (feedPage + 1) * pageSize);
-        }
-        
-        // Merge & dedupe
-        allFeedPosts = [...allFeedPosts, ...newPosts];
-        appData.feedPosts = [...new Array(...new Set(allFeedPosts.map(p => p.id))) // Dedupe
-            .map(id => allFeedPosts.find(p => p.id === id))
-            .sort((a,b) => b.id - a.id)]; // Latest first
-        
-        window.saveData();
-        
-        if (document.getElementById('feed-container')) {
-            window.renderFeed();
-        }
-        
-        feedPage++;
-        
-        // Connect observer to new trigger
-        const newTrigger = document.querySelector('.infinite-trigger');
-        if (newTrigger && !newTrigger.hasAttribute('observed')) {
-            feedObserver.observe(newTrigger);
-            newTrigger.setAttribute('observed', 'true');
-        }
-        
-    } catch (error) {
-        console.error('Load more feed error:', error);
-    } finally {
-        feedLoading = false;
-    }
-};
+        };
 
-// Initial load
-window.renderFeed = () => {
-    const container = document.getElementById('feed-container');
-    if (!container) return;
-    
-    if (appData.feedPosts.length === 0) {
-        container.innerHTML = '<div class="text-center p-10 text-gray-400 font-bold border-2 border-dashed rounded-3xl">Belum ada postingan komunitas. Jadilah yang pertama!</div>';
-        return;
-    }
-    
-    container.innerHTML = appData.feedPosts.map(post => {
-        const isLiked = currentUser && post.liked_by?.includes(currentUser.id);
-        return `
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-6 cursor-pointer hover:shadow-md transition-all group" 
-                 ondblclick="window.doubleClickLike('${post.id}')" 
-                 data-post-id="${post.id}">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold overflow-hidden border border-gray-200 shrink-0">
-                        ${post.author_avatar ? `<img src="${post.author_avatar}" class="w-full h-full object-cover">` : `<span class="text-white">${(post.author || "U").charAt(0)}</span>`}
-                    </div>
-                    <div>
-                        <p class="font-black text-sm">${post.author || "User"}</p>
-                        ${post.user_tag ? `<p class="text-[10px] font-black ${post.user_tag === '#ADMIN' ? 'text-red-500' : 'text-emerald-500'} tracking-widest">${post.user_tag}</p>` : ''}
-                        <p class="timestamp text-[10px] text-gray-400 uppercase tracking-widest" data-timestamp="${post.timestamp || post.id}">${window.getRelativeTime(post.timestamp || post.id)}</p>
-                    </div>
-                </div>
-                ${post.image_data ? `<img src="${post.image_data}" class="w-full rounded-2xl mb-4 border border-gray-100 shadow-sm object-cover max-h-96 group-hover:scale-[1.02] transition-transform duration-300" />` : ''}
-                ${post.caption ? `<p class="text-gray-800 font-medium text-sm leading-relaxed whitespace-pre-line">${post.caption}</p>` : ''}
-                <div class="flex items-center gap-4 mt-6 pt-4 border-t border-gray-50">
-                    <button onclick="window.toggleLike('${post.id}'); event.stopPropagation();" 
-                            class="heart-btn flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-all ${isLiked ? 'text-red-500 scale-110' : 'text-gray-400 hover:text-red-500'} font-bold text-sm"
-                            data-post-id="${post.id}">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="${isLiked ? 'currentColor' : 'none'}" stroke="${isLiked ? '#fff' : 'currentColor'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                        <span>${post.likes || 0}</span>
-                    </button>
-                    <button class="flex items-center gap-2 text-gray-400 hover:text-emerald-500 transition font-bold text-xs" onclick="window.viewPost('${post.id}'); event.stopPropagation();">
-                        💬 
-                        <span class="ml-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-black">
-                            ${appData.postComments[post.id] ? appData.postComments[post.id].length : 0}
-                        </span>
-                    </button>
-                </div>
-            </div>`;
-    }).join('') + '<div class="infinite-trigger h-20 flex items-center justify-center"></div>';
-    
-    // Update timestamps
-    updateTimestamps();
-    
-    // Re-observe infinite trigger
-    setTimeout(() => {
-        const trigger = document.querySelector('.infinite-trigger');
-        if (trigger) feedObserver.observe(trigger);
-    }, 100);
-};
-
-window.updateTimestamps = () => {
-    document.querySelectorAll('.timestamp').forEach(el => {
-        const ts = parseInt(el.dataset.timestamp);
-        el.textContent = window.getRelativeTime(ts);
-    });
-};
-
-// Auto-update timestamps every 30s
-setInterval(updateTimestamps, 30000);
-
-window.toggleLike = (postId) => {
-    if (!currentUser) {
-        window.openModal('auth');
-        return;
-    }
-    
-    const post = appData.feedPosts.find(p => String(p.id) === String(postId));
-    if (!post) return;
-    
-    const userId = currentUser.id;
-    const wasLiked = post.liked_by.includes(userId);
-    
-    if (wasLiked) {
-        post.liked_by = post.liked_by.filter(id => id !== userId);
-        post.likes = Math.max(0, post.likes - 1);
-        window.startLikeAnimation(postId, false);
-    } else {
-        post.liked_by.push(userId);
-        post.likes += 1;
-        window.startLikeAnimation(postId, true);
-    }
-    
-    window.saveData();
-    
-    // Update UI immediately
-    if (document.querySelector(`[data-post-id="${postId}"]`)) {
-        window.renderFeed();
-    }
-    
-    // Supabase sync likes
-    if (supabaseClient) {
-        supabaseClient.from('post_likes').upsert({
-            post_id: Number(postId),
-            user_id: userId,
-            liked: !wasLiked
-        }).catch(console.error);
-    }
-};
-
-window.doubleClickLike = (postId) => {
-    const post = appData.feedPosts.find(p => String(p.id) === String(postId));
-    if (!post || !currentUser || post.liked_by.includes(currentUser.id)) return;
-    
-    // Trigger like + burst animation
-    window.toggleLike(postId);
-    
-    // Double-click burst (multiple hearts)
-    const card = document.querySelector(`[data-post-id="${postId}"]`);
-    if (card) {
-        for (let i = 0; i < 6; i++) {
+        window.renderFeed = () => {
+            const container = document.getElementById('feed-container');
+            if (!container) return;
+            
+            if (appData.feedPosts.length === 0) {
+                container.innerHTML = '<div class="text-center p-10 text-gray-400 font-bold border-2 border-dashed rounded-3xl">Belum ada postingan komunitas. Jadilah yang pertama!</div>';
+                return;
+            }
+            
+            container.innerHTML = appData.feedPosts.map(post => {
+                const isLiked = currentUser && post.liked_by?.includes(currentUser.id);
+                return `
+                    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-6 cursor-pointer hover:shadow-md transition-all group" 
+                         ondblclick="window.doubleClickLike('${post.id}')" 
+                         data-post-id="${post.id}">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold overflow-hidden border border-gray-200 shrink-0">
+                                ${post.author_avatar ? `<img src="${post.author_avatar}" class="w-full h-full object-cover">` : `<span class="text-white">${(post.author || "U").charAt(0)}</span>`}
+                            </div>
+                            <div>
+                                <p class="font-black text-sm">${post.author || "User"}</p>
+                                ${post.user_tag ? `<p class="text-[10px] font-black ${post.user_tag === '#ADMIN' ? 'text-red-500' : 'text-emerald-500'} tracking-widest">${post.user_tag}</p>` : ''}
+                                <p class="timestamp text-[10px] text-gray-400 uppercase tracking-widest" data-timestamp="${post.timestamp || post.id}">${window.getRelativeTime(post.timestamp || post.id)}</p>
+                            </div>
+                        </div>
+                        ${post.image_data ? `<img src="${post.image_data}" class="w-full rounded-2xl mb-4 border border-gray-100 shadow-sm object-cover max-h-96 group-hover:scale-[1.02] transition-transform duration-300" />` : ''}
+                        ${post.caption ? `<p class="text-gray-800 font-medium text-sm leading-relaxed whitespace-pre-line">${post.caption}</p>` : ''}
+                        <div class="flex items-center gap-4 mt-6 pt-4 border-t border-gray-50">
+                            <button onclick="window.toggleLike('${post.id}'); event.stopPropagation();" 
+                                    class="heart-btn flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-all ${isLiked ? 'text-red-500 scale-110' : 'text-gray-400 hover:text-red-500'} font-bold text-sm"
+                                    data-post-id="${post.id}">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="${isLiked ? 'currentColor' : 'none'}" stroke="${isLiked ? '#fff' : 'currentColor'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                                <span>${post.likes || 0}</span>
+                            </button>
+                            <button class="flex items-center gap-2 text-gray-400 hover:text-emerald-500 transition font-bold text-xs" onclick="window.viewPost('${post.id}'); event.stopPropagation();">
+                                💬 
+                                <span class="ml-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-black">
+                                    ${appData.postComments[post.id] ? appData.postComments[post.id].length : 0}
+                                </span>
+                            </button>
+                        </div>
+                    </div>`;
+            }).join('') + '<div class="infinite-trigger h-20 flex items-center justify-center"></div>';
+            
+            updateTimestamps();
             setTimeout(() => {
-                const heart = document.createElement('div');
-                heart.innerHTML = '<svg class="like-heart burst-heart" width="28" height="28" viewBox="0 0 24 24" fill="#ff4d4d"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>';
-                heart.style.cssText = `
-                    position: absolute;
-                    left: ${Math.random() * 80 + 10}%;
-                    top: ${Math.random() * 60 + 10}%;
-                    pointer-events: none;
-                    z-index: 100;
-                    animation: heartBurst 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-                `;
-                card.style.position = 'relative';
-                card.appendChild(heart);
-                setTimeout(() => heart.remove(), 800);
-            }, i * 100);
-        }
-    }
-};
+                const trigger = document.querySelector('.infinite-trigger');
+                if (trigger) feedObserver.observe(trigger);
+            }, 100);
+        };
 
-// STEP 1 ✅ ENHANCED getUserTag() - Bugfix Complete
-window.isAdmin = (email) => email === 'hyaku7000@gmail.com';
-window.padId = (num) => `#${num.toString().padStart(5, '0')}`;
+        window.updateTimestamps = () => {
+            document.querySelectorAll('.timestamp').forEach(el => {
+                const ts = parseInt(el.dataset.timestamp);
+                el.textContent = window.getRelativeTime(ts);
+            });
+        };
 
-async function getUserTag(userId, forceRefresh = false) {
-    if (!userId) return '';
+        setInterval(updateTimestamps, 30000);
 
-    // 1. Memory cache hit
-    if (window.userTagCache?.[userId] && !forceRefresh) {
-        return window.userTagCache[userId];
-    }
-    
-    // 2. localStorage cache
-    const persistentCache = JSON.parse(localStorage.getItem('jv_user_tags') || '{}');
-    if (persistentCache[userId] && !forceRefresh) {
-        window.userTagCache = window.userTagCache || {};
-        window.userTagCache[userId] = persistentCache[userId];
-        return persistentCache[userId];
-    }
+        window.toggleLike = (postId) => {
+            if (!currentUser) { window.openModal('auth'); return; }
+            const post = appData.feedPosts.find(p => String(p.id) === String(postId));
+            if (!post) return;
+            const userId = currentUser.id;
+            const wasLiked = post.liked_by.includes(userId);
+            
+            if (wasLiked) {
+                post.liked_by = post.liked_by.filter(id => id !== userId);
+                post.likes = Math.max(0, post.likes - 1);
+                window.startLikeAnimation(postId, false);
+            } else {
+                post.liked_by.push(userId);
+                post.likes += 1;
+                window.startLikeAnimation(postId, true);
+            }
+            window.saveData();
+            if (document.querySelector(`[data-post-id="${postId}"]`)) window.renderFeed();
+            
+            if (supabaseClient) {
+                supabaseClient.from('post_likes').upsert({ post_id: Number(postId), user_id: userId, liked: !wasLiked }).catch(console.error);
+            }
+        };
 
-    let tag = '';
+        window.doubleClickLike = (postId) => {
+            const post = appData.feedPosts.find(p => String(p.id) === String(postId));
+            if (!post || !currentUser || post.liked_by.includes(currentUser.id)) return;
+            window.toggleLike(postId);
+            
+            const card = document.querySelector(`[data-post-id="${postId}"]`);
+            if (card) {
+                for (let i = 0; i < 6; i++) {
+                    setTimeout(() => {
+                        const heart = document.createElement('div');
+                        heart.innerHTML = '<svg class="like-heart burst-heart" width="28" height="28" viewBox="0 0 24 24" fill="#ff4d4d"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>';
+                        heart.style.cssText = `position: absolute; left: ${Math.random() * 80 + 10}%; top: ${Math.random() * 60 + 10}%; pointer-events: none; z-index: 100; animation: heartBurst 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;`;
+                        card.style.position = 'relative';
+                        card.appendChild(heart);
+                        setTimeout(() => heart.remove(), 800);
+                    }, i * 100);
+                }
+            }
+        };
 
-    // 3. Supabase query with retry + timeout
-    if (supabaseClient) {
-        try {
-            const { data: userData, error } = await supabaseClient
-                .from('user_data')
-                .select('id, email, created_at')
-                .eq('user_id', userId)
-                .single()
-                .timeout(3000);
+        window.isAdmin = (email) => email === 'hyaku7000@gmail.com';
+        window.padId = (num) => `#${num.toString().padStart(5, '0')}`;
 
-            if (userData) {
-                // Admin override
-                if (window.isAdmin(userData.email)) {
-                    tag = '#ADMIN';
-                } else {
-                    // Global sequential order from creation time
-                    if (!window.userCreationOrder[userId]) {
-                        try {
-                            const { data: allUsers } = await supabaseClient
-                                .from('user_data')
-                                .select('user_id, created_at')
-                                .order('created_at', { ascending: true })
-                                .limit(1000);
+        async function getUserTag(userId, forceRefresh = false) {
+            if (!userId) return '';
+            
+            if (currentUser && currentUser.id === userId && window.isAdmin(currentUser.email || '')) return '#ADMIN';
+            
+            if (window.userTagCache?.[userId] && !forceRefresh) return window.userTagCache[userId];
+            
+            const persistentCache = JSON.parse(localStorage.getItem('jv_user_tags') || '{}');
+            if (persistentCache[userId] && !forceRefresh) {
+                window.userTagCache = window.userTagCache || {};
+                window.userTagCache[userId] = persistentCache[userId];
+                return persistentCache[userId];
+            }
 
-                            allUsers.forEach((u, index) => {
-                                window.userCreationOrder[u.user_id] = index + 1;
-                            });
-                            localStorage.setItem('jv_user_orders', JSON.stringify(window.userCreationOrder));
-                        } catch (e) {
-                            console.warn('User order sync failed:', e);
+            let tag = '';
+            if (supabaseClient) {
+                try {
+                    const { data: userData, error } = await supabaseClient.from('user_data').select('id, email, created_at').eq('user_id', userId).single();
+                    if (!error && userData) {
+                        if (window.isAdmin(userData.email)) {
+                            tag = '#ADMIN';
+                        } else {
+                            if (!window.userCreationOrder[userId]) {
+                                try {
+                                    const { data: allUsers } = await supabaseClient.from('user_data').select('user_id, created_at').order('created_at', { ascending: true }).limit(1000);
+                                    allUsers?.forEach((u, index) => { window.userCreationOrder[u.user_id] = index + 1; });
+                                    localStorage.setItem('jv_user_orders', JSON.stringify(window.userCreationOrder));
+                                } catch (e) {}
+                            }
+                            const orderNum = window.userCreationOrder[userId] || appData.nextUserId || 1;
+                            tag = `#${orderNum.toString().padStart(5, '0')}`;
                         }
                     }
-                    const orderNum = window.userCreationOrder[userId] || Object.keys(persistentCache).length + 1;
-                    tag = window.padId(orderNum);
-                }
+                } catch (e) {}
             }
-        } catch (e) {
-            console.error('getUserTag error:', e);
+
+            if (!tag) {
+                const fallbackOrder = appData.nextUserId || 1;
+                appData.nextUserId = fallbackOrder + 1;
+                tag = `#${fallbackOrder.toString().padStart(5, '0')}`;
+            }
+
+            window.userTagCache = window.userTagCache || {};
+            window.userTagCache[userId] = tag;
+            persistentCache[userId] = tag;
+            localStorage.setItem('jv_user_tags', JSON.stringify(persistentCache));
+            
+            if (currentUser && currentUser.id === userId) appData.profile.user_id_display = tag;
+            
+            window.saveData(false);
+            return tag;
         }
-    }
 
-    // 4. Offline sequential fallback
-    if (!tag) {
-        if (!appData.nextUserId) {
-            appData.nextUserId = parseInt(localStorage.getItem('jv_next_user_id') || '1');
-        }
-        const fallbackOrder = appData.nextUserId++;
-        tag = window.padId(fallbackOrder);
-        localStorage.setItem('jv_next_user_id', appData.nextUserId.toString());
-    }
+        window.generateUserId = (email) => window.getUserTag(null, true);
+        
+        window.ensureUserId = async (force = false) => {
+            if (currentUser && (!appData.profile.user_id_display || force)) {
+                if (force) {
+                    delete window.userTagCache?.[currentUser.id];
+                    localStorage.removeItem('jv_user_tags');
+                }
+                appData.profile.user_id_display = await getUserTag(currentUser.id, force);
+                window.saveData(true);
+                window.updateUI();
+            }
+        };
 
-    // 5. Cache EVERYWHERE (memory + persistent + save appData)
-    window.userTagCache = window.userTagCache || {};
-    window.userTagCache[userId] = tag;
-    persistentCache[userId] = tag;
-    localStorage.setItem('jv_user_tags', JSON.stringify(persistentCache));
-    
-    // Auto-save to appData for cloud sync
-    window.saveData(false);
-    
-    console.log(`UserTag(${userId}): ${tag} (cached: true)`);
-    return tag;
-}
+        window.migrateUserTags = async () => {
+            const postsWithMissingTags = appData.feedPosts.filter(p => !p.user_tag);
+            for (let post of postsWithMissingTags) post.user_tag = await getUserTag(post.user_id);
+            Object.values(appData.postComments || {}).flat().forEach(async (comment) => {
+                if (!comment.user_tag) comment.user_tag = await getUserTag(comment.user_id);
+            });
+            window.saveData(false);
+        };
 
-// Legacy functions (kept for compatibility)
-window.generateUserId = (email) => window.getUserTag(null, true); // Uses fallback
-window.ensureUserId = async () => {
-    if (currentUser && !appData.profile.user_id_display) {
-        appData.profile.user_id_display = await getUserTag(currentUser.id);
-        window.saveData(true);
-        window.updateUI();
-    }
-};
-
-// Auto-migrate old comments/posts on load
-window.migrateUserTags = async () => {
-    const postsWithMissingTags = appData.feedPosts.filter(p => !p.user_tag);
-    for (let post of postsWithMissingTags) {
-        post.user_tag = await getUserTag(post.user_id);
-    }
-    
-    // Migrate comments too
-    Object.values(appData.postComments || {}).flat().forEach(async (comment) => {
-        if (!comment.user_tag) {
-            comment.user_tag = await getUserTag(comment.user_id);
-        }
-    });
-    
-    window.saveData(false);
-};
-
-
-// --- SETUP SUPABASE ---
         let supabaseClient = null;
         try {
             if (window.supabase) {
@@ -921,6 +836,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
                     currentUser = session?.user || null;
                     const authBtn = document.getElementById('auth-btn'); 
                     const logoutMenu = document.getElementById('logout-menu-item');
+                    
                     if(event === 'SIGNED_OUT') {
                         currentUser = null;
                         localStorage.clear();
@@ -931,57 +847,60 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
                             authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600'); 
                         }
                         if(logoutMenu) logoutMenu.classList.add('hidden'); 
+                        window.setView('dashboard');
                         window.updateUI(); 
-                        return; // CRITICAL: Skip ALL cloud sync
+                        return;
                     }
-if(currentUser) { 
+                    
+                    if(currentUser) { 
                         if(authBtn && logoutMenu) { 
                             authBtn.innerText = "Terhubung"; 
                             authBtn.classList.replace('bg-emerald-500', 'bg-gray-800'); 
                             authBtn.classList.replace('hover:bg-emerald-600', 'hover:bg-gray-700'); 
                             logoutMenu.classList.remove('hidden'); 
                         }
-                        // Generate/ensure user ID immediately
-                        await window.ensureUserId();
-                        // Cloud sync: Preserve feedPosts/postComments (local social data)
+                        await window.ensureUserId(true);
+                        window.setView('dashboard');  // FIX: Show dashboard immediately
+                        window.updateUI();  // FIX: Full UI refresh
+                        
+                        await window.migrateUserTags();
+                        
+                        // Always render feed after login sync
+                        if (document.getElementById('view-feed') && !document.getElementById('view-feed').classList.contains('hidden')) {
+                            window.renderFeed();
+                        }
+                        
                         try {
-                            const { data: cloudDataRes, error } = await supabaseClient
-                                .from('user_data')
-                                .select('app_state')
-                                .eq('user_id', currentUser.id)
-                                .single();
+                            const { data: cloudDataRes, error } = await supabaseClient.from('user_data').select('app_state').eq('user_id', currentUser.id).single();
                             if (!error && cloudDataRes && cloudDataRes.app_state) { 
                                 try { 
                                     const cloudData = JSON.parse(cloudDataRes.app_state);
-                                    // STATE PROTECTION: Don't override social/feed data + user_id_display
                                     const protectedKeys = ['feedPosts', 'postComments', 'localComments', 'profile'];
                                     protectedKeys.forEach(key => delete cloudData[key]);
                                     const localData = JSON.parse(JSON.stringify(appData));
                                     appData = deepMerge(localData, cloudData);
                                     window.saveData(false);
-                                } catch(e) { console.error('Cloud data parse error:', e); }
+                                } catch(e) {}
                             } else {
                                 window.saveData(true);
                             }
-                        } catch(e) {
-                            console.error('Cloud sync error:', e);
-                        }
-                        window.updateUI(); 
+                        } catch(e) {}
+                        
                         window.loadFeedFromDB(); 
                         window.loadNotifications();
                     } else { 
-
                         if(authBtn && logoutMenu) { 
                             authBtn.innerText = "Login"; 
                             authBtn.classList.replace('bg-gray-800', 'bg-emerald-500'); 
                             authBtn.classList.replace('hover:bg-gray-700', 'hover:bg-emerald-600'); 
                             logoutMenu.classList.add('hidden'); 
                         }
+                        window.setView('dashboard');
                         window.updateUI();
                     }
                 });
             }
-        } catch (error) { console.error("Database tidak dapat dijangkau", error); }
+        } catch (error) { }
 
         window.saveData = (syncCloud = true) => { 
             localStorage.setItem(STORAGE_KEY, CryptoJS.AES.encrypt(JSON.stringify(appData), ENCRYPT_KEY).toString()); 
@@ -990,15 +909,14 @@ if(currentUser) {
             }
         };
 
-window.loadData = () => {
+        window.loadData = () => {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) { 
                 try { 
                     const parsed = JSON.parse(CryptoJS.AES.decrypt(saved, ENCRYPT_KEY).toString(CryptoJS.enc.Utf8));
                     appData = { ...DEFAULT_APP_DATA, ...parsed };
-                } catch(e) { console.error('Load data failed:', e); }
+                } catch(e) { }
             }
-            // Ensure required fields exist
             if(!appData.feedPosts) appData.feedPosts = [];
             if(!appData.localComments) appData.localComments = {};
             if(!appData.postComments) appData.postComments = {};
@@ -1007,7 +925,6 @@ window.loadData = () => {
             if(!appData.nextUserId) appData.nextUserId = 1;
             if(!appData.profile.user_id_display) appData.profile.user_id_display = null;
         };
-
 
         window.switchAuthTab = (mode) => {
             authMode = mode; document.getElementById('auth-error').classList.add('hidden'); document.getElementById('auth-success').classList.add('hidden');
@@ -1042,23 +959,38 @@ window.loadData = () => {
                 if(error) { errEl.innerText = error.message; errEl.classList.remove('hidden'); } else { succEl.innerText = "Akun dibuat! Silakan Login."; succEl.classList.remove('hidden'); window.switchAuthTab('login'); }
             } else {
                 if(!password) { errEl.innerText = "Password wajib diisi!"; errEl.classList.remove('hidden'); document.getElementById('btn-auth-action').innerText = "Masuk Sekarang"; return; }
-        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                if(error) { errEl.innerText = error.message; errEl.classList.remove('hidden'); } else { window.closeModal('auth'); }
+                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if(error) { 
+                    errEl.innerText = error.message; 
+                    errEl.classList.remove('hidden'); 
+                } else { 
+                    document.getElementById('btn-auth-action').innerText = "Berhasil!";
+                    setTimeout(() => { window.closeModal('auth'); }, 800);
+                }
             }
-            if(authMode === 'login') document.getElementById('btn-auth-action').innerText = "Masuk Sekarang"; else if(authMode === 'register') document.getElementById('btn-auth-action').innerText = "Buat Akun Baru"; else document.getElementById('btn-auth-action').innerText = "Kirim Link Reset";
+            setTimeout(() => {
+                if(authMode === 'login') document.getElementById('btn-auth-action').innerText = "Masuk Sekarang"; 
+                else if(authMode === 'register') document.getElementById('btn-auth-action').innerText = "Buat Akun Baru"; 
+                else document.getElementById('btn-auth-action').innerText = "Kirim Link Reset";
+            }, 500);
         };
 
-window.logout = async () => { 
+        window.logout = async () => { 
             if(!confirm('Yakin logout? Data lokal akan direset. Social data aman di cloud.')) return;
             
-            // STEP 5: PROPER SEQUENCE - local first, then supabase
-            localStorage.clear(); // 1. Clear storage FIRST
-            localStorage.removeItem('jv_last_post_id');
-            appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA)); // 2. Reset appData
-            window.updateUI(); // 3. Update UI immediately
-            currentUser = null; // 4. Clear currentUser
+            localStorage.removeItem('jv_user_tags');
+            localStorage.removeItem('jv_user_orders');
+            localStorage.removeItem('jv_next_user_id');
             
-            // Force UI refresh & hide auth elements
+            localStorage.clear();
+            localStorage.removeItem('jv_last_post_id');
+            appData = JSON.parse(JSON.stringify(DEFAULT_APP_DATA));
+            window.userTagCache = {};
+            window.userCreationOrder = {};
+            appData.nextUserId = 1;
+            window.updateUI();
+            currentUser = null;
+            
             const authBtn = document.getElementById('auth-btn'); 
             const logoutMenu = document.getElementById('logout-menu-item');
             if(authBtn) {
@@ -1068,14 +1000,9 @@ window.logout = async () => {
             }
             if(logoutMenu) logoutMenu.classList.add('hidden'); 
             
-            // 5. Sign out supabase (async, no await block)
             if(supabaseClient) {
-                supabaseClient.auth.signOut().catch(e => {
-                    console.log('Supabase signout cleanup:', e); 
-                });
+                supabaseClient.auth.signOut().catch(e => {});
             }
-            
-            console.log('Logout complete - local reset + UI updated (no refresh needed)');
         };
 
         window.checkAuthAndOpenModal = (modalId) => { if(!currentUser) { window.openModal('auth'); alert("Login dulu untuk fitur ini!"); return; } window.openModal(modalId); };
@@ -1115,14 +1042,192 @@ window.logout = async () => {
             window.loadNotifications();
         };
 
-        // --- SISTEM HALAMAN POSTINGAN & KOMENTAR FIX ---
         window.goBack = () => { window.setView(previousView || 'feed'); };
         
-      window.viewPost = (postId) => {
+        window.isLoadingComments = false;
+        const commentDebounceTimers = {};
+        const realtimeChannels = {}; 
+
+        window.sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        window.retryCommentSync = async (optimisticId) => {
+            console.log('Retrying sync for ID:', optimisticId);
+            
+            // Extract data from local comment
+            const comments = appData.postComments[currentPostIdForComment] || [];
+            const localComment = comments.find(c => c.id === optimisticId);
+            if (!localComment) {
+                alert('Local comment not found');
+                return;
+            }
+            
+            // Trigger fresh sync with original text
+            const input = document.getElementById('detail-comment-input');
+            if (input) {
+                input.value = localComment.text;
+                await window.sendDetailComment();
+            } else {
+                alert('Comment input not found - refresh page');
+            }
+        };
+
+        function renderComment(c) {
+            const isPending = c.source === 'local' && !c.db_synced;
+            const timeAgo = window.getRelativeTime(c.timestamp || Date.now());
+            
+            return `
+                <div class="flex gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:shadow-md transition-all group ${isPending ? 'border-emerald-200 bg-emerald-50/50 animate-pulse' : ''}" id="comment-${c.id}">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center font-bold text-white text-sm overflow-hidden border-2 border-white shadow-sm shrink-0">
+                        ${c.avatar ? `<img src="${c.avatar}" class="w-full h-full object-cover rounded-full">` : c.author?.charAt(0)?.toUpperCase() || '?'}
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <p class="font-bold text-sm text-gray-900 truncate max-w-[200px]">${c.author || 'Anon'}</p>
+                                ${c.user_tag ? `<span class="px-2 py-0.5 text-[9px] font-black rounded-full ${c.user_tag === '#ADMIN' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">${c.user_tag}</span>` : ''}
+                            </div>
+                            <span class="text-[11px] text-gray-400 font-medium ml-2 whitespace-nowrap">${timeAgo}</span>
+                        </div>
+                        <p class="text-gray-800 text-sm leading-relaxed mb-3">${c.text}</p>
+                        <div class="flex items-center gap-4 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="window.likeComment('${c.id}')" class="flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors">
+                                <svg width="14" height="14" class="heart-icon" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                                <span>${c.likes || 0}</span>
+                            </button>
+                            <button onclick="window.replyComment('${c.author}')" class="text-gray-500 hover:text-emerald-500 px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors font-medium">Reply</button>
+                        </div>
+                        ${isPending ? '<div class="mt-2 px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] rounded-full w-fit flex items-center gap-1"><span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>Syncing to cloud...</div>' : ''}
+                    </div>
+                </div>`;
+        }
+
+        window.loadPostComments = async () => {
+            const postId = currentPostIdForComment;
+            if (!postId || window.isLoadingComments) return;
+            
+            if (commentDebounceTimers[postId]) clearTimeout(commentDebounceTimers[postId]);
+            commentDebounceTimers[postId] = setTimeout(async () => {
+                window.isLoadingComments = true;
+                const container = document.getElementById('detail-comments-list');
+                if (!container) {
+                    window.isLoadingComments = false;
+                    return;
+                }
+                
+                let allComments = [
+                    ...(appData.postComments[postId] || []),
+                    ...(appData.localComments?.[postId] || [])
+                ];
+                
+                const seen = new Set();
+                allComments = allComments
+                    .filter(c => {
+                        const key = c.id || `local_${c.timestamp}`;
+                        if (seen.has(key)) return false;
+                        seen.add(key);
+                        return true;
+                    })
+                    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                const now = Date.now();
+                const lastSync = appData.lastCommentSync[postId];
+                
+                if (supabaseClient && (!lastSync || now - lastSync > 60000)) {
+                    await window.retryCommentSync(async () => {
+                        const thirtySecondsAgo = new Date(now - 30000).toISOString();
+                        const { data, error } = await Promise.race([
+                            supabaseClient.from('comments').select(`*, user_data:user_id (email, created_at)`).eq('post_id', Number(postId)).gte('created_at', thirtySecondsAgo).order('created_at', { ascending: false }).limit(50),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('Delta sync timeout')), 5000))
+                        ]);
+                        
+                        if (!error && data?.length) {
+                            for (let comment of data) {
+                                if (!comment.user_tag) comment.user_tag = await getUserTag(comment.user_id);
+                            }
+                            
+                            const dbComments = data.map(c => ({
+                                ...c, source: 'db', db_synced: true, timestamp: new Date(c.created_at).getTime()
+                            }));
+                            
+                            const merged = [...allComments, ...dbComments];
+                            const finalComments = Array.from(new Map(merged.map(c => [c.id || `ts_${c.timestamp}`, c])).values())
+                                .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                            
+                            appData.postComments[postId] = finalComments;
+                            allComments = finalComments;
+                            appData.lastCommentSync[postId] = now;
+                            delete appData.localComments?.[postId];
+                            window.saveData();
+                        }
+                        return data;
+                    }).catch(err => { console.warn('Sync failed:', err.message); });
+                }
+                
+                try {
+                    if (!allComments || allComments.length === 0) {
+                        container.innerHTML = `<div class="text-center p-8 text-gray-400"><div class="text-lg mb-2">💭</div><p class="font-bold text-sm">Belum ada komentar</p><p class="text-xs mt-1 opacity-75">Jadilah yang pertama menulis!</p></div>`;
+                    } else {
+                        container.innerHTML = allComments.map(renderComment).join('');
+                    }
+                } catch (renderError) {
+                    container.innerHTML = '<div class="p-8 text-center"><p class="text-red-500 text-sm font-bold mb-2">Error loading</p><button onclick="window.loadPostComments()" class="text-emerald-500 underline text-xs font-bold">Retry</button></div>';
+                }
+                
+                setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100);
+                window.isLoadingComments = false;
+                delete commentDebounceTimers[postId];
+            }, 500);
+        };
+
+        window.subscribeToPostComments = async (postId) => {
+            if (!supabaseClient || realtimeChannels[postId]) return;
+            
+            await window.retryCommentSync(async () => {
+                const channel = supabaseClient.channel(`comments-${postId}`)
+                    .on('postgres_changes', 
+                        { event: '*', schema: 'public', table: 'comments', filter: `post_id=eq.${postId}` }, 
+                        (payload) => {
+                            window.loadPostComments();
+                            const container = document.getElementById('detail-comments-list');
+                            if (container && !window.isLoadingComments) {
+                                container.insertAdjacentHTML('afterbegin', 
+                                    '<div class="fixed top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-2xl animate-bounce z-[100] max-w-sm">' +
+                                    (payload.eventType === 'INSERT' ? '💬 New comment!' : '✏️ Comment updated') + 
+                                    '</div>'
+                                );
+                                setTimeout(() => {
+                                    const badge = container.querySelector('div:last-child');
+                                    if (badge) badge.remove();
+                                }, 3000);
+                            }
+                        }
+                    )
+                    .subscribe((status) => {
+                        if (status === 'SUBSCRIBED') realtimeChannels[postId] = channel;
+                    });
+            });
+        };
+
+        window.unsubscribeFromPostComments = (postId) => {
+            if (realtimeChannels[postId]) {
+                supabaseClient.removeChannel(realtimeChannels[postId]);
+                delete realtimeChannels[postId];
+            }
+        };
+
+        window.viewPost = async (postId) => {
+            const prevPostId = currentPostIdForComment;
+            if (prevPostId && prevPostId !== String(postId)) {
+                window.unsubscribeFromPostComments(prevPostId);
+            }
+            
             currentPostIdForComment = String(postId); 
-            localStorage.setItem('jv_last_post_id', currentPostIdForComment); // Mengingat ID post
+            localStorage.setItem('jv_last_post_id', currentPostIdForComment); 
             window.setView('post-detail');
             document.getElementById('comment-input-bar').classList.remove('hidden');
+            
             const post = appData.feedPosts.find(p => String(p.id) === currentPostIdForComment);
             const container = document.getElementById('detail-main-post-container');
             
@@ -1140,279 +1245,10 @@ window.logout = async () => {
                     ${post.caption ? `<p class="text-gray-800 font-medium text-sm leading-relaxed whitespace-pre-line">${post.caption}</p>` : ''}
                 </div>
             `;
+            
             window.loadPostComments();
+            setTimeout(() => { window.subscribeToPostComments(postId); }, 500);
         };
-
-// STEP 4 ✅ 3X RETRY w/ Exponential Backoff - Unbreakable sync
-window.isLoadingComments = false;
-const commentDebounceTimers = {};
-const realtimeChannels = {}; 
-
-// UTILITY: Exponential backoff sleep
-window.sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-// CORE: 3x Retry wrapper for ALL Supabase calls
-window.retryCommentSync = async (operation, maxRetries = 3) => {
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-        try {
-            return await operation();
-        } catch (error) {
-            console.warn(`Attempt ${attempt + 1} failed:`, error.message);
-            if (attempt === maxRetries - 1) {
-                throw error; // Final failure
-            }
-            // Exponential backoff: 1s, 2s, 4s
-            await window.sleep(1000 * Math.pow(2, attempt));
-        }
-    }
-};
-
-window.loadPostComments = async () => {
-    const postId = currentPostIdForComment;
-    if (!postId) return;
-    
-    if (commentDebounceTimers[postId]) {
-        clearTimeout(commentDebounceTimers[postId]);
-    }
-    
-    commentDebounceTimers[postId] = setTimeout(async () => {
-        if (window.isLoadingComments) return;
-        window.isLoadingComments = true;
-        
-        const container = document.getElementById('detail-comments-list');
-        if (!container) {
-            window.isLoadingComments = false;
-            return;
-        }
-        
-        container.innerHTML = `
-            <div class="space-y-4">
-                <div class="flex gap-3 p-4 bg-white rounded-2xl animate-pulse">
-                    <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
-                    <div class="flex-grow space-y-2">
-                        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-                        <div class="h-3 bg-gray-200 rounded w-full"></div>
-                    </div>
-                </div>
-                <div class="text-center py-4 text-emerald-500 text-xs font-bold">Loading comments...</div>
-            </div>
-        `;
-        
-        let allComments = [];
-        try {
-            allComments = [
-                ...(appData.postComments[postId] || []),
-                ...(appData.localComments?.[postId] || [])
-            ];
-            const seen = new Set();
-            allComments = allComments
-                .filter(c => {
-                    const key = c.id || `local_${c.timestamp}`;
-                    if (seen.has(key)) return false;
-                    seen.add(key);
-                    return true;
-                })
-                .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-        } catch (e) {
-            console.error('Cache merge error:', e);
-        }
-        
-        // STEP 2: RETRY-ENABLED DELTA SYNC (1min TTL)
-        const now = Date.now();
-        const lastSync = appData.lastCommentSync[postId];
-        if (supabaseClient && (!lastSync || now - lastSync > 60000)) {
-            await window.retryCommentSync(async () => {
-                const thirtySecondsAgo = new Date(now - 30000).toISOString();
-                const { data, error } = await Promise.race([
-                    supabaseClient
-                        .from('comments')
-                        .select(`
-                            *,
-                            user_data:user_id (
-                                email,
-                                created_at
-                            )
-                        `)
-                        .eq('post_id', Number(postId))
-                        .gte('created_at', thirtySecondsAgo)
-                        .order('created_at', { ascending: false })
-                        .limit(50),
-                    new Promise((_, reject) => 
-                        setTimeout(() => reject(new Error('Delta sync timeout')), 5000)
-                    )
-                ]);
-                
-                if (!error && data?.length) {
-                    for (let comment of data) {
-                        if (!comment.user_tag) {
-                            comment.user_tag = await getUserTag(comment.user_id);
-                        }
-                    }
-                    
-                    const dbComments = data.map(c => ({
-                        ...c,
-                        source: 'db',
-                        db_synced: true,
-                        timestamp: new Date(c.created_at).getTime()
-                    }));
-                    
-                    const merged = [...allComments, ...dbComments];
-                    const finalComments = Array.from(new Map(merged.map(c => [c.id || `ts_${c.timestamp}`, c])).values())
-                        .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                    
-                    appData.postComments[postId] = finalComments;
-                    appData.lastCommentSync[postId] = now;
-                    delete appData.localComments?.[postId];
-                    window.saveData();
-                    
-                    console.log(`✓ RetrySync: ${dbComments.length} comments (attempt success)`);
-                }
-                return data;
-            }).catch(err => {
-                console.warn('All retries failed (cache safe):', err.message);
-            });
-        }
-        
-        // RENDER (Safe)
-        try {
-            if (!allComments || allComments.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center p-8 text-gray-400">
-                        <div class="text-lg mb-2">💭</div>
-                        <p class="font-bold text-sm">Belum ada komentar</p>
-                        <p class="text-xs mt-1 opacity-75">Jadilah yang pertama menulis!</p>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = allComments.map(c => {
-                    const isPending = c.source === 'local' && !c.db_synced;
-                    const timeAgo = window.getRelativeTime(c.timestamp || Date.now());
-                    
-                    return `
-                        <div class="flex gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:shadow-md transition-all group ${isPending ? 'border-emerald-200 bg-emerald-50/50 animate-pulse' : ''}">
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center font-bold text-white text-sm overflow-hidden border-2 border-white shadow-sm shrink-0">
-                                ${c.avatar ? `<img src="${c.avatar}" class="w-full h-full rounded-full object-cover">` : c.author?.charAt(0)?.toUpperCase() || '?'}
-                            </div>
-                            <div class="flex-grow min-w-0">
-                                <div class="flex justify-between items-start mb-2">
-                                    <div class="flex items-center gap-2 flex-wrap">
-                                        <p class="font-bold text-sm text-gray-900 truncate max-w-[200px]">${c.author || 'Anon'}</p>
-                                        ${c.user_tag ? `<span class="px-2 py-0.5 text-[9px] font-black rounded-full ${c.user_tag === '#ADMIN' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">${c.user_tag}</span>` : ''}
-                                    </div>
-                                    <span class="text-[11px] text-gray-400 font-medium ml-2 whitespace-nowrap">${timeAgo}</span>
-                                </div>
-                                <p class="text-gray-800 text-sm leading-relaxed mb-3">${c.text}</p>
-                                <div class="flex items-center gap-4 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onclick="window.likeComment('${c.id}')" class="flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors">
-                                        <svg width="14" height="14" class="heart-icon" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                        </svg>
-                                        <span>${c.likes || 0}</span>
-                                    </button>
-                                    <button onclick="window.replyComment('${c.id}')" class="text-gray-500 hover:text-emerald-500 px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors font-medium">Reply</button>
-                                </div>
-                                ${isPending ? '<div class="mt-2 px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] rounded-full w-fit flex items-center gap-1"><span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>Syncing...</div>' : ''}
-                            </div>
-                        </div>`;
-                }).join('');
-            }
-        } catch (renderError) {
-            console.error('Comment render error:', renderError);
-            container.innerHTML = '<div class="p-8 text-center"><p class="text-red-500 text-sm font-bold mb-2">Error loading</p><button onclick="window.loadPostComments()" class="text-emerald-500 underline text-xs font-bold">Retry</button></div>';
-        }
-        
-        setTimeout(() => {
-            container.scrollTop = container.scrollHeight;
-        }, 100);
-        
-        window.isLoadingComments = false;
-        delete commentDebounceTimers[postId];
-    }, 500);
-};
-
-// RETRY-ENHANCED REALTIME CHANNELS
-window.subscribeToPostComments = async (postId) => {
-    if (!supabaseClient || realtimeChannels[postId]) return;
-    
-    console.log(`🔔 Subscribing to comments-${postId}`);
-    
-    await window.retryCommentSync(async () => {
-        const channel = supabaseClient.channel(`comments-${postId}`)
-            .on('postgres_changes', 
-                { 
-                    event: '*', 
-                    schema: 'public', 
-                    table: 'comments',
-                    filter: `post_id=eq.${postId}`
-                }, 
-                (payload) => {
-                    console.log('🔥 LIVE COMMENT UPDATE:', payload);
-                    window.loadPostComments();
-                    
-                    const container = document.getElementById('detail-comments-list');
-                    if (container && !window.isLoadingComments) {
-                        container.insertAdjacentHTML('afterbegin', 
-                            '<div class="fixed top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-2xl animate-bounce z-[100] max-w-sm">' +
-                            (payload.eventType === 'INSERT' ? '💬 New comment!' : '✏️ Comment updated') + 
-                            '</div>'
-                        );
-                        setTimeout(() => {
-                            const badge = container.querySelector('div:last-child');
-                            if (badge) badge.remove();
-                        }, 3000);
-                    }
-                }
-            )
-            .subscribe((status) => {
-                if (status === 'SUBSCRIBED') {
-                    console.log(`✅ LIVE: comments-${postId} ready`);
-                    realtimeChannels[postId] = channel;
-                } else {
-                    console.warn(`❌ Channel status: ${status}`);
-                }
-            });
-    });
-};
-
-// Unsubscribe (no retry needed)
-window.unsubscribeFromPostComments = (postId) => {
-    if (realtimeChannels[postId]) {
-        supabaseClient.removeChannel(realtimeChannels[postId]);
-        delete realtimeChannels[postId];
-        console.log(`🔕 Unsubscribed from comments-${postId}`);
-    }
-};
-
-// Auto-subscribe in viewPost (retry-safe)
-const originalViewPost = window.viewPost;
-window.viewPost = async (postId) => {
-    const prevPostId = currentPostIdForComment;
-    
-    if (prevPostId && prevPostId !== postId) {
-        window.unsubscribeFromPostComments(prevPostId);
-    }
-    
-    originalViewPost(postId);
-    
-    setTimeout(() => {
-        window.subscribeToPostComments(postId);
-    }, 500);
-};
-
-// Cleanup on view change
-const originalSetView = window.setView;
-window.setView = (viewName) => {
-    if (currentView === 'post-detail' && viewName !== 'post-detail') {
-        window.unsubscribeFromPostComments(currentPostIdForComment);
-    }
-    originalSetView(viewName);
-};
-
-
-
-
-
-
 
         window.replyComment = (authorName) => {
             const input = document.getElementById('detail-comment-input');
@@ -1420,171 +1256,124 @@ window.setView = (viewName) => {
             input.focus();
         };
 
-window.sendDetailComment = async () => {
-    if(!currentUser) { alert("Silakan Login Terlebih Dahulu!"); window.openModal('auth'); return; }
-    const input = document.getElementById('detail-comment-input'); 
-    const text = input.value.trim();
-    if(!text || !currentPostIdForComment) return;
-    input.value = '';
-    
-    // 1. Buat Payload Optimistic Lokal
-    const optimisticId = "local_" + Date.now();
-const optimisticComment = {
-        id: optimisticId,
-        post_id: Number(currentPostIdForComment),
-        user_id: currentUser.id,
-        author: appData.profile.name || "User",
-        avatar: appData.profile.avatar || "",
-        user_tag: appData.profile.user_id_display || '',
-        text: text,
-        date: new Date().toLocaleDateString('id-ID'),
-        timestamp: Date.now(),
-        source: 'local',
-        db_synced: false
-    };
-
-    // 2. Simpan di memori lokal sementara
-    if(!appData.postComments[currentPostIdForComment]) appData.postComments[currentPostIdForComment] = [];
-    appData.postComments[currentPostIdForComment].unshift(optimisticComment);
-    window.saveData();
-
-    // 3. RENDER INSTAN (Tanpa membuat layar jadi "Memuat balasan...")
-    const container = document.getElementById('detail-comments-list');
-    if (container) {
-        // Hapus teks "Belum ada balasan" jika ini komentar pertama
-        if (container.innerHTML.includes('Belum ada balasan')) container.innerHTML = '';
-        
-        const c = optimisticComment;
-        const commentHTML = `
-        <div id="comment-${c.id}" class="flex gap-3 bg-white p-4 rounded-2xl shadow-sm border border-emerald-200 bg-emerald-50/50 animate-pulse hover:shadow-md transition-all">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 overflow-hidden shrink-0 border-2 border-white shadow-sm">
-                ${c.avatar ? `<img src="${c.avatar}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-white font-bold text-sm">${(c.author || "U").charAt(0).toUpperCase()}</div>`}
-            </div>
-            <div class="flex-grow min-w-0">
-                <div class="flex items-start gap-2 mb-1">
-                    <p class="font-bold text-sm text-gray-900 truncate flex-1">${c.author}</p>
-                    <span class="text-[11px] text-gray-400 font-medium">Baru saja</span>
-                </div>
-                <p class="text-gray-800 text-sm leading-relaxed mb-3">${c.text}</p>
-                <div id="sync-status-${c.id}" class="text-[10px] text-emerald-500 font-bold mt-2 flex items-center gap-1">⏳ Syncing...</div>
-            </div>
-        </div>`;
-        
-        // Suntikkan elemen ke posisi teratas
-        container.insertAdjacentHTML('afterbegin', commentHTML);
-    }
-
-    // 4. Sinkronisasi Asli ke Database Supabase di belakang layar
-    if(supabaseClient) {
-        try {
-const newComment = {
+        window.sendDetailComment = async () => {
+            if(!currentUser) { alert("Silakan Login Terlebih Dahulu!"); window.openModal('auth'); return; }
+            const input = document.getElementById('detail-comment-input'); 
+            const text = input.value.trim();
+            if(!text || !currentPostIdForComment) return;
+            input.value = '';
+            
+            const optimisticId = "local_" + Date.now();
+            const optimisticComment = {
+                id: optimisticId,
                 post_id: Number(currentPostIdForComment),
                 user_id: currentUser.id,
                 author: appData.profile.name || "User",
                 avatar: appData.profile.avatar || "",
                 user_tag: appData.profile.user_id_display || '',
                 text: text,
-                date: new Date().toLocaleDateString('id-ID')
+                date: new Date().toLocaleDateString('id-ID'),
+                timestamp: Date.now(),
+                source: 'local',
+                db_synced: false
             };
 
-            // Pakai .select() untuk langsung meminta ID balasan resmi dari server
-            const { data, error } = await supabaseClient.from('comments').insert([newComment]).select();
-
-            if(error) throw error;
-
-            // 5. Jika sukses: Update array dengan ID server yang sah
-            appData.postComments[currentPostIdForComment] = appData.postComments[currentPostIdForComment].filter(c => c.id !== optimisticId);
-            let realId = optimisticId;
-            
-            if (data && data.length > 0) {
-                const dbComment = {
-                    ...data[0],
-                    source: 'db',
-                    db_synced: true,
-                    timestamp: new Date(data[0].created_at).getTime()
-                };
-                appData.postComments[currentPostIdForComment].unshift(dbComment);
-                realId = data[0].id;
-            }
+            if(!appData.postComments[currentPostIdForComment]) appData.postComments[currentPostIdForComment] = [];
+            appData.postComments[currentPostIdForComment].unshift(optimisticComment);
             window.saveData();
 
-            // 6. Ganti elemen UI yang sedang "Syncing" menjadi interaktif (Tanpa kedip layar!)
-            const el = document.getElementById(`comment-${optimisticId}`);
-            if (el) {
-                el.id = `comment-${realId}`;
-                el.classList.remove('border-emerald-200', 'bg-emerald-50/50', 'animate-pulse');
-                el.classList.add('border-gray-100');
+            const container = document.getElementById('detail-comments-list');
+            if (container) {
+                if (container.innerHTML.includes('Belum ada balasan')) container.innerHTML = '';
                 
-                const syncStatus = document.getElementById(`sync-status-${optimisticId}`);
-                if (syncStatus) {
-                    syncStatus.outerHTML = `
-                    <div class="flex items-center gap-4 text-xs">
-                        <button onclick="window.likeComment('${realId}')" id="like-${realId}" class="flex items-center gap-1 text-gray-500 hover:text-red-500 transition-colors">
-                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                            <span>0</span>
-                        </button>
-                        <button onclick="window.replyComment('${realId}')" class="text-gray-500 hover:text-emerald-500 font-medium transition-colors">Balas</button>
-                    </div>`;
+                const c = optimisticComment;
+                const commentHTML = `
+                <div id="comment-${c.id}" class="flex gap-3 bg-white p-4 rounded-2xl shadow-sm border border-emerald-200 bg-emerald-50/50 animate-pulse hover:shadow-md transition-all">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 overflow-hidden shrink-0 border-2 border-white shadow-sm">
+                        ${c.avatar ? `<img src="${c.avatar}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-white font-bold text-sm">${(c.author || "U").charAt(0).toUpperCase()}</div>`}
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <div class="flex items-start gap-2 mb-1">
+                            <p class="font-bold text-sm text-gray-900 truncate flex-1">${c.author}</p>
+                            <span class="text-[11px] text-gray-400 font-medium">Baru saja</span>
+                        </div>
+                        <p class="text-gray-800 text-sm leading-relaxed mb-3">${c.text}</p>
+                        <div id="sync-status-${c.id}" class="text-[10px] text-emerald-500 font-bold mt-2 flex items-center gap-1">⏳ Syncing...</div>
+                    </div>
+                </div>`;
+                
+                container.insertAdjacentHTML('afterbegin', commentHTML);
+            }
+
+            if(supabaseClient) {
+                try {
+                    const newComment = {
+                        post_id: Number(currentPostIdForComment),
+                        user_id: currentUser.id,
+                        author: appData.profile.name || "User",
+                        avatar: appData.profile.avatar || "",
+                        user_tag: appData.profile.user_id_display || '',
+                        text: text,
+                        date: new Date().toLocaleDateString('id-ID')
+                    };
+
+                    const { data, error } = await supabaseClient.from('comments').insert([newComment]).select();
+                    if(error) throw error;
+
+                    // Mark ALL local comments as synced + force refresh (FIX for stuck spinners)
+                    const comments = appData.postComments[currentPostIdForComment] || [];
+                    comments.forEach(c => { if (c.source === 'local') c.db_synced = true; });
+                    window.loadPostComments(); // Force full re-render clears ALL spinners
+                    
+                    if (data && data.length > 0) {
+                        const dbComment = { ...data[0], source: 'db', db_synced: true, timestamp: new Date(data[0].created_at).getTime() };
+                        appData.postComments[currentPostIdForComment].unshift(dbComment);
+                    }
+                    window.saveData();
+                    
+                    // Optional: Success toast
+                    const toast = document.createElement('div');
+                    toast.className = 'fixed top-4 right-4 bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-2xl z-[100] animate-fade-in';
+                    toast.textContent = '💬 Komentar terkirim!';
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+
+                    const post = appData.feedPosts.find(p => String(p.id) === String(currentPostIdForComment));
+                    if(post && post.user_id && post.user_id !== currentUser.id) {
+                        const notifMsg = `${appData.profile.name || "Seseorang"} membalas: "${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"`;
+                        await supabaseClient.from('notifications').insert([{ user_id: post.user_id, post_id: Number(currentPostIdForComment), message: notifMsg }]);
+                    }
+                } catch(err) {
+                    console.error('Comment sync failed:', err);
+                    // Retry sync instead of remove
+                    window.retryCommentSync(optimisticId);
                 }
             }
+        };
 
-            // 7. Kirim Notifikasi ke Pemilik
-            const post = appData.feedPosts.find(p => String(p.id) === String(currentPostIdForComment));
-            if(post && post.user_id && post.user_id !== currentUser.id) {
-                const notifMsg = `${appData.profile.name || "Seseorang"} membalas: "${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"`;
-                await supabaseClient.from('notifications').insert([{
-                    user_id: post.user_id,
-                    post_id: Number(currentPostIdForComment),
-                    message: notifMsg
-                }]);
-            }
-
-        } catch(err) {
-            console.error("Gagal simpan komentar:", err);
-            alert("Gagal mengirim komentar ke server:\n" + err.message);
+        window.startLikeAnimation = (postId, isLike) => {
+            const card = document.querySelector(`[onclick="window.viewPost('${postId}')"]`);
+            if (!card) return;
             
-            // Tarik balik (Rollback) jika gagal total
-            appData.postComments[currentPostIdForComment] = appData.postComments[currentPostIdForComment].filter(c => c.id !== optimisticId);
-            window.saveData();
-            const el = document.getElementById(`comment-${optimisticId}`);
-            if(el) el.remove();
-        }
-    }
-};
+            const heart = document.createElement('div');
+            heart.innerHTML = '<svg class="like-heart" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+            heart.className = `like-animation ${isLike ? 'like' : 'unlike'}`;
+            heart.style.cssText = `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); pointer-events: none; z-index: 100; color: ${isLike ? '#ff4d4d' : '#666'};`;
+            
+            card.style.position = 'relative';
+            card.appendChild(heart);
+            
+            requestAnimationFrame(() => {
+                heart.style.transform = 'translate(-50%, -50%) scale(1)';
+                heart.querySelector('.like-heart').style.animation = 'heartBeat 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+            });
+            
+            setTimeout(() => {
+                heart.style.transform = 'translate(-50%, -50%) scale(0)';
+                setTimeout(() => card.removeChild(heart), 300);
+            }, 600);
+        };
 
-// --- LIKE ANIMATION --- 
-window.startLikeAnimation = (postId, isLike) => {
-    const card = document.querySelector(`[onclick="window.viewPost('${postId}')"]`);
-    if (!card) return;
-    
-    const heart = document.createElement('div');
-    heart.innerHTML = '<svg class="like-heart" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
-    heart.className = `like-animation ${isLike ? 'like' : 'unlike'}`;
-    heart.style.cssText = `
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        pointer-events: none;
-        z-index: 100;
-        color: ${isLike ? '#ff4d4d' : '#666'};
-    `;
-    
-    card.style.position = 'relative';
-    card.appendChild(heart);
-    
-    requestAnimationFrame(() => {
-        heart.style.transform = 'translate(-50%, -50%) scale(1)';
-        heart.querySelector('.like-heart').style.animation = 'heartBeat 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-    });
-    
-    setTimeout(() => {
-        heart.style.transform = 'translate(-50%, -50%) scale(0)';
-        setTimeout(() => card.removeChild(heart), 300);
-    }, 600);
-};
-
-// --- MEDIA, POSTINGAN & FEED ---
         window.handleAvatarUpload = (e) => {
             const file = e.target.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = (event) => {
@@ -1618,110 +1407,78 @@ window.startLikeAnimation = (postId, isLike) => {
             const caption = document.getElementById('post-caption').value.trim(); 
             if(!caption && !currentPostImage) return alert("Tulis sesuatu atau tambahkan foto!");
             
-const newPost = { 
-    id: Date.now(), 
-    user_id: currentUser.id, 
-    author: appData.profile.name || "User", 
-    author_avatar: appData.profile.avatar || "", 
-    user_tag: appData.profile.user_id_display || '',
-    caption: caption, 
-    date: new Date().toLocaleDateString('id-ID'), 
-    is_share_card: !!currentPostImage, 
-    image_data: currentPostImage || "", 
-    likes: 0 
-};
+            const newPost = { 
+                id: Date.now(), 
+                user_id: currentUser.id, 
+                author: appData.profile.name || "User", 
+                author_avatar: appData.profile.avatar || "", 
+                user_tag: appData.profile.user_id_display || '',
+                caption: caption, 
+                date: new Date().toLocaleDateString('id-ID'), 
+                is_share_card: !!currentPostImage, 
+                image_data: currentPostImage || "", 
+                likes: 0 
+            };
             appData.feedPosts.unshift(newPost); window.saveData(false);
             document.getElementById('post-caption').value = ''; window.removePostImage(); window.closeModal('create-post'); window.setView('feed');
-            if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); if (error) alert("Gagal sync: " + error.message); }
+            if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); }
         };
 
         window.postShareCardToFeed = () => {
             if(!currentUser) return; document.getElementById('btn-post-share').innerText = "Menyiapkan...";
             html2canvas(document.getElementById('capture-area'), { backgroundColor: '#18181b', scale: 2 }).then(async canvas => {
                 const imgData = canvas.toDataURL('image/png', 0.8), data = appData.currentShareData;
-const newPost = { 
-    id: Date.now(), 
-    user_id: currentUser.id, 
-    author: appData.profile.name || "User", 
-    author_avatar: appData.profile.avatar || "",
-    user_tag: appData.profile.user_id_display || '',
-    caption: `Update ${data.title}! Return saat ini di angka ${data.isPlus ? '+' : ''}${data.percentage.toFixed(2)}%. 🚀`, 
-    date: new Date().toLocaleDateString('id-ID'), 
-    is_share_card: true, 
-    image_data: imgData, 
-    likes: 0 
-};
+                const newPost = { 
+                    id: Date.now(), 
+                    user_id: currentUser.id, 
+                    author: appData.profile.name || "User", 
+                    author_avatar: appData.profile.avatar || "",
+                    user_tag: appData.profile.user_id_display || '',
+                    caption: `Update ${data.title}! Return saat ini di angka ${data.isPlus ? '+' : ''}${data.percentage.toFixed(2)}%. 🚀`, 
+                    date: new Date().toLocaleDateString('id-ID'), 
+                    is_share_card: true, 
+                    image_data: imgData, 
+                    likes: 0 
+                };
                 appData.feedPosts.unshift(newPost); window.saveData(false); window.closeModal('share-preview'); window.setView('feed'); document.getElementById('btn-post-share').innerText = "🚀 Post Feed";
-                if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); if (error) alert("Gagal sync: " + error.message); }
+                if(supabaseClient) { const { error } = await supabaseClient.from('posts').insert([newPost]); }
             });
         };
 
 window.syncFeedFromDB = async () => {
-            if(!supabaseClient) return;
-            
+            if(!supabaseClient) {
+                window.renderFeed();
+                return;
+            }
             const btns = document.querySelectorAll('.sync-feed-btn');
-            btns.forEach(btn => {
-                btn.disabled = true;
-                btn.innerHTML = '⏳ Syncing...';
-                btn.classList.add('opacity-50', 'cursor-not-allowed');
-            });
+            btns.forEach(btn => { btn.disabled = true; btn.innerHTML = '⏳ Syncing...'; btn.classList.add('opacity-50', 'cursor-not-allowed'); });
 
             try { 
                 const { data, error } = await supabaseClient.from('posts').select('*').order('id', { ascending: false }); 
                 if (!error && data) { 
-                    // MIGRATE: Assign user tags to legacy posts
                     for (let post of data) {
-                        if (!post.user_tag) {
-                            post.user_tag = await getUserTag(post.user_id);
-                        }
+                        if (!post.user_tag) post.user_tag = await getUserTag(post.user_id);
                     }
                     appData.feedPosts = data; 
                     window.saveData(false); 
-                    if(currentView === 'feed') window.renderFeed(); 
-                    if(currentView === 'profile') window.renderProfileFeed(); 
-                } 
+                    await window.migrateUserTags();
+                } else {
+                    console.warn('Supabase feed fetch failed, using local:', error);
+                }
             } catch (err) {
                 console.error('Feed sync error:', err);
             }
             
-            // Reset buttons after fixed delay for UX
+            // Always render feed after sync
+            window.renderFeed();
+            feedPage = 0;
+            allFeedPosts = [];
+            
             setTimeout(() => {
-                btns.forEach(btn => {
-                    btn.disabled = false;
-                    btn.innerHTML = '↻ Refresh';
-                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
-                });
+                btns.forEach(btn => { btn.disabled = false; btn.innerHTML = '↻ Refresh'; btn.classList.remove('opacity-50', 'cursor-not-allowed'); });
             }, 1000);
         };
         window.loadFeedFromDB = window.syncFeedFromDB; 
-
-        window.renderFeed = () => {
-            const container = document.getElementById('feed-container');
-            if(appData.feedPosts.length === 0) { container.innerHTML = '<div class="text-center p-10 text-gray-400 font-bold border-2 border-dashed rounded-3xl">Belum ada postingan komunitas. Jadilah yang pertama!</div>'; return; }
-            container.innerHTML = appData.feedPosts.map(post => `
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-6 cursor-pointer hover:shadow-md transition" onclick="window.viewPost('${post.id}')">
-<div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-tr from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-black overflow-hidden border border-gray-200 shrink-0">
-                            ${post.author_avatar ? `<img src="${post.author_avatar}" class="w-full h-full object-cover">` : `<span class="text-white">${(post.author || "U").charAt(0)}</span>`}
-                        </div>
-                        <div>
-                            <p class="font-black text-sm">${post.author || "User"}</p>
-                            ${post.user_tag ? `<p class="text-[10px] font-black ${post.user_tag === '#ADMIN' ? 'text-red-500' : 'text-emerald-500'} tracking-widest">${post.user_tag}</p>` : ''}
-                            <p class="text-[10px] text-gray-400 uppercase tracking-widest">${post.date}</p>
-                        </div>
-                    </div>
-                    ${post.image_data ? `<img src="${post.image_data}" class="w-full rounded-2xl mb-4 border border-gray-100 shadow-sm object-cover max-h-96" />` : ''}
-                    ${post.caption ? `<p class="text-gray-800 font-medium text-sm leading-relaxed whitespace-pre-line">${post.caption}</p>` : ''}
-                    <div class="flex gap-4 mt-6 pt-4 border-t border-gray-50">
-                        <button class="flex items-center gap-2 text-gray-400 hover:text-emerald-500 transition font-bold text-xs">
-                            💬 
-                            <span class="ml-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-black">
-                                ${appData.postComments[post.id] ? appData.postComments[post.id].length : 0}
-                            </span>
-                        </button>
-                    </div>
-                </div>`).join('');
-        };
 
         window.switchProfileTab = (tab) => {
             if(tab === 'photo') {
@@ -1733,7 +1490,7 @@ window.syncFeedFromDB = async () => {
             }
         };
 
-window.renderProfileFeed = () => {
+        window.renderProfileFeed = () => {
             if(!currentUser) {
                 document.getElementById('profile-feed-photo-container').innerHTML = '<div class="col-span-full text-center p-8 text-gray-400 font-bold text-sm">Login untuk melihat postingan pribadi</div>';
                 document.getElementById('profile-feed-text-container').innerHTML = '<div class="text-center p-8 text-gray-400 font-bold text-sm">Login untuk melihat postingan pribadi</div>';
@@ -1742,9 +1499,7 @@ window.renderProfileFeed = () => {
             
             const photoContainer = document.getElementById('profile-feed-photo-container');
             const textContainer = document.getElementById('profile-feed-text-container');
-            
             const myPosts = appData.feedPosts.filter(p => p.user_id === currentUser.id);
-            
             const imagePosts = myPosts.filter(p => p.image_data), textPosts = myPosts.filter(p => !p.image_data);
 
             if(imagePosts.length === 0) { photoContainer.innerHTML = '<div class="col-span-3 text-center p-5 text-gray-400 text-xs font-bold uppercase tracking-widest">Belum ada foto.</div>'; }
@@ -1777,17 +1532,16 @@ window.renderProfileFeed = () => {
             const newCaption = prompt("Edit teks postingan kamu:", post.caption);
             if(newCaption !== null && newCaption.trim() !== "") {
                 post.caption = newCaption; window.saveData(false); window.renderProfileFeed(); window.renderFeed();
-                if(supabaseClient) { const { error } = await supabaseClient.from('posts').update({ caption: newCaption }).eq('id', postId); if(error) alert("Gagal update: " + error.message); }
+                if(supabaseClient) { await supabaseClient.from('posts').update({ caption: newCaption }).eq('id', postId); }
             }
         };
 
         window.deletePost = async (postId) => {
             if(!confirm("Yakin ingin menghapus postingan ini?")) return;
             appData.feedPosts = appData.feedPosts.filter(p => String(p.id) !== String(postId)); window.saveData(false); window.renderProfileFeed(); window.renderFeed();
-            if(supabaseClient) { const { error } = await supabaseClient.from('posts').delete().eq('id', postId); if(error) alert("Gagal hapus: " + error.message); }
+            if(supabaseClient) { await supabaseClient.from('posts').delete().eq('id', postId); }
         };
 
-// LIBRARY DATA
         const STATIC_LIBRARY_DATA = [
             { id: 'lib-1', name: 'Atomic Habits', desc: 'Perubahan kecil yang memberikan hasil luar biasa.', file: 'modul 1', sampul: 'smodul 1' },
             { id: 'lib-2', name: 'Berani Tidak Disukai', desc: 'Melihat hidup dari sudut pandang Adler.', file: 'modul 2', sampul: 'smodul 2' },
@@ -1817,7 +1571,6 @@ window.renderProfileFeed = () => {
                 </div>`).join('');
         };
 
-        // --- SHARE CARD LOGIC ---
         window.shareContent = (type, id) => {
             try {
                 let title = "", base = 0, current = 0; const recs = appData.settings.mode === 'simple' ? appData.simpleRecords : appData.complexRecords;
@@ -1828,13 +1581,17 @@ window.renderProfileFeed = () => {
                 document.getElementById('share-card-subtitle').innerText = `Return ${title}`; document.getElementById('share-card-base').innerText = window.formatMoney(base); document.getElementById('share-card-current').innerText = window.formatMoney(current);
                 const percEl = document.getElementById('share-card-percentage'); percEl.innerText = `${isPlus ? '+' : ''}${percentage.toFixed(2)}%`; percEl.style.color = isPlus ? '#10b981' : '#ef4444';
                 appData.currentShareData = { title, percentage, isPlus }; window.openModal('share-preview');
-            } catch(e) { alert("Error Share: " + e.message); }
+            } catch(e) {}
         };
+
         window.downloadShareCard = () => { html2canvas(document.getElementById('capture-area'), { backgroundColor: '#18181b', scale: 2 }).then(canvas => { const link = document.createElement('a'); link.download = `JvFinance_Share_${Date.now()}.png`; link.href = canvas.toDataURL('image/png'); link.click(); }); };
 
-        // --- NAVIGATION & LOKAL CRUD ---
         window.setView = function(viewName, pushState = true) {
             document.getElementById('dropdownMenu').classList.add('hidden');
+            
+            if (currentView === 'post-detail' && viewName !== 'post-detail') {
+                window.unsubscribeFromPostComments(currentPostIdForComment);
+            }
             
             if (viewName !== currentView && viewName === 'post-detail') { previousView = currentView; }
             currentView = viewName;
@@ -1846,7 +1603,7 @@ window.renderProfileFeed = () => {
             if (viewName === 'record-detail') setTimeout(window.updateBookChart, 100);
             if (viewName === 'portfolio') setTimeout(window.updatePortfolio, 100);
             if (viewName === 'library') window.renderLibrary();
-            if (viewName === 'feed') { window.renderFeed(); window.syncFeedFromDB(); }
+            if (viewName === 'feed') { window.renderFeed(); }
             if (viewName === 'profile') window.renderProfileFeed();
 
             if (pushState) history.pushState({ view: viewName }, "", "#" + viewName);
@@ -1885,15 +1642,13 @@ window.renderProfileFeed = () => {
                     totalExpense += rExp;
                 });
                 
-                // PERBAIKAN: Jika data kosong atau cuma 1 titik, buat jadi garis lurus agar terbaca oleh grafik
                 if (pts.length === 0) pts = [0, 0];
                 if (pts.length === 1) pts.push(pts[0]); 
                 
-             if(dashQuickChart) { dashQuickChart.data.labels = pts.map((_, i) => i); dashQuickChart.data.datasets[0].data = pts; dashQuickChart.update(); }
+                if(dashQuickChart) { dashQuickChart.data.labels = pts.map((_, i) => i); dashQuickChart.data.datasets[0].data = pts; dashQuickChart.update(); }
                 if(complexIncChart) { complexIncChart.data.labels = labelsAI; complexIncChart.data.datasets[0].data = incomeAI; complexIncChart.update(); }
                 if(complexExpChart) { complexExpChart.data.labels = labelsAI; complexExpChart.data.datasets[0].data = expenseAI; complexExpChart.update(); }
                 
-                // Memancing grafik agar muncul ukurannya saat mode dipindah
                 setTimeout(() => {
                     if (dashQuickChart) dashQuickChart.resize();
                     if (complexIncChart) complexIncChart.resize();
@@ -1926,15 +1681,15 @@ window.renderProfileFeed = () => {
             const fill = document.getElementById('target-progress-fill'); if(fill) fill.style.width = `${target > 0 ? Math.min((totalWealth / target) * 100, 100) : 0}%`;
 
             const dispName = document.getElementById('display-name'); if(dispName) dispName.innerText = appData.profile.name === "User" ? "User" : appData.profile.name;
-        const headName = document.getElementById('profile-header-name'); if(headName) headName.innerText = appData.profile.name === "User" ? "User" : appData.profile.name;
-        const idDisplay = document.getElementById('profile-id-display'); 
-        if(idDisplay && appData.profile.user_id_display) {
-            idDisplay.innerText = `ID: ${appData.profile.user_id_display}`;
-            idDisplay.classList.remove('text-gray-400');
-            idDisplay.classList.add('text-emerald-600');
-        } else if(idDisplay) {
-            idDisplay.innerText = 'ID: Loading...';
-        }
+            const headName = document.getElementById('profile-header-name'); if(headName) headName.innerText = appData.profile.name === "User" ? "User" : appData.profile.name;
+            const idDisplay = document.getElementById('profile-id-display'); 
+            if(idDisplay && appData.profile.user_id_display) {
+                idDisplay.innerText = `ID: ${appData.profile.user_id_display}`;
+                idDisplay.classList.remove('text-gray-400');
+                idDisplay.classList.add('text-emerald-600');
+            } else if(idDisplay) {
+                idDisplay.innerText = 'ID: Loading...';
+            }
             if(appData.profile.avatar) { const preview = document.getElementById('profile-avatar-preview'); if(preview) preview.src = appData.profile.avatar; }
 
             window.renderRecordsList(recs);
@@ -2019,7 +1774,6 @@ window.renderProfileFeed = () => {
                         const r = recs.find(x => x.id === editId); title.innerText = "Edit Buku"; recNameInput.value = r.name; document.getElementById('rec-amount').value = r.baseAmount; recMonthSelect.value = r.month;
                         btn.onclick = () => { r.name = recNameInput.value; r.month = recMonthSelect.value; r.baseAmount = parseFloat(document.getElementById('rec-amount').value) || 0; window.saveData(); window.closeModal('record'); window.updateUI(); window.updateDashboardGraph(); };
                     } else {
-                        // Monthly auto-suggest
                         const now = new Date();
                         const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
                         const suggestedName = `${months[now.getMonth()]} ${now.getFullYear()}`;
@@ -2088,7 +1842,6 @@ window.renderProfileFeed = () => {
         window.addEventListener('DOMContentLoaded', () => {
             window.loadData(); window.initCharts(); window.updateUI(); window.changeTheme(appData.settings.theme);
             
-            // Initial feed load for infinite scroll
             if (document.getElementById('view-feed')) {
                 window.syncFeedFromDB();
                 setTimeout(() => {
@@ -2098,7 +1851,6 @@ window.renderProfileFeed = () => {
                 }, 500);
             }
             
-            // Auto-update timestamps globally
             setInterval(() => {
                 if (currentView === 'feed') window.updateTimestamps();
             }, 30000);

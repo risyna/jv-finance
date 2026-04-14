@@ -1,45 +1,23 @@
-# Comment System Bugfix ✅ STEP 4 COMPLETE
-*Date: Now* | *Status: 5/6 - 3X Retry + Exponential Backoff 🔄*
+# JV Finance Feed Post-Login Fix - Implementation Tracker
+**Status: 0/4 Complete** | Plan Approved by User
 
-## Progress Update
-✅ **Step 1:** getUserTag() enhanced ✓
-✅ **Step 2:** 5s debounce + delta sync ✓
-✅ **Step 3:** Supabase realtime channels ✓
-✅ **Step 4:** retryCommentSync() - Unbreakable API calls ✓
+## Plan Breakdown:
 
-## Test Results Expected:
-```
-✓ Network flaky → 3x retry (1s→2s→4s) 
-✓ Console: "Attempt 1 failed... Attempt 2 success"
-✓ Supabase offline → Cache-only (no crash)
-✓ Realtime channels → Auto-retry subscribe
-```
- 
-## Next: Step 5 🎯 FEED TOP-2 COMMENTS PREVIEW
-```
-Feed card → Show top 2 comments + "X more"
-Click → Jump to post-detail #anchor
-"Latest: @user Teks singkat..." 
-```
+### [ ] 1. Update syncFeedFromDB()
+- Always call `window.renderFeed()` after data assignment
+- Reset `feedPage=0; allFeedPosts=[]`
+- Ensure local fallback if Supabase fails
 
-## Test Current Fix:
-```bash
-python -m http.server 8000
-```
-1. Chrome DevTools → Network → Throttle "Slow 3G"
-2. Open post → Comments load despite network lag?
-3. Console → See retry logs on slow network?
-4. Toggle network offline → Comments still render from cache?
+### [ ] 2. Fix Auth Callback
+- Add `if(document.getElementById('view-feed')) window.renderFeed()` after `migrateUserTags()`
 
-## Pending Steps:
-```
-[ ] Step 5: Feed top-2 comments preview  
-[ ] Step 6: Like/reply animations + UX polish
-```
+### [ ] 3. Fix setView('feed')
+- Change to `window.renderFeed()` ONLY (remove `window.syncFeedFromDB()` to prevent loop)
 
-**Next → Edit index.html (Step 5 - Feed Preview)**
+### [ ] 4. Test & Complete
+- Login → Feed tab shows posts immediately
+- Update main TODO.md → 5/6 
+- Update TODO-FIXES.md (all complete)
 
-
-
-
+**Next:** Implement step-by-step, update progress after each
 
